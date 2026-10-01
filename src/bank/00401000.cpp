@@ -1,6 +1,13 @@
 // bank/00401000. Original .cpp is not known yet.
 // Function names match config/dtk_symbols.txt so objdiff can pair them.
 // Not annotated FUNCTION.
+//
+// fn_00401070 is the interface mode runner. The 15 modes are triples of
+// callbacks at 0x588A70. Mode 2 plays "Title" (next to credits.tbl and
+// geeks.bik). Mode 8 builds a screen with a "Load" button and a "Cancel"
+// button. The panels in this bank are Assess-Bkgrnd (fn_004011D0 and the
+// unlabeled span at 0x401380), Map-Bkgrnd (fn_00401EF0), and BuySell-Bkgrnd
+// (fn_00404A20). Options-Bkgrnd and SaveLoad-Bkgrnd are other addresses.
 
 extern "C" {
 
@@ -131,7 +138,7 @@ int fn_00401070(void)
 	return DAT_005B27E0;
 }
 
-// 0x402250 through 0x4044A0 was one gap. It is a resolution menu.
+// 0x402250 through 0x4044A0 sits between Map-Bkgrnd and the automap commands.
 // The int at 0x60AD68 selects a scale: 0 and the default are 1.0, 1 is 1.25, 2 is 1.6.
 // The int at 0x5B2A10 is a step, 0 through 6, dispatched by fn_00402680.
 // fn_00402280 writes the label at 0x5B2A14. The large bodies stay symbols until their C is written.
