@@ -6,8 +6,10 @@
 // callbacks at 0x588A70. Mode 2 plays "Title" (next to credits.tbl and
 // geeks.bik). Mode 8 builds a screen with a "Load" button and a "Cancel"
 // button. The panels in this bank are Assess-Bkgrnd (fn_004011D0 and the
-// unlabeled span at 0x401380), Map-Bkgrnd (fn_00401EF0), and BuySell-Bkgrnd
+// functions from 0x401380), Map-Bkgrnd (fn_00401EF0), and BuySell-Bkgrnd
 // (fn_00404A20). Options-Bkgrnd and SaveLoad-Bkgrnd are other addresses.
+
+#include <string.h>
 
 extern "C" {
 
@@ -427,6 +429,22 @@ struct ConsoleCmd
 	void fn_005019E0(void);
 	void fn_0050A180(const char* name, const char* help, void (*handler)(void));
 	void fn_004D14F0(int id, int value);
+	void fn_00501A80(void);
+	void fn_00501A00(int ticks);
+	unsigned char fn_00501A90(void);
+	unsigned char fn_00501B10(void);
+};
+
+struct AssessEnt
+{
+	void fn_00462070(char* dst);
+	int fn_00462840(int which);
+	float fn_004626B0(int which);
+};
+
+struct AssessPart
+{
+	float fn_00464DE0(void);
 };
 
 struct ColorPair
@@ -439,6 +457,26 @@ void fn_004016D0(void);
 int fn_00401840(int arg);
 void fn_00401B20(void);
 void fn_00401BF0(void);
+void fn_00401C80(void);
+void fn_00401CE0(void);
+void fn_00401DA0(void);
+void fn_004011D0(void);
+float fn_004134A0(void);
+int fn_00503E80(int kind);
+int fn_005026E0(const char* name, int group, int flags);
+unsigned char fn_00501360(int which);
+unsigned char fn_005012C0(int which);
+void fn_005013C0(int* a, int* b, int* c);
+void fn_00416A10(void);
+int fn_0056C910(const char* text, const char* stop);
+char* fn_005054F0(int entry);
+void fn_004144F0(int image, int x, int y, int color);
+void fn_00506B90(int a, int b, int c, int d);
+int fn_00508300(int kind);
+void fn_00506970(int* a, int* b, int* c, int* d);
+void fn_00506840(int a, int b, int c, int d);
+void fn_00506C10(int color);
+void fn_00508C60(int x, int y, char* text, int w, int font);
 unsigned char fn_00432DA0(void);
 void fn_00432660(int a, int b);
 void fn_0041E380(void);
@@ -609,6 +647,392 @@ void fn_00401EA0(void)
 {
 	((ColorPair*)0x005B29E0)->fn_005067F0(0xFF, 0, 0, 0xFF);
 	((ColorPair*)0x005B29E4)->fn_005067F0(0, 0xFF, 0, 0xFF);
+}
+
+// Seven assess images at 0x57E4C0, stride 0x40. The suffix table at 0x58BDA4
+// is "640.tga" or "1024.tga". The scrollbar image is the pair at 0x588B48.
+
+void fn_004011D0(void)
+{
+	char name[0x70];
+	float scale;
+	int i;
+	int mode;
+	int image;
+	int* slot;
+	char* src;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 7; i++)
+	{
+		slot = (int*)(i * 0x18 + 0x005B2810);
+		src = (char*)(i * 0x40 + 0x0057E4C0);
+		slot[0] = 0;
+		slot[1] = -1;
+		slot[2] = 0;
+		slot[3] = 0;
+		slot[4] = 0;
+		slot[5] = 0;
+		fn_00503E80(0);
+		if (src[0] == 0)
+			continue;
+		strcpy(name, src);
+		strcat(name, *(char**)(*(int*)0x005BD318 * 4 + 0x0058BDA4));
+		image = fn_005026E0(name, *(int*)0x0060AC10, -1);
+		slot[1] = image;
+		mode = *(int*)0x0060AD68;
+		slot[2] = *(int*)(src + mode * 8 + 0x24);
+		slot[3] = *(int*)(src + mode * 8 + 0x28);
+		fn_00503500(image, &slot[4], &slot[5]);
+		slot[4] = (int)((float)slot[4] * scale + 0.5f);
+		slot[5] = (int)((float)slot[5] * scale + 0.5f);
+		if (i == 0)
+			slot[0] |= 1;
+	}
+	fn_00503E80(0);
+	image = fn_005026E0(*(char**)(*(int*)0x005BD318 * 4 + 0x00588B48), *(int*)0x0060AC10, -1);
+	*(int*)0x005B28C8 = image;
+	fn_00503500(image, (int*)0x005B2808, (int*)0x005B280C);
+	*(int*)0x005B2808 = (int)((float)*(int*)0x005B2808 * scale);
+	*(int*)0x005B280C = (int)((float)*(int*)0x005B280C * scale);
+}
+
+void fn_004013F0(int arg)
+{
+	char* obj;
+	char name[0x34];
+	int link;
+	int other;
+	int word_600;
+	int flat;
+	int stat0;
+	unsigned short stat_word;
+	int pct_a;
+	int pct_b;
+	int stats[7];
+	int i;
+	int lines;
+	int len;
+	char* text;
+
+	obj = (char*)arg;
+	if (*(unsigned char*)0x005FBFD8 & 2)
+	{
+		link = *(int*)(obj + 0x71C);
+		if (_stricmp(*(char**)link, (char*)0x00588BB8) == 0)
+		{
+			strcpy(name, (char*)0x025CDA58);
+		}
+		else
+		{
+			len = fn_0056C910(*(char**)link, (char*)0x00588BA8);
+			if (len)
+			{
+				strncpy(name, *(char**)link, len);
+				name[len] = 0;
+			}
+			else
+			{
+				strcpy(name, *(char**)link);
+			}
+		}
+	}
+	else
+	{
+		((AssessEnt*)obj)->fn_00462070(name);
+	}
+
+	word_600 = *(short*)(obj + 0x600);
+	flat = (int)*(float*)(obj + 0x5F8);
+	stat0 = ((AssessEnt*)obj)->fn_00462840(0);
+	link = *(int*)(obj + 0x71C);
+	other = *(int*)(obj + 0x768);
+	if (other && (*(unsigned int*)(link + 0x258) & 0x200) == 0)
+		stat_word = *(unsigned short*)(*(int*)(other + 4) + 0x68);
+	else
+		stat_word = *(unsigned short*)(link + 0x38);
+	pct_a = (int)(((AssessPart*)(obj + 0x558))->fn_00464DE0() * 100.0f + 0.5f);
+	pct_b = (int)(((AssessEnt*)obj)->fn_004626B0(3) * 100.0f + 0.5f);
+	text = (char*)(*(int*)(obj + 0x71C) + 0xF8);
+	for (i = 0; i < 7; i++)
+		stats[i] = ((int*)text)[i];
+	sprintf(
+		(char*)0x005B28D4,
+		(char*)0x025CE1CC,
+		name,
+		word_600,
+		flat,
+		stat0,
+		(int)stat_word,
+		pct_a,
+		pct_b);
+	lines = 1;
+	for (i = 0; i < 7; i++)
+	{
+		if (i == 3 || stats[i] == 2)
+			continue;
+		strcat((char*)0x005B28D4, (char*)0x00588BA4);
+		strcat((char*)0x005B28D4, fn_005054F0(*(int*)(i * 4 + 0x008EC9C4)));
+		strcat((char*)0x005B28D4, (char*)0x00588BA0);
+		strcat((char*)0x005B28D4, fn_005054F0(*(int*)(stats[i] * 4 + 0x008B5098)));
+	}
+	len = 0;
+	while (((char*)0x005B28D4)[len] != 0)
+		len++;
+	if (len > 0)
+	{
+		for (i = 0; i < len; i++)
+		{
+			if (((char*)0x005B28D4)[i] == 0x0A)
+				lines++;
+		}
+	}
+	*(int*)0x005B28CC = lines;
+}
+
+void fn_004016D0(void)
+{
+	int count;
+	int mode;
+	int step;
+	int page;
+	int cursor;
+	int y;
+
+	count = *(int*)0x005B28CC;
+	mode = *(int*)0x0060AD68;
+	step = *(int*)(mode * 4 + 0x0057E6A4);
+	if (count <= step)
+	{
+		*(unsigned char*)0x005B28C4 = 0;
+		*(int*)0x005B2828 |= 4;
+		*(int*)0x005B2858 |= 4;
+		return;
+	}
+	*(unsigned char*)0x005B28C4 = 1;
+	*(int*)0x005B2828 &= ~4;
+	*(int*)0x005B2858 &= ~4;
+	if (count <= 0)
+	{
+		*(int*)0x005B27F8 = *(int*)(mode * 8 + 0x00588B50);
+		*(int*)0x005B27FC = *(int*)(mode * 8 + 0x00588B54);
+		*(int*)0x005B27F0 = *(int*)0x005B2808;
+		*(int*)0x005B27F4 = *(int*)(mode * 4 + 0x00588B68);
+		return;
+	}
+	page = *(int*)(mode * 4 + 0x00588B68);
+	cursor = *(int*)0x005B28B8;
+	*(int*)0x005B27F8 = *(int*)(mode * 8 + 0x00588B50);
+	y = (int)((float)cursor / (float)count * (float)page + 0.5f);
+	*(int*)0x005B27FC = y + *(int*)(mode * 8 + 0x00588B54);
+	*(int*)0x005B27F0 = *(int*)0x005B2808;
+	*(int*)0x005B27F4 = (int)((float)step / (float)count * (float)page + 0.5f);
+}
+
+int fn_00401840(int arg)
+{
+	int i;
+	unsigned char* src;
+	int* slot;
+	int wheel;
+	int ignored_b;
+	int ignored_c;
+
+	*(int*)0x005B2804 = -1;
+	src = (unsigned char*)0x0057E4C0;
+	slot = (int*)0x005B2810;
+	for (i = 0; i < 7; i++)
+	{
+		if ((slot[0] & 4) == 0 && (src[0x3C] & 5))
+		{
+			if (fn_00413460(
+					*(int*)0x005FBFDC,
+					*(int*)0x005FBFE0,
+					slot[2],
+					slot[3],
+					slot[4],
+					slot[5]))
+			{
+				slot[0] |= 2;
+				*(int*)0x005B2804 = i;
+				if (src[0x3C] & 1)
+				{
+					if (fn_00501360(0))
+					{
+						*(int*)0x005B29D4 = 1;
+						((ConsoleCmd*)0x005B28BC)->fn_00501A80();
+						return arg;
+					}
+				}
+				else if ((src[0x3C] & 4) && fn_00501360(0))
+				{
+					*(int*)0x005B29D4 = 1;
+					fn_00401A80(*(int*)0x005B2804 + 1);
+					((ConsoleCmd*)0x005B28BC)->fn_00501A00(0x1F4);
+					return arg;
+				}
+			}
+		}
+		src += 0x40;
+		slot = (int*)((char*)slot + 0x18);
+	}
+	if (fn_00413460(
+			*(int*)0x005FBFDC,
+			*(int*)0x005FBFE0,
+			*(int*)0x005B27F8,
+			*(int*)0x005B27FC,
+			*(int*)0x005B27F0,
+			*(int*)0x005B27F4)
+		&& fn_00501360(0))
+	{
+		*(int*)0x005B29D4 = 2;
+		*(int*)0x005B28C0 = *(int*)0x005B27FC;
+		*(int*)0x005B28D0 = *(int*)0x005FBFE0;
+		return arg;
+	}
+	if (arg == 1)
+	{
+		fn_00416A10();
+		fn_00468D90(0x24, 1.0f, 0, 0, 0);
+		return 0;
+	}
+	fn_005013C0(&wheel, &ignored_b, &ignored_c);
+	if (wheel > 0)
+		fn_00401A20();
+	else if (wheel < 0)
+		fn_00401A50();
+	return arg;
+}
+
+void fn_00401B20(void)
+{
+	int idx;
+	int next;
+	int* slot;
+
+	idx = *(int*)0x005B2804;
+	next = idx + 1;
+	if (idx < 0 || idx >= 7)
+	{
+		*(int*)0x005B29D4 = 0;
+		return;
+	}
+	slot = (int*)((next + next * 2) * 8 + 0x005B2810);
+	if (fn_00413460(
+			*(int*)0x005FBFDC,
+			*(int*)0x005FBFE0,
+			*(int*)((next + next * 2) * 8 + 0x005B2818),
+			*(int*)((next + next * 2) * 8 + 0x005B281C),
+			*(int*)((next + next * 2) * 8 + 0x005B2820),
+			*(int*)((next + next * 2) * 8 + 0x005B2824)))
+		*(int*)((next + next * 2) * 8 + 0x005B2810) |= 2;
+	if (!fn_005012C0(0))
+	{
+		if ((*(int*)slot & 2) && !((ConsoleCmd*)0x005B28BC)->fn_00501B10())
+			fn_00401A80(next);
+		*(int*)0x005B29D4 = 0;
+		return;
+	}
+	if (((ConsoleCmd*)0x005B28BC)->fn_00501B10()
+		&& ((ConsoleCmd*)0x005B28BC)->fn_00501A90()
+		&& (*(int*)slot & 2))
+	{
+		fn_00401A80(next);
+		((ConsoleCmd*)0x005B28BC)->fn_00501A00(0x64);
+	}
+}
+
+void fn_00401BF0(void)
+{
+	int mode;
+	int delta;
+	int cursor;
+	int step;
+	int limit;
+
+	mode = *(int*)0x0060AD68;
+	delta = *(int*)0x005FBFE0 - *(int*)(mode * 8 + 0x00588B54) - *(int*)0x005B28D0 + *(int*)0x005B28C0;
+	cursor = (int)((float)delta / (float)*(int*)(mode * 4 + 0x00588B68) * (float)*(int*)0x005B28CC + 0.5f);
+	if (cursor < 0)
+		cursor = 0;
+	step = *(int*)(mode * 4 + 0x0057E6A4);
+	limit = *(int*)0x005B28CC - step;
+	if (cursor < limit)
+		limit = cursor;
+	*(int*)0x005B28B8 = limit;
+	fn_004016D0();
+	if (!fn_005012C0(0))
+		*(int*)0x005B29D4 = 0;
+}
+
+void fn_00401CE0(void)
+{
+	int wide;
+	int tall;
+	int mode;
+	int xoff;
+	int yoff;
+	int c0;
+	int c1;
+	int c2;
+	int c3;
+
+	wide = fn_00508300(-1);
+	tall = fn_00508300(-1);
+	mode = *(int*)0x0060AD68;
+	yoff = -(*(int*)0x005B28B8 * tall);
+	xoff = *(int*)(mode * 4 + 0x0057E6A4) * wide;
+	fn_00506970(&c0, &c1, &c2, &c3);
+	fn_00506840(
+		*(int*)(mode * 8 + 0x0057E680),
+		*(int*)(mode * 8 + 0x0057E684),
+		*(int*)(mode * 4 + 0x0057E698),
+		xoff);
+	fn_00506C10(0x005BD2EC);
+	fn_00508C60(0, yoff, (char*)0x005B28D4, -1, *(int*)0x025D8DF4);
+	fn_00506840(c0, c1, c2, c3);
+}
+
+void fn_00401DA0(void)
+{
+	int count;
+	int height;
+	int i;
+	int y;
+
+	if (*(unsigned char*)0x005B28C4 == 0)
+		return;
+	fn_00506B90(0xFF, 0xFF, 0xFF, 0xFF);
+	height = *(int*)0x005B280C;
+	count = *(int*)0x005B27F4 / height;
+	for (i = 0; i < count; i++)
+	{
+		y = *(int*)0x005B27FC + i * height;
+		fn_004144F0(*(int*)0x005B28C8, *(int*)0x005B27F8, y, *(int*)0x025D88C4);
+	}
+	fn_004144F0(
+		*(int*)0x005B28C8,
+		*(int*)0x005B27F8,
+		*(int*)0x005B27FC - height + *(int*)0x005B27F4,
+		*(int*)0x025D88C4);
+}
+
+void fn_00401C80(void)
+{
+	int field;
+
+	fn_00506B90(0xFF, 0xFF, 0xFF, 0xFF);
+	for (field = 0x005B2818; field < 0x005B28C0; field += 0x18)
+	{
+		if (*(unsigned char*)(field - 8) & 3)
+			fn_004144F0(
+				*(int*)(field - 4),
+				*(int*)field,
+				*(int*)(field + 4),
+				*(int*)0x025D88C4);
+	}
+	fn_00401CE0();
+	fn_00401DA0();
 }
 
 void fn_004044D0(void);
