@@ -408,3 +408,8 @@ fread(dst, pack->archive_size, 1, file);
 fclose(file);
     return 1;
 }
+
+extern "C" void __fastcall fn_00536920(void* self)
+{
+    *(int*)self = 0xffffffff;
+}

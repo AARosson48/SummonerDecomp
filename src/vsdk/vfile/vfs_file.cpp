@@ -1352,3 +1352,23 @@ void vfs_io_bytes(VfsFile* file, void* data, int count, int version) {
         vfs_write_raw(file, data, count);
     }
 }
+
+extern "C" int __fastcall fn_005273C0(void* self)
+{
+    return *(int*)((char*)self + 0x274);
+}
+
+extern "C" int __fastcall fn_005273D0(void* self)
+{
+    return (int)((char*)self + 0x27c);
+}
+
+extern "C" void __fastcall fn_00552120(void* self)
+{
+    *(int*)self = 0;
+}
+
+extern "C" int __fastcall fn_005530A0(void* self)
+{
+    return (int)((char*)self + 0x278);
+}
