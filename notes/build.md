@@ -141,7 +141,15 @@ The same Red Faction files, next pass. `objdiff-cli diff` / report:
 - `vsdk/ca/character.cpp` `?fn_00541240@Character@@QAEXHH@Z` is an objdiff 1:1 match, 36 bytes. **[STATE 3].** `_fn_00541290` diff 95.51724, `_fn_00541330` diff 95.5, `_fn_00541300` diff 90.0, `?fn_00541270@Character@@QAEHXZ` diff 49.090908.
 - `vsdk/ca/character_instance.cpp` `?fn_0051ABD0@CharacterInstance@@QAEPAUVec3@@PAU2@@Z` sums the active animation samples. Diff 78.425, report 78.5375.
 
-The report after that pass: `fuzzy_match_percent` 0.9124829, `matched_code` 821, `matched_code_percent` 0.05406352, `matched_functions` 18 of 6915. The new 1:1 function is the character lookup. The other bytes the report added are the 99-percent functions it records as 100. `complete` stays false on every unit, so there is still no fully-linked band.
+`vsdk/ca/skeleton.cpp` is the Red Faction skeleton file. `objdiff-cli diff` / report:
+
+- `?fn_00543D50@Anim@@QAEPAU1@PBD0DHD@Z` copies the skeleton name, interns the second string, and fails with `Too many skeletons` at line `0x96`. Diff 77.327866, report 77.508194.
+- `?fn_00543E10@Anim@@QAEXXZ` unlinks the skeleton and returns its allocations to the heap. Diff 72.906975, report 73.00775.
+- `?fn_00543FC0@Anim@@QAEPAUVec3@@PAU2@@Z` is the bone sample `character_instance` calls. Scale is `1 / ((end - start) * 0.00625 * 0.033333335)`. Diff 77.0, report 77.08.
+
+All three are under 100, so they stay unmatched. `fn_00544090` in that file has no C yet.
+
+The report after the skeleton functions: `fuzzy_match_percent` 0.9465685, `matched_code` 821, `matched_code_percent` 0.05406352, `matched_functions` 18 of 6915. None of the skeleton functions added matched bytes. `complete` stays false on every unit, so there is still no fully-linked band.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
 7. `bank/` units were left out of `progress_categories`, so decomp.dev's groups stayed at 0 while the project total included their matches. `bank/*` is the Banks category. Engine, Volition SDK, Game, and Level scripts only count units whose split name is an original `.cpp`. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 

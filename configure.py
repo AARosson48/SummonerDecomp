@@ -74,6 +74,7 @@ def compiled_units():
         ("vsdk/gr/gr.cpp", "src/vsdk/gr/gr.cpp"),
         ("vsdk/ca/character.cpp", "src/vsdk/ca/character.cpp"),
         ("vsdk/ca/character_instance.cpp", "src/vsdk/ca/character_instance.cpp"),
+        ("vsdk/ca/skeleton.cpp", "src/vsdk/ca/skeleton.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
     ]
