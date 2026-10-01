@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 def apply(config, args):
-    config["baseimg"] = "baserom/baserom.exe"
+    config["baseimg"] = "retail_bin/Sum.exe"
     config["myimg"] = "build/Sum.exe"
     config["mapfile"] = "build/Sum.map"
     config["source_directories"] = ["src", "include"]

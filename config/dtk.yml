@@ -1,6 +1,6 @@
-object_base: baserom
+object_base: retail_bin
 name: Sum
-object: baserom.exe
+object: Sum.exe
 hash: cdc5d71d447a89e9a1c5e176c65c9b129321d7fc
 symbols: config/dtk_symbols.txt
 splits: config/splits.txt

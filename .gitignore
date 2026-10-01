@@ -2,6 +2,7 @@
 /build/
 /baserom/*.exe
 /baserom/*.dll
+/retail_bin/
 /assets/**
 !/assets/.gitkeep
 /project.local.json

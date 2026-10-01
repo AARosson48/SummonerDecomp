@@ -1,4 +1,4 @@
-# Compared with reccmp the same way LEGO Island compares a rebuild to the retail binary.
+# reccmp compares retail_bin/Sum.exe (private repo, checked out in CI) with build/Sum.exe.
 # https://github.com/isledecomp/reccmp
 targets:
   SUM:

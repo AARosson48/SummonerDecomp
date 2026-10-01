@@ -5,17 +5,52 @@ on:
   pull_request:
 
 jobs:
-  progress:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Checkout Retail Binary
+        uses: actions/checkout@v4
+        with:
+          repository: AARosson48/SummonerDecomp-retail
+          token: ${{ secrets.RETAIL_BINARY_TOKEN }}
+          path: retail_bin
+
+      - name: Verify retail Sum.exe
+        shell: python
+        run: |
+          import hashlib, pathlib, sys
+          exe = pathlib.Path("retail_bin/Sum.exe")
+          digest = hashlib.sha1(exe.read_bytes()).hexdigest()
+          expected = "cdc5d71d447a89e9a1c5e176c65c9b129321d7fc"
+          if digest != expected:
+              sys.exit(f"retail_bin/Sum.exe sha1 {digest} != {expected}")
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - name: Configure
-        run: python configure.py
-      - name: Progress report
-        run: python tools/progress.py --report build/report.json
+
+      - name: Install reccmp
+        run: python -m pip install reccmp
+
+      - name: Record retail_bin/Sum.exe
+        run: reccmp-project detect --what original --search-path retail_bin
+
+      - name: Build with MSVC 6.0
+        shell: pwsh
+        run: |
+          git clone --depth 1 https://github.com/itsmattkc/MSVC600.git "$env:RUNNER_TEMP\MSVC600"
+          $env:MSVC6 = "$env:RUNNER_TEMP\MSVC600"
+          python tools/build_msvc6.py
+
+      - name: Record build/Sum.exe
+        run: reccmp-project detect --what recompiled --search-path build
+
+      - name: Compare retail_bin/Sum.exe to build/Sum.exe
+        run: reccmp-reccmp --target SUM --json build/report.json
+
       - name: Upload decomp.dev report
         uses: actions/upload-artifact@v4
         with:

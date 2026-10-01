@@ -13,7 +13,18 @@ Follow the existing AI notes. Do not invent a second procedure.
 - Compiler recorded in the Rich header: Utc12_CPP build 8966, linker 6.00.8447. The portable tree at `C:\projects\MSVC600` (`itsmattkc/MSVC600`) prints `cl` 12.00.8804 and `dumpbin` 6.00.8447. Racers uses `cl` 12.00.8168. Do not copy that version.
 - Original source paths are the assert strings in `config/modules.txt` (`D:\projects\Summoner\pccode\...`). A function goes in that `.cpp` once an assert, string cluster, or address range places it there.
 - `// FUNCTION: SUM 0x........` means a 100% reccmp match. Anything short of that stays `// STUB:`. Unknown names stay `FUN_xxxxxxxx` until a match or a string proves a name.
-- Compare with `reccmp-reccmp --target SUM --verbose 0xADDRESS` after an MSVC 6 build and PDB. `tools/progress.py` does not decide a match.
+- Compare with `reccmp-reccmp --target SUM --verbose 0xADDRESS` after an MSVC 6 build and PDB. The original is `retail_bin/Sum.exe`. The rebuild is `build/Sum.exe`. `tools/progress.py` does not decide a match.
+- `Sum.exe` is not in this repository. The private repo `AARosson48/SummonerDecomp-retail` holds the retail binary. The public workflow checks that repo out into `retail_bin/` with the `RETAIL_BINARY_TOKEN` secret.
+
+## Build and diff pipeline
+
+Declare one state before acting on a build result. If the build log or objdiff output is missing, ask for it.
+
+- **[STATE 1] BUILD FAILURE.** MSVC returns non-zero or reports a syntax error. Fix syntax only. Leave the function's logic and structure as they are. Rebuild.
+- **[STATE 2] DIFF MISMATCH.** The compile succeeded and objdiff reports different instructions, stack, or registers. This is a matching error. Change types, alignment, or calling convention so MSVC emits the original bytes. Rebuild.
+- **[STATE 3] BINARY MATCH.** objdiff reports a 1:1 match for that function. Record the decomp.dev entry from that objdiff output, including the MSVC version and flags that produced it.
+
+A function stays unmatched until objdiff verifies the bytes.
 
 ## What this repo currently does wrong
 

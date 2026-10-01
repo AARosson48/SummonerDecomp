@@ -31,13 +31,13 @@ Python 3.10 or newer. On Windows, Developer Mode or an elevated shell is require
 
 ```sh
 python tools/extract_game.py
-python configure.py
-python tools/progress.py --report build/report.json
+python tools/build_msvc6.py
+reccmp-reccmp --target SUM
 ```
 
 `extract_game.py` finds the install from the Steam uninstall key for app 2750, the GOG registry key, and every library listed in Steam's `libraryfolders.vdf`. A saved path from an earlier run is read from `project.local.json`, which is gitignored. If none of those locate `Sum.exe`, set `SUMMONER_DIR` to the install folder, or pass that folder with `--game-dir`.
 
-The script copies only the executable into `baserom/baserom.exe`. It symlinks `*.vpp` and the runtime DLLs into `build/` and `assets/`. It stops if the executable hash is not `sum-pc`.
+The script copies the executable to `retail_bin/Sum.exe`. That directory is gitignored. The GitHub build checks the same file out from the private repo `AARosson48/SummonerDecomp-retail`. It symlinks `*.vpp` and the runtime DLLs into `build/` and `assets/`. It stops if the executable hash is not `sum-pc`.
 
 ## What is in the executable
 
@@ -52,7 +52,7 @@ Assert strings in the executable still carry the source paths from the original 
 | Multiplayer | `WSOCK32.dll` and PXO (`pxo.net`) |
 | Middleware | `binkw32.dll`, `EAX.DLL` |
 
-Matching follows the Windows projects that use [reccmp](https://github.com/isledecomp/reccmp). You compile this source with MSVC 6, link an executable, and reccmp compares each function in that executable with the same address in retail `Sum.exe`. `reccmp-project.yml` names that retail file and its hash. `config/reccmp.csv` is that full address list. A function with no name yet is still an address, written as `fn_` plus the address. `extract_game.py` writes `reccmp-user.yml` with the path to the `Sum.exe` on that machine, and that file is gitignored.
+Matching follows the Windows projects that use [reccmp](https://github.com/isledecomp/reccmp). You compile this source with MSVC 6, link `build/Sum.exe`, and reccmp compares each function in that executable with the same address in `retail_bin/Sum.exe`. `reccmp-project.yml` names that retail file and its hash. `config/reccmp.csv` is that full address list. A function with no name yet is still an address, written as `fn_` plus the address. `extract_game.py` writes `reccmp-user.yml` with `retail_bin/Sum.exe`, and that file is gitignored.
 
 ```sh
 pip install reccmp

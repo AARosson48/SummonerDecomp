@@ -74,7 +74,7 @@ def write_objdiff():
         "build_target": False,
         "build_base": False,
         "watch_patterns": ["*.c", "*.cpp", "*.h", "*.py", "*.yml", "*.yaml", "*.txt", "*.json"],
-        "ignore_patterns": ["build/**/*", "VPP/**/*", "baserom/**/*"],
+        "ignore_patterns": ["build/**/*", "VPP/**/*", "baserom/**/*", "retail_bin/**/*"],
         "progress_categories": [
             {"id": "engine", "name": "Engine"},
             {"id": "vsdk", "name": "Volition SDK"},
