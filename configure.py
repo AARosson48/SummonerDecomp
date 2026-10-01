@@ -70,6 +70,10 @@ def compiled_units():
         ("vsdk/os/registry.cpp", "src/vsdk/os/registry.cpp"),
         ("vsdk/os/stringpool.cpp", "src/vsdk/os/stringpool.cpp"),
         ("vsdk/gr/opengl/gr_opengl.cpp", "src/vsdk/gr/opengl/gr_opengl.cpp"),
+        ("Summoner/player/player.cpp", "src/Summoner/player/player.cpp"),
+        ("vsdk/gr/gr.cpp", "src/vsdk/gr/gr.cpp"),
+        ("vsdk/ca/character.cpp", "src/vsdk/ca/character.cpp"),
+        ("vsdk/ca/character_instance.cpp", "src/vsdk/ca/character_instance.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
     ]

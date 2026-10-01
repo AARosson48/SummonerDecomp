@@ -134,7 +134,14 @@ The same SDK files, each one function, now on the compare. `objdiff-cli diff` / 
 - `vsdk/os/stringpool.cpp` `?fn_00544C40@StringPool@@QAEPADPBD@Z`: diff 61.431034, report 61.551723.
 - `vsdk/gr/opengl/gr_opengl.cpp` `_fn_0054F6F0`: diff 94.69388, report 95.081635. Window mode `0xC8` / `0xC9` / `0xCA`, then `GL_VERSION` / `GL_EXTENSIONS` for `1.2` or `GL_APPLE_packed_pixel`.
 
-The report after those four: `fuzzy_match_percent` 0.87058884, `matched_code` 622, `matched_code_percent` 0.04095921, `matched_functions` 13 of 6915. Functions under 100 are the blue band. `complete` stays false on every unit, so there is still no fully-linked band.
+The same Red Faction files, next pass. `objdiff-cli diff` / report:
+
+- `Summoner/player/player.cpp` `_fn_004334F0` takes a slot off the free list. The assert string is `No more player slots availeble`. Diff 99.675. The report records 100 and counts its 141 bytes. The diff is not 1:1.
+- `vsdk/gr/gr.cpp` `_fn_00506110` reads `SST_DUALHEAD` when the window mode is `0xC9`. Diff 91.95238, report 92.38095. The three accessors `_fn_00506160`, `_fn_00506170`, `_fn_00506180` are diff 99.666664, 99.5, 99.5. The report records those three as 100. The diff is not 1:1.
+- `vsdk/ca/character.cpp` `?fn_00541240@Character@@QAEXHH@Z` is an objdiff 1:1 match, 36 bytes. **[STATE 3].** `_fn_00541290` diff 95.51724, `_fn_00541330` diff 95.5, `_fn_00541300` diff 90.0, `?fn_00541270@Character@@QAEHXZ` diff 49.090908.
+- `vsdk/ca/character_instance.cpp` `?fn_0051ABD0@CharacterInstance@@QAEPAUVec3@@PAU2@@Z` sums the active animation samples. Diff 78.425, report 78.5375.
+
+The report after that pass: `fuzzy_match_percent` 0.9124829, `matched_code` 821, `matched_code_percent` 0.05406352, `matched_functions` 18 of 6915. The new 1:1 function is the character lookup. The other bytes the report added are the 99-percent functions it records as 100. `complete` stays false on every unit, so there is still no fully-linked band.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
 7. `bank/` units were left out of `progress_categories`, so decomp.dev's groups stayed at 0 while the project total included their matches. `bank/*` is the Banks category. Engine, Volition SDK, Game, and Level scripts only count units whose split name is an original `.cpp`. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 
