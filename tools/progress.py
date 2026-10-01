@@ -83,7 +83,7 @@ def metrics(code_total, data_total, code_matched, data_matched):
     }
 
 
-def measures(code_total, data_total, code_matched, data_matched, units, complete_units):
+def measures(code_total, data_total, code_matched, data_matched, units, complete_units, functions=0, matched_functions=0):
     def pct(matched, total):
         if total <= 0:
             return 0.0
@@ -97,9 +97,9 @@ def measures(code_total, data_total, code_matched, data_matched, units, complete
         "total_data": str(data_total),
         "matched_data": str(data_matched),
         "matched_data_percent": pct(data_matched, data_total),
-        "total_functions": 0,
-        "matched_functions": 0,
-        "matched_functions_percent": 0.0,
+        "total_functions": functions,
+        "matched_functions": matched_functions,
+        "matched_functions_percent": pct(matched_functions, functions),
         "complete_code": str(code_matched),
         "complete_code_percent": pct(code_matched, code_total),
         "complete_data": str(data_matched),
@@ -180,7 +180,7 @@ def category_for(original_path):
 
 
 def load_text_symbols():
-    """Every .text symbol, named or not. Sizes already cover the section."""
+    """Every .text symbol from the decomp-toolkit scan. Sizes cover the section."""
     import re
 
     path = os.path.join(ROOT, "config", "symbols_all.txt")
@@ -194,81 +194,132 @@ def load_text_symbols():
         for raw in handle:
             match = pattern.match(raw.strip())
             if match:
-                name, _address, size = match.groups()
-                rows.append((name, int(size, 16)))
+                name, address, size = match.groups()
+                rows.append((name, int(address, 16), int(size, 16)))
     return rows
 
 
-def report(facts, code_total, data_total, code_matched, data_matched):
-    modules = load_modules()
-    rdata = section(facts, ".rdata")["vsize"]
-    data_init = section(facts, ".data")["rawsize"]
-    rsrc = section(facts, ".rsrc")["vsize"]
-    # One tile per function, including functions that only have an address.
-    # Matched stays 0 until a rebuild compares equal.
+def load_splits():
+    """Units from config/splits.txt. Each section is (start, end)."""
+    import re
+
+    path = os.path.join(ROOT, "config", "splits.txt")
+    pattern = re.compile(r"(\.\w+)\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f]+)")
     units = []
-    for name, size in load_text_symbols():
-        units.append(
+    current = None
+    with open(path, "r", encoding="utf-8") as handle:
+        for raw in handle:
+            line = raw.strip()
+            if not line or line.startswith("#") or line == "Sections:":
+                continue
+            if line.endswith(":") and not line.startswith("."):
+                current = {"name": line[:-1], "sections": {}}
+                units.append(current)
+                continue
+            match = pattern.match(line)
+            if current and match:
+                current["sections"][match.group(1)] = (
+                    int(match.group(2), 16),
+                    int(match.group(3), 16),
+                )
+    return units
+
+
+def report(facts, code_total, data_total, code_matched, data_matched):
+    # One report unit per splits.txt object. Matched stays 0 until a rebuild
+    # compares equal. Code units with no data keep matched_data_percent at 0;
+    # objdiff would otherwise report 100% when the data total is 0.
+    splits = load_splits()
+    text_units = []
+    for unit in splits:
+        if ".text" in unit["sections"]:
+            start, end = unit["sections"][".text"]
+            text_units.append((start, end, unit))
+    text_units.sort()
+
+    buckets = {id(unit): [] for unit in splits}
+    for name, address, size in load_text_symbols():
+        lo, hi = 0, len(text_units) - 1
+        found = None
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            start, end, unit = text_units[mid]
+            if address < start:
+                hi = mid - 1
+            elif address >= end:
+                lo = mid + 1
+            else:
+                found = text_units[mid]
+                break
+        if found is None:
+            continue
+        start, end, unit = found
+        clipped = min(size, end - address)
+        buckets[id(unit)].append(
             {
                 "name": name,
-                "measures": measures(size, 0, 0, 0, 1, 0),
-                "sections": [],
-                "functions": [],
-                "metadata": {"complete": False, "progress_categories": ["engine"]},
+                "size": str(clipped),
+                "fuzzy_match_percent": 0.0,
+                "metadata": {"virtual_address": f"0x{address:08X}"},
+                "measures": measures(clipped, 0, 0, 0, 0, 0, 1, 0),
             }
         )
-    units.extend(
-        [
-        {
-            "name": "sum.exe:.rdata",
-            "measures": measures(0, rdata, 0, 0, 1, 0),
-            "sections": [],
-            "functions": [],
-            "metadata": {"complete": False, "progress_categories": ["engine"]},
-        },
-        {
-            "name": "sum.exe:.data",
-            "measures": measures(0, data_init, 0, 0, 1, 0),
-            "sections": [],
-            "functions": [],
-            "metadata": {"complete": False, "progress_categories": ["engine"]},
-        },
-        {
-            "name": "sum.exe:.rsrc",
-            "measures": measures(0, rsrc, 0, 0, 1, 0),
-            "sections": [],
-            "functions": [],
-            "metadata": {"complete": False, "progress_categories": ["engine"]},
-        },
-        ]
-    )
-    for original in modules:
-        rel = original.split("pccode\\", 1)[-1].replace("\\", "/")
+
+    units = []
+    categories = {
+        "engine": [0, 0, 0],
+        "vsdk": [0, 0, 0],
+        "game": [0, 0, 0],
+        "scripts": [0, 0, 0],
+    }
+    function_count = 0
+    for unit in splits:
+        code = 0
+        data = 0
+        for section, (start, end) in unit["sections"].items():
+            if section == ".text":
+                code += end - start
+            else:
+                data += end - start
+        functions = buckets[id(unit)]
+        function_count += len(functions)
+        metadata = {"complete": False}
+        if unit["name"].endswith(".cpp"):
+            category = category_for(unit["name"])
+            metadata["progress_categories"] = [category]
+            categories[category][0] += code
+            categories[category][1] += data
+            categories[category][2] += len(functions)
         units.append(
             {
-                "name": rel,
-                "measures": measures(0, 0, 0, 0, 1, 0),
+                "name": unit["name"],
+                "measures": measures(code, data, 0, 0, 1, 0, len(functions), 0),
                 "sections": [],
-                "functions": [],
-                "metadata": {
-                    "complete": False,
-                    "source_path": "src/" + rel,
-                    "progress_categories": [category_for(original)],
-                },
+                "functions": functions,
+                "metadata": metadata,
             }
         )
-    overall = measures(code_total, data_total, code_matched, data_matched, len(units), 0)
-    engine = measures(code_total, data_total, code_matched, data_matched, 4, 0)
-    empty = measures(0, 0, 0, 0, 0, 0)
+
+    overall = measures(
+        code_total, data_total, code_matched, data_matched, len(units), 0, function_count, 0
+    )
+    names = {
+        "engine": "Engine",
+        "vsdk": "Volition SDK",
+        "game": "Game",
+        "scripts": "Level scripts",
+    }
     return {
         "measures": overall,
         "units": units,
         "version": 1,
         "categories": [
-            {"id": "engine", "name": "Engine", "measures": engine},
-            {"id": "vsdk", "name": "Volition SDK", "measures": empty},
-            {"id": "game", "name": "Game", "measures": empty},
-            {"id": "scripts", "name": "Level scripts", "measures": empty},
+            {
+                "id": key,
+                "name": names[key],
+                "measures": measures(code, data, 0, 0, 0, 0, functions, 0),
+            }
+            for key, (code, data, functions) in categories.items()
         ],
     }
 

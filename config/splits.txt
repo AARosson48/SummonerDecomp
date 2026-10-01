@@ -4,8 +4,449 @@ Sections:
 	.data       type:data align:4096
 	.rsrc       type:rodata align:4096
 
-Sum.exe:
-	.text       start:0x00401000 end:0x0057DB40
+bank/00401000:
+	.text       start:0x00401000 end:0x00404BD0
+
+bank/00404BD0:
+	.text       start:0x00404BD0 end:0x00408590
+
+bank/00408590:
+	.text       start:0x00408590 end:0x0040C4A0
+
+bank/0040C4A0:
+	.text       start:0x0040C4A0 end:0x004102A0
+
+bank/004102A0:
+	.text       start:0x004102A0 end:0x00414270
+
+bank/00414270:
+	.text       start:0x00414270 end:0x004181D0
+
+bank/004181D0:
+	.text       start:0x004181D0 end:0x0041C110
+
+bank/0041C110:
+	.text       start:0x0041C110 end:0x0041EF30
+
+bank/0041EF30:
+	.text       start:0x0041EF30 end:0x00422DD0
+
+bank/00422DD0:
+	.text       start:0x00422DD0 end:0x004256A0
+
+bank/004256A0:
+	.text       start:0x004256A0 end:0x00429410
+
+bank/00429410:
+	.text       start:0x00429410 end:0x0042B800
+
+bank/0042B800:
+	.text       start:0x0042B800 end:0x0042F7D0
+
+bank/0042F7D0:
+	.text       start:0x0042F7D0 end:0x004334F0
+
+Summoner/player/player.cpp:
+	.text       start:0x004334F0 end:0x00433580
+
+bank/00433580:
+	.text       start:0x00433580 end:0x00437570
+
+bank/00437570:
+	.text       start:0x00437570 end:0x0043B260
+
+bank/0043B260:
+	.text       start:0x0043B260 end:0x0043F220
+
+bank/0043F220:
+	.text       start:0x0043F220 end:0x00442B90
+
+bank/00442B90:
+	.text       start:0x00442B90 end:0x004452F0
+
+Engine/characterinfo/characterinfo.cpp:
+	.text       start:0x004452F0 end:0x00449B00
+
+bank/00449B00:
+	.text       start:0x00449B00 end:0x0044D540
+
+Engine/Objects/items.cpp:
+	.text       start:0x0044D540 end:0x0044D870
+
+bank/0044D870:
+	.text       start:0x0044D870 end:0x00450E30
+
+bank/00450E30:
+	.text       start:0x00450E30 end:0x00454C44
+
+bank/00454C44:
+	.text       start:0x00454C44 end:0x004568E0
+
+Engine/Objects/living_entity.cpp:
+	.text       start:0x004568E0 end:0x00461DC0
+
+bank/00461DC0:
+	.text       start:0x00461DC0 end:0x00465D24
+
+bank/00465D24:
+	.text       start:0x00465D24 end:0x004691E0
+
+Engine/gamesound/gamesound.cpp:
+	.text       start:0x004691E0 end:0x00469580
+
+bank/00469580:
+	.text       start:0x00469580 end:0x00469C40
+
+Engine/Objects/objects.cpp:
+	.text       start:0x00469C40 end:0x00469DD0
+
+bank/00469DD0:
+	.text       start:0x00469DD0 end:0x0046CB50
+
+Engine/objects/item_paging.cpp:
+	.text       start:0x0046CB50 end:0x0046CC50
+
+bank/0046CC50:
+	.text       start:0x0046CC50 end:0x0046F100
+
+Engine/s3d/s3d.cpp:
+	.text       start:0x0046F100 end:0x0046F210
+
+bank/0046F210:
+	.text       start:0x0046F210 end:0x00473200
+
+bank/00473200:
+	.text       start:0x00473200 end:0x00477080
+
+bank/00477080:
+	.text       start:0x00477080 end:0x0047ABE0
+
+bank/0047ABE0:
+	.text       start:0x0047ABE0 end:0x0047E900
+
+bank/0047E900:
+	.text       start:0x0047E900 end:0x00482850
+
+bank/00482850:
+	.text       start:0x00482850 end:0x004865A0
+
+bank/004865A0:
+	.text       start:0x004865A0 end:0x0048A230
+
+bank/0048A230:
+	.text       start:0x0048A230 end:0x0048DE60
+
+bank/0048DE60:
+	.text       start:0x0048DE60 end:0x0048E470
+
+Engine/rendering/levelrender.cpp:
+	.text       start:0x0048E470 end:0x004914E0
+
+bank/004914E0:
+	.text       start:0x004914E0 end:0x004954A0
+
+bank/004954A0:
+	.text       start:0x004954A0 end:0x004989D0
+
+bank/004989D0:
+	.text       start:0x004989D0 end:0x0049C970
+
+bank/0049C970:
+	.text       start:0x0049C970 end:0x0049CDD0
+
+Engine/ai/pathfinding.cpp:
+	.text       start:0x0049CDD0 end:0x0049D930
+
+bank/0049D930:
+	.text       start:0x0049D930 end:0x004A16A0
+
+Engine/ai/boss_ai.cpp:
+	.text       start:0x004A16A0 end:0x004A1AC0
+
+bank/004A1AC0:
+	.text       start:0x004A1AC0 end:0x004A5750
+
+bank/004A5750:
+	.text       start:0x004A5750 end:0x004A9440
+
+bank/004A9440:
+	.text       start:0x004A9440 end:0x004AC240
+
+bank/004AC240:
+	.text       start:0x004AC240 end:0x004B0210
+
+bank/004B0210:
+	.text       start:0x004B0210 end:0x004B3010
+
+bank/004B3010:
+	.text       start:0x004B3010 end:0x004B6C10
+
+bank/004B6C10:
+	.text       start:0x004B6C10 end:0x004B7D30
+
+Engine/ai/pathfinding_visibility.cpp:
+	.text       start:0x004B7D30 end:0x004B86E0
+
+bank/004B86E0:
+	.text       start:0x004B86E0 end:0x004BC6B0
+
+bank/004BC6B0:
+	.text       start:0x004BC6B0 end:0x004C06B0
+
+bank/004C06B0:
+	.text       start:0x004C06B0 end:0x004C4470
+
+bank/004C4470:
+	.text       start:0x004C4470 end:0x004C8100
+
+bank/004C8100:
+	.text       start:0x004C8100 end:0x004CAF40
+
+levelscripts/Scripts/level_scripts_common.cpp:
+	.text       start:0x004CAF40 end:0x004CC010
+
+bank/004CC010:
+	.text       start:0x004CC010 end:0x004CFF80
+
+bank/004CFF80:
+	.text       start:0x004CFF80 end:0x004D39C0
+
+bank/004D39C0:
+	.text       start:0x004D39C0 end:0x004D7930
+
+bank/004D7930:
+	.text       start:0x004D7930 end:0x004D7C20
+
+levelscripts/conversation.cpp:
+	.text       start:0x004D7C20 end:0x004D7C70
+
+bank/004D7C70:
+	.text       start:0x004D7C70 end:0x004DB420
+
+levelscripts/script_internal.cpp:
+	.text       start:0x004DB420 end:0x004DB6EC
+
+bank/004DB6EC:
+	.text       start:0x004DB6EC end:0x004DF6E0
+
+bank/004DF6E0:
+	.text       start:0x004DF6E0 end:0x004E30D0
+
+bank/004E30D0:
+	.text       start:0x004E30D0 end:0x004E6890
+
+bank/004E6890:
+	.text       start:0x004E6890 end:0x004ECF60
+
+bank/004ECF60:
+	.text       start:0x004ECF60 end:0x004F0F10
+
+bank/004F0F10:
+	.text       start:0x004F0F10 end:0x004F4ED0
+
+bank/004F4ED0:
+	.text       start:0x004F4ED0 end:0x004F8EB0
+
+bank/004F8EB0:
+	.text       start:0x004F8EB0 end:0x004FCE40
+
+bank/004FCE40:
+	.text       start:0x004FCE40 end:0x00500DE0
+
+bank/00500DE0:
+	.text       start:0x00500DE0 end:0x00501D20
+
+vsdk/bmpman/bmpman.cpp:
+	.text       start:0x00501D20 end:0x00503C80
+
+bank/00503C80:
+	.text       start:0x00503C80 end:0x00505E00
+
+vsdk/gr/gr.cpp:
+	.text       start:0x00505E00 end:0x005065E0
+
+bank/005065E0:
+	.text       start:0x005065E0 end:0x00508560
+
+vsdk/gr/gr_font.cpp:
+	.text       start:0x00508560 end:0x00508C60
+
+bank/00508C60:
+	.text       start:0x00508C60 end:0x0050C130
+
+bank/0050C130:
+	.text       start:0x0050C130 end:0x00510110
+
+bank/00510110:
+	.text       start:0x00510110 end:0x00510390
+
+vsdk/math/matrix.cpp:
+	.text       start:0x00510390 end:0x00510510
+
+bank/00510510:
+	.text       start:0x00510510 end:0x00511F90
+
+vsdk/os/registry.cpp:
+	.text       start:0x00511F90 end:0x00512050
+
+bank/00512050:
+	.text       start:0x00512050 end:0x005124C0
+
+vsdk/os/memory.cpp:
+	.text       start:0x005124C0 end:0x00512880
+
+bank/00512880:
+	.text       start:0x00512880 end:0x00515970
+
+vsdk/parse/parse.cpp:
+	.text       start:0x00515970 end:0x00516780
+
+bank/00516780:
+	.text       start:0x00516780 end:0x0051A780
+
+bank/0051A780:
+	.text       start:0x0051A780 end:0x0051ABD0
+
+vsdk/ca/character_instance.cpp:
+	.text       start:0x0051ABD0 end:0x0051ACB0
+
+bank/0051ACB0:
+	.text       start:0x0051ACB0 end:0x0051BFD0
+
+vsdk/geom/effect_mem.cpp:
+	.text       start:0x0051BFD0 end:0x0051D240
+
+bank/0051D240:
+	.text       start:0x0051D240 end:0x005211F0
+
+bank/005211F0:
+	.text       start:0x005211F0 end:0x00524C10
+
+bank/00524C10:
+	.text       start:0x00524C10 end:0x00528430
+
+bank/00528430:
+	.text       start:0x00528430 end:0x0052B850
+
+vsdk/ui/window.cpp:
+	.text       start:0x0052B850 end:0x0052B9F0
+
+bank/0052B9F0:
+	.text       start:0x0052B9F0 end:0x0052F760
+
+bank/0052F760:
+	.text       start:0x0052F760 end:0x00533620
+
+bank/00533620:
+	.text       start:0x00533620 end:0x00534110
+
+vsdk/vfile/packfile/file_packfile.cpp:
+	.text       start:0x00534110 end:0x005341A0
+
+bank/005341A0:
+	.text       start:0x005341A0 end:0x00537F70
+
+bank/00537F70:
+	.text       start:0x00537F70 end:0x005394E0
+
+vsdk/gr/directx/gr_direct3d.cpp:
+	.text       start:0x005394E0 end:0x0053A170
+
+bank/0053A170:
+	.text       start:0x0053A170 end:0x0053E060
+
+bank/0053E060:
+	.text       start:0x0053E060 end:0x0053E310
+
+vsdk/os/cmdline.cpp:
+	.text       start:0x0053E310 end:0x0053E3C0
+
+bank/0053E3C0:
+	.text       start:0x0053E3C0 end:0x00540970
+
+vsdk/ca/character.cpp:
+	.text       start:0x00540970 end:0x00541700
+
+bank/00541700:
+	.text       start:0x00541700 end:0x00543D50
+
+vsdk/ca/skeleton.cpp:
+	.text       start:0x00543D50 end:0x00544A10
+
+bank/00544A10:
+	.text       start:0x00544A10 end:0x00544C40
+
+vsdk/os/stringpool.cpp:
+	.text       start:0x00544C40 end:0x00544CD0
+
+bank/00544CD0:
+	.text       start:0x00544CD0 end:0x005484F0
+
+bank/005484F0:
+	.text       start:0x005484F0 end:0x00549D10
+
+vsdk/gr/glide/gr_glide.cpp:
+	.text       start:0x00549D10 end:0x00549F50
+
+bank/00549F50:
+	.text       start:0x00549F50 end:0x0054D630
+
+bank/0054D630:
+	.text       start:0x0054D630 end:0x0054F6F0
+
+vsdk/gr/opengl/gr_opengl.cpp:
+	.text       start:0x0054F6F0 end:0x0054F790
+
+bank/0054F790:
+	.text       start:0x0054F790 end:0x005535F0
+
+vsdk/ui/ui_container.cpp:
+	.text       start:0x005535F0 end:0x005537A0
+
+bank/005537A0:
+	.text       start:0x005537A0 end:0x00555110
+
+vsdk/bmpman/targautils.cpp:
+	.text       start:0x00555110 end:0x00555CF0
+
+bank/00555CF0:
+	.text       start:0x00555CF0 end:0x00559B80
+
+bank/00559B80:
+	.text       start:0x00559B80 end:0x0055DB80
+
+bank/0055DB80:
+	.text       start:0x0055DB80 end:0x00561900
+
+bank/00561900:
+	.text       start:0x00561900 end:0x00565880
+
+bank/00565880:
+	.text       start:0x00565880 end:0x00568E40
+
+bank/00568E40:
+	.text       start:0x00568E40 end:0x0056CA1C
+
+bank/0056CA1C:
+	.text       start:0x0056CA1C end:0x0057032C
+
+bank/0057032C:
+	.text       start:0x0057032C end:0x005740CC
+
+bank/005740CC:
+	.text       start:0x005740CC end:0x00577DB0
+
+bank/00577DB0:
+	.text       start:0x00577DB0 end:0x0057BDB0
+
+bank/0057BDB0:
+	.text       start:0x0057BDB0 end:0x0057DB40
+
+rdata:
 	.rdata      start:0x0057E000 end:0x00587224
+
+data:
 	.data       start:0x00588000 end:0x005B3000
+
+rsrc:
 	.rsrc       start:0x02FC0000 end:0x02FC0980
