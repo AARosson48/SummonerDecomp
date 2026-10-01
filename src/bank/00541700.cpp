@@ -31,4 +31,9 @@ unsigned char __fastcall fn_00543000(void* self)
 	return *(unsigned char*)((char*)self + 0x1d);
 }
 
+int __fastcall fn_00542FF0(void* self)
+{
+	return *(unsigned char*)((char*)self + 0x1c) == 0;
+}
+
 }

@@ -7,4 +7,9 @@ int fn_00477770()
 	return *(int*)0xa5a2c8;
 }
 
+int fn_00477780(int index)
+{
+	return (index * 7 << 4) + *(int*)0xa5a2cc;
+}
+
 }

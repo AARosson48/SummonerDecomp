@@ -24,4 +24,18 @@ void fn_00416674()
 {
 }
 
+void fn_004326C0(void);
+void fn_00412E50(int value);
+void fn_00406360(int value);
+
+void fn_004158B0()
+{
+	if (*(unsigned char*)0x5c100c & 1)
+		fn_004326C0();
+	if (*(unsigned char*)0x5c100c & 2)
+		fn_00412E50(0);
+	if (*(unsigned char*)0x5c100c & 4)
+		fn_00406360(0);
+}
+
 }

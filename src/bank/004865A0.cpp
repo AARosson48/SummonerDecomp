@@ -1,3 +1,5 @@
+#include <string.h>
+
 // Leaf functions in bank/004865A0. Each one is a load, a store, or a constant return.
 
 extern "C" {
@@ -16,6 +18,11 @@ unsigned char fn_00486BE0()
 void fn_00487750(int value)
 {
 	*(int*)0x59c124 = value;
+}
+
+void fn_004872B0()
+{
+	memset((void*)0x22f9560, 0, 24);
 }
 
 }

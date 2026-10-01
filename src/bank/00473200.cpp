@@ -8,3 +8,12 @@ int __fastcall fn_00473600(void* self)
 }
 
 }
+
+struct Obj73610 {
+	void fn_00473610(int value);
+};
+
+void Obj73610::fn_00473610(int value)
+{
+	*(int*)((char*)this + 0x18) = value;
+}

@@ -17,4 +17,9 @@ void __fastcall fn_004DAC10(void* self)
 	*(int*)((char*)self + 8) = 0;
 }
 
+int __fastcall fn_004DAC20(void* self)
+{
+	return *(int*)((char*)self + 8) == 0;
+}
+
 }

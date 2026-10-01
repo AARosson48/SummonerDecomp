@@ -29,4 +29,14 @@ int __fastcall fn_004943E0(void* self)
 	return (int)((char*)self + 0x4c);
 }
 
+int __fastcall fn_00493F70(void* self)
+{
+	return *(int*)((char*)self + 4);
+}
+
+float __fastcall fn_004943F0(float* self)
+{
+	return self[5] + self[4] + self[3] - self[2];
+}
+
 }

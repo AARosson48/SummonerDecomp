@@ -11,4 +11,9 @@ void fn_00568B10()
 {
 }
 
+int fn_00568B20(int count, int stride)
+{
+	return (count + stride - 1) / stride;
+}
+
 }
