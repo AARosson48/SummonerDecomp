@@ -173,7 +173,7 @@ The report after that handler: `fuzzy_match_percent` 1.2311891, `matched_code` 2
 
 - Retail `Sum.exe` SHA-1 `cdc5d71d447a89e9a1c5e176c65c9b129321d7fc`. Private repo `AARosson48/SummonerDecomp-retail`. Public CI checks it out to `orig/sum-pc/`. Do not commit the exe.
 - Rich header: Utc12_CPP build 8966. Do not copy another project's MSVC service-pack pin until this exe's link matches.
-- `src/bank/00401000.cpp` is on the report. Six of its functions match. `_fn_00401070` is still the diff-versus-report disagreement in step 3.
+- `src/bank/00401000.cpp` is on the report. Six of its functions match. `_fn_00401070` is still the diff-versus-report disagreement in step 3. `gap_00_00402250_text` is 8,781 bytes of code (8.78 KB) that decomp-toolkit did not cut into functions. It starts with a `call`. `gap_00_00401380_text` is another 2,813 bytes of code. Both are already inside `total_code`. The card percent is `matched_code / total_code`. Project `total_data` is 215,972 and is not that division.
 - Do not edit `src/` to force the whole tree to compile. Comment-only `.cpp` files stay out of `compiled_units()`.
 - Do not commit `src/Engine/handler_4e68e0.cpp`. The names in it were invented.
 - Do not set match percents in `tools/progress.py` or `tools/scrub_report.py`. objdiff's `matched_data_percent: 100` on a unit with `total_data` 0 is not a match; the scrub removes those keys.
