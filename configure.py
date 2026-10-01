@@ -163,7 +163,7 @@ rule split
   description = split Sum.exe
 
 rule report
-  command = tools/bin/objdiff-cli{exe} report generate -p . -o build/report.json -f json
+  command = tools/bin/objdiff-cli{exe} report generate -p . -o build/report.json -f json && python tools/scrub_report.py build/report.json
   description = report
 
 build build/base/config.json: split
