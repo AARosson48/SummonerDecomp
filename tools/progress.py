@@ -169,12 +169,12 @@ def load_modules():
 
 
 def category_for(original_path):
-    lowered = original_path.replace("\\", "/").lower()
-    if "/vsdk/" in lowered:
+    lowered = original_path.replace("\\", "/").lower().lstrip("/")
+    if lowered.startswith("vsdk/") or "/vsdk/" in lowered:
         return "vsdk"
-    if "/levelscripts/" in lowered:
+    if lowered.startswith("levelscripts/") or "/levelscripts/" in lowered:
         return "scripts"
-    if "/summoner/" in lowered:
+    if lowered.startswith("summoner/") or "/summoner/" in lowered:
         return "game"
     return "engine"
 
