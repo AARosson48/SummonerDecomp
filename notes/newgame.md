@@ -122,6 +122,14 @@ The loose search paths those files are opened through are `data\models\levels` (
 
 Mode 4's tick, `fn_00438F30`, is the per-frame function. Its body is still closed.
 
+## What loads the level
+
+New Game does not open a VPP and it does not play a video. It stores `masad` and requests mode 2. Mode 2 sets the gold and requests mode 4. Mode 4 calls `_fn_004DAEF0` with the two name buffers.
+
+`_fn_004DAEF0` clears the level object at `0x25461A0` through `?fn_004D7C70@ObjD7C70@@QAEXXZ`, then looks up the variant in the seven-slot row at `0x25388C0 + id * 0x70`. Each slot is `0x10` bytes. The pointer at `+0` is a variant name. The dword at `+4` is a count. A positive count calls `?fn_004D82F0@ObjD7C70@@QAEHPAD0@Z` with the name and the variant. That function calls `fn_004FEE50` first. A nonzero return stores `-1` and skips the load. A zero return looks the name up again and calls either `fn_004D84D0` or `fn_004D02D0` on the object at `0x2493A38`. Those two are still closed. `level_mount_archives` has already mounted `levelm.vpp`, `levele.vpp`, and `levelt.vpp`, which is where the `.s3d`, `.pfg`, `.lcf`, `.vis`, and `.tga` files are read from.
+
+The opening is a different row. Masad's level callback `fn_004FD980` skips it when the variant is `masad_v2`. Otherwise `fn_004FDA90` checks the quest flag `masad_intro`. If that flag is clear, it gives the character `Tunic`, sets the flag, and calls `fn_004CCF00` with `Game-Pre-Intro` and the completion at `0x4FDB10`. The completion starts `Game-Intro` the same way. Both names are rows in `cutscene.tbl`: a camera `.csc`, animation `.vfx` files, and a soundtrack `.wav`. `fn_004355E0` is the reader for that table. The renderer itself is still closed.
+
 ## Live new game
 
 The first watch was started with `CreateProcess` from this session, so Windows did not give it the foreground. The videos and the framebuffer stayed blank while the mode changes still happened. The run below was started by the player, with the watch already waiting. The player skipped the startup logos with Esc, clicked New Game, let the opening play through to gameplay, clicked through the tutorial screens, then used Esc, Quit to Menu, Yes, and Quit Game.
