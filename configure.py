@@ -59,6 +59,7 @@ def compiled_units():
         ("vsdk/os/memory.cpp", "src/vsdk/os/memory.cpp"),
         ("bank/00524C10", "src/vsdk/vfile/vfs_file.cpp"),
         ("bank/00533620", "src/vsdk/vfile/packfile/file_packfile.cpp"),
+        ("vsdk/vfile/packfile/file_packfile.cpp", "src/vsdk/vfile/packfile/file_packfile.cpp"),
         ("bank/005341A0", "src/vsdk/vfile/packfile/file_packfile.cpp"),
         ("bank/0054F790", "src/vsdk/vfile/vfs_file.cpp"),
         ("bank/00555CF0", "src/vsdk/os/text.cpp"),

@@ -55,7 +55,7 @@ static int pack_stricmp(const char* a, const char* b) {
     }
 }
 
-static int filename_hash(const char* name) {
+extern "C" int filename_hash(const char* name) {
     if (!name) {
         return -1;
     }
@@ -71,7 +71,7 @@ static int filename_hash(const char* name) {
     return (int)hash < 0 ? -(int)hash : (int)hash;
 }
 
-static void hash_insert(PackfileEntry* entry) {
+extern "C" void hash_insert(PackfileEntry* entry) {
     int slot = entry->hash % PACKFILE_HASH_SLOTS;
     if (slot < 0) {
         slot += PACKFILE_HASH_SLOTS;
@@ -89,7 +89,7 @@ static void hash_insert(PackfileEntry* entry) {
     }
 }
 
-static int check_header(Packfile* pack, const PackfileHeader* header) {
+extern "C" int check_header(Packfile* pack, const PackfileHeader* header) {
     pack->file_count = (int)header->file_count;
     pack->archive_size = header->archive_size;
     if (header->magic != PACKFILE_MAGIC) {
@@ -101,7 +101,7 @@ static int check_header(Packfile* pack, const PackfileHeader* header) {
     return (int)header->file_count;
 }
 
-static int read_entries(Packfile* pack, const unsigned char* sector, int count, int* index) {
+extern "C" int read_entries(Packfile* pack, const unsigned char* sector, int count, int* index) {
     if (count <= 0) {
         return 1;
     }
@@ -126,7 +126,7 @@ static int read_entries(Packfile* pack, const unsigned char* sector, int count, 
     return 1;
 }
 
-static void assign_sectors(Packfile* pack, int sector) {
+extern "C" void assign_sectors(Packfile* pack, int sector) {
     PackfileEntry* entry = pack->entries;
     for (int n = pack->file_count; n > 0; n--) {
         entry->sector = sector;
@@ -136,7 +136,7 @@ static void assign_sectors(Packfile* pack, int sector) {
     }
 }
 
-static int reserve_entries(Packfile* pack) {
+extern "C" int reserve_entries(Packfile* pack) {
     int total = g_file_count + pack->file_count;
     if (total > PACKFILE_MAX_FILES) {
 printf("SIZEOF FILE ENTRY : %d\n", PACKFILE_ENTRY_SIZE);
