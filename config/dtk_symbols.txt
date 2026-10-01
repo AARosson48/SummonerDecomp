@@ -422,6 +422,7 @@ fn_0042FC00 = .text:0x0042FC00; // type:function size:0x60
 fn_0042FC60 = .text:0x0042FC60; // type:function size:0xE0
 fn_0042FD40 = .text:0x0042FD40; // type:function size:0x210
 fn_0042FF50 = .text:0x0042FF50; // type:function size:0x90
+_fn_0042FFE0 = .text:0x0042FFE0; // type:function size:0x50
 _fn_00430030 = .text:0x00430030; // type:function size:0x40
 fn_00430070 = .text:0x00430070; // type:function size:0x6
 fn_00430076 = .text:0x00430076; // type:function size:0x3A

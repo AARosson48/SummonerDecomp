@@ -148,7 +148,7 @@ int fn_00401070(void)
 void fn_00402280(int which);
 void fn_004025A0(int index);
 void fn_004025F0(void);
-void fn_0042FFE0(int* out_a, int* out_b, int width, int height);
+void fn_0042FFE0(float* out_a, float* out_b, int width, int height);
 int fn_00430220(int id);
 void fn_00503500(int entry, int* width, int* height);
 void fn_00468D90(int id, float value, int a, int b, int c);
@@ -167,14 +167,17 @@ void fn_004023B0(void)
 	int mode;
 	float scale;
 	int* obj;
-	int out_a;
-	int out_b;
+	float out_a;
+	float out_b;
 	int scaled_a;
 	int scaled_b;
 
 	mode = *(int*)0x0060AD68;
 	switch (mode)
 	{
+	case 0:
+		scale = 1.0f;
+		break;
 	case 1:
 		scale = 1.25f;
 		break;
@@ -187,8 +190,8 @@ void fn_004023B0(void)
 	}
 	obj = *(int**)0x005FCC88;
 	fn_0042FFE0(&out_a, &out_b, obj[4], obj[6]);
-	scaled_a = (int)(*(int*)0x005B29F4 * scale * (float)out_a + 0.5f);
-	scaled_b = (int)(*(int*)0x005B29F8 * scale * (float)out_b + 0.5f);
+	scaled_a = (int)((float)*(int*)0x005B29F4 * out_a * scale + *(float*)0x0057E6B0);
+	scaled_b = (int)((float)*(int*)0x005B29F8 * out_b * scale + *(float*)0x0057E6B0);
 	if (*(char*)0x005B2A0C)
 	{
 		*(int*)0x005B2B4C = (*(int*)(mode * 8 + 0x0057E910) / 2) - scaled_a;
@@ -211,6 +214,9 @@ void fn_00402490(void)
 
 	switch (*(int*)0x0060AD68)
 	{
+	case 0:
+		scale = 1.0f;
+		break;
 	case 1:
 		scale = 1.25f;
 		break;
@@ -233,12 +239,12 @@ void fn_00402490(void)
 		}
 		else
 		{
-			int out_a;
-			int out_b;
+			float out_a;
+			float out_b;
 
 			fn_0042FFE0(&out_a, &out_b, *(int*)(src - 4), *(int*)src);
-			dst[-1] = (int)(*(int*)0x005B29F4 * scale * (float)out_a + 0.5f);
-			dst[0] = (int)(*(int*)0x005B29F8 * scale * (float)out_b + 0.5f);
+			dst[-1] = (int)((float)*(int*)0x005B29F4 * out_a * scale + *(float*)0x0057E6B0);
+			dst[0] = (int)((float)*(int*)0x005B29F8 * out_b * scale + *(float*)0x0057E6B0);
 		}
 		src += 0x30;
 		dst += 2;
