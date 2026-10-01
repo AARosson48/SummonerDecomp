@@ -573,19 +573,18 @@ void fn_00401A20(void)
 
 void fn_00401A50(void)
 {
-	int step;
 	int cursor;
+	int step;
 	int limit;
-	int next;
 
-	step = *(int*)(*(int*)0x0060AD68 * 4 + 0x0057E6A4);
 	cursor = *(int*)0x005B28B8;
+	step = *(int*)(*(int*)0x0060AD68 * 4 + 0x0057E6A4);
 	limit = *(int*)0x005B28CC - step;
 	if (cursor >= limit)
 		return;
-	next = cursor + step;
-	if (next < limit)
-		limit = next;
+	cursor += step;
+	if (cursor < limit)
+		limit = cursor;
 	*(int*)0x005B28B8 = limit;
 	fn_004016D0();
 }
@@ -618,17 +617,17 @@ void fn_00401AF0(void)
 
 void fn_00401A80(int arg)
 {
-	switch (arg - 2)
+	switch (arg)
 	{
-	case 0:
+	case 2:
 		fn_00401AD0();
 		fn_00468D90(0x25, 1.0f, 0, 0, 0);
 		break;
-	case 2:
+	case 4:
 		fn_00401AF0();
 		fn_00468D90(0x25, 1.0f, 0, 0, 0);
 		break;
-	case 4:
+	case 6:
 		fn_00416A10();
 		fn_00468D90(0x24, 1.0f, 0, 0, 0);
 		break;
