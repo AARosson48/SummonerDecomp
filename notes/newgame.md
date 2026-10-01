@@ -88,7 +88,7 @@ The other internal names, in order: Wolong, Catacombs, test, masad, worldmap1, l
 - Visibility sets `$vis-gi-02` through `$vis-gi-10`
 - Fog 50/70, then 30/50, then 40/60
 
-`Game-Intro_cscript.tbl` is the camera path on that level. `$Level` is `masad`. The points are `$RIDE-A01` and the rest of that ride, each `$Type: "cutscene"`. `fn_004DB420` reads `$Name`, `$Type`, `+Plane`, `$Position`, and `$Orientation`. `fn_004CD5F0` reads the `#Navpoints` section. `fn_004CB7B0` reads `masad.tbl`: fog, ambient sounds, shopkeepers, effects, and the automap.
+`Game-Intro_cscript.tbl` is the camera path on that level. `$Level` is `masad`. The points are `$RIDE-A01` and the rest of that ride, each `$Type: "cutscene"`. `fn_004DB420` reads `$Name`, `$Type`, `+Plane`, `$Position`, and `$Orientation`. `fn_004CD5F0` reads the `#Navpoints` section. `fn_004CB7B0` reads `masad.tbl`: fog, ambient sounds, shopkeepers, effects, and the automap. The automap and fog lines name `$layer01`. The load trigger's `+Spline name` is `$loadarea01`. Both of those names are markers stored in the `.s3d`.
 
 `fn_0042E9D0` is the `masad_intro` / `masad_basic_controls_tutorial` check. It has no direct call.
 
