@@ -120,6 +120,38 @@ The same three archives hold the other campaign maps, plus `PCMS-boss1` through 
 
 The loose search paths those files are opened through are `data\models\levels` (`.v3d`, `.s3d`, `.vfx`, `.vlm`), `data\maps\levels` (`.vbm`, `.tga`, `.m2v`), `data\tables\levels` (`.tbl`), and `data\internal` (`.pfg`, `.mlo`, `.vis`, `.vex`, `.bsp`, `.lkf`, `.eax`).
 
+## Summoner level file (`.s3d`)
+
+`fn_0046E1B0` is the reader. It opens the file, reads four bytes, and compares them with `S3DF`. The current maps use version `0x10012` (49 of the 60 files). Eight older files are `0x1000f`, two are `0x10010`, and one is `0x10011`.
+
+`fn_0046F6D0` reads the rest of the header. The C in `bank/0046F210` matches those bytes. The first dword is the version, and it is stored on the open file with `vfs_file_set_user`. Later reads, including `fn_0046FFE0`, skip a block when that value is below `0x10012`. Then it reads 19 count dwords and three floats.
+
+| Offset | Field |
+| --- | --- |
+| `0x00` | `S3DF` |
+| `0x04` | Version |
+| `0x08` | Nineteen counts |
+| `0x2C` | How many texture names follow. Masad is 130, eleh is 75, tancredhouse is 37 |
+| `0x4C` | Size in bytes of that name block. Masad is `0xA67`, eleh is `0x4FF`, tancredhouse is `0x236` |
+| `0x54` | Three equal floats, one color. Tancredhouse is `60/255` on each channel |
+| `0x60` | The name-block size again, then that many bytes of C strings (`Treetrunk.tga`, `ftn.vbm`, and the rest) |
+
+`fn_0046F990` allocates from those counts. `fn_0046F660` reads the repeated size and the name bytes. `fn_0046F100` then reads two words and a raw block. On tancredhouse those words are 256 and 256, and the block starts immediately after the names.
+
+`fn_0046E910` reads each mesh: two counted strings, four dwords, a vec3, and a float. Mesh names in tancredhouse are length-prefixed (`TH2-Floor01`, `Bookcase`, `chest-closed02`). `fn_0046EBE0` reads each placed copy. After the version check it reads a vec3, a basis, and three more vec3s. The warning `mesh '%s' may have an invalid orientation` is printed from that function. It then special-cases mesh names `blackpoly`, `Ocean`, `Stalag-Small`, `mosaic0`, the rubble piles, and `s1-sewercanal`.
+
+After the meshes, `fn_0046E1B0` sorts names by prefix. `$player`, `$hostile`, and `$npc` go one way. `$vis` goes another. A fixed list of carpet and tapestry meshes (`Carpet01-Tile`, `Tapestry01-01-LCF`, and the rest of that list) is handled on its own. `fn_0046F2C0` reads a marker as two counted strings, a vec4, and a vec3. Tancredhouse ends with `$player1-01` through `$player1-04`, `$loadarea01`, and `$seethru22`.
+
+## Level config (`.lcf`)
+
+All 50 files are text, except `LPalaceInt02.lcf`, which is the four bytes `-LCF` and nothing else. Across the other files there are only three kinds of line:
+
+- A piece name on its own line (`tree`, `woodpile`, `masad-house01-01`). There are 5,746 of these.
+- `nocollide:` and a name. There are 285 of these.
+- `+script:` and a table name (`masad_script.tbl`, `masad_v2_script.tbl`). There are 25 of these.
+
+`Sum.exe` does not contain `nocollide`, `+script:`, or `.lcf`. The search path lists `.lkf`. The function that applies those lines is still the missing piece. The names it would match are the mesh names in the `.s3d`.
+
 Mode 4's tick, `fn_00438F30`, is the per-frame function. Its body is still closed.
 
 ## What loads the level
