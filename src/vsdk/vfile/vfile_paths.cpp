@@ -110,6 +110,7 @@ static int g_path_internal;
 static int g_path_internal_alias;
 static int g_path_players;
 static int g_path_savegame;
+static int g_path_tables;
 static int g_path_tables_levels;
 static int g_path_movies;
 
@@ -152,7 +153,7 @@ void vfs_init_search_paths(void) {
     vfs_add_search_path("data\\effects\\spells", ".tga .m2v .vfx .vbm");
     vfs_add_search_path("data\\effects", ".vfx .rfx");
     vfs_add_search_path("data\\tables\\boss", ".tbl");
-    vfs_add_search_path("data\\tables", ".tbl");
+    g_path_tables = vfs_add_search_path("data\\tables", ".tbl");
     vfs_add_search_path("data\\v3d", ".v3d .s3d .vfx");
     g_path_models_levels = vfs_add_search_path("data\\models\\levels", ".v3d .s3d .vfx .vlm");
     g_path_models_levels_alias = g_path_models_levels;
@@ -179,6 +180,7 @@ void vfs_init_search_paths(void) {
     (void)g_path_internal_alias;
     (void)g_path_players;
     (void)g_path_savegame;
+    (void)g_path_tables;
     (void)g_path_tables_levels;
     (void)g_path_movies;
 }

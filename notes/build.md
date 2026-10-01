@@ -157,7 +157,11 @@ The large functions in `Engine/Objects/living_entity.cpp` and the 8,864-byte fun
 
 `vsdk/os/text.cpp` compare helpers are objdiff 1:1. **[STATE 3].** `_vfs_text_eq` 59, `_vfs_text_ne` 60, `_vfs_text_lt` 67, `_vfs_text_gt` 70, `_vfs_text_le` 70, `_vfs_text_ge` 67. They return `bool` and call `_stricmp`. `@vfs_text_clear@4` 28, `@vfs_text_empty@4` 22, and `@vfs_text_blank@4` 51 are `__fastcall` and also 1:1. The `*cstr` overloads stay under 100.
 
-The report after those text matches: `fuzzy_match_percent` 1.0225604, `matched_code` 1443, `matched_code_percent` 0.09502273, `matched_functions` 29 of 6916. The new matched bytes are the nine text helpers (494). `complete` stays false on every unit, so there is still no fully-linked band.
+The report after those text matches: `fuzzy_match_percent` 1.0225604, `matched_code` 1443, `matched_code_percent` 0.09502273, `matched_functions` 29 of 6916. The new matched bytes are the nine text helpers (494).
+
+`_vfs_init_search_paths` (636 bytes) is an objdiff 1:1 match. **[STATE 3].** It registers the table search paths, including the `data\tables` id at `0x60AC5C`. The path strings and those ids are named in `config/dtk_symbols.txt` so the relocations pair.
+
+The report after that function: `fuzzy_match_percent` 1.0228825, `matched_code` 2079, `matched_code_percent` 0.13690385, `matched_functions` 30 of 6916. `complete` stays false on every unit, so there is still no fully-linked band.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
 7. `bank/` units were left out of `progress_categories`, so decomp.dev's groups stayed at 0 while the project total included their matches. `bank/*` is the Banks category. Engine, Volition SDK, Game, and Level scripts only count units whose split name is an original `.cpp`. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 
