@@ -66,6 +66,10 @@ def compiled_units():
         ("bank/00559B80", "src/vsdk/vfile/vfs_file.cpp"),
         ("vsdk/parse/parse.cpp", "src/vsdk/parse/parse.cpp"),
         ("vsdk/os/cmdline.cpp", "src/vsdk/os/cmdline.cpp"),
+        ("vsdk/math/matrix.cpp", "src/vsdk/math/matrix.cpp"),
+        ("vsdk/os/registry.cpp", "src/vsdk/os/registry.cpp"),
+        ("vsdk/os/stringpool.cpp", "src/vsdk/os/stringpool.cpp"),
+        ("vsdk/gr/opengl/gr_opengl.cpp", "src/vsdk/gr/opengl/gr_opengl.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
     ]

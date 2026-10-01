@@ -125,9 +125,16 @@ objdiff's three code numbers, from `objdiff_core::bindings::report::Measures`:
 
 `bank/004D39C0` holds `_fn_004D39C0` (1632 bytes). The table map reads it as the quest list: `events.tbl` and `demo_events.tbl`, with `$Quest`, `+Main quest`, `+Stage`, and a `$Level` / `+Flag` block. `objdiff-cli diff` reports 68.902435. The report function is `fuzzy_match_percent` 69.47228. That is under 100, so it stays unmatched. The rest of that bank has no C, so the unit fuzzy is 7.1675286.
 
-`vsdk/os/cmdline.cpp` is one function, `_fn_0053E310` (176 bytes). Red Faction's source tree has the same file. It walks the argument list, accepts a registered option that may take the next argument, and fails on an unrecognized `-` parameter. `objdiff-cli diff` reports 68.26316. The report function is 68.49123. Under 100, so it stays unmatched. `vsdk/math/matrix.cpp` is the same kind of unit: one function, 384 bytes, and that file is in the Red Faction tree too.
+`vsdk/os/cmdline.cpp` is one function, `_fn_0053E310` (176 bytes). Red Faction's source tree has the same file. It walks the argument list, accepts a registered option that may take the next argument, and fails on an unrecognized `-` parameter. `objdiff-cli diff` reports 68.26316. The report function is 68.49123. Under 100, so it stays unmatched.
 
-The report after the command-line check: `fuzzy_match_percent` 0.81985134, `matched_code` 443, `matched_code_percent` 0.029171914, `matched_functions` 12 of 6915. Functions under 100 are the blue band. `complete` stays false on every unit, so there is still no fully-linked band.
+The same SDK files, each one function, now on the compare. `objdiff-cli diff` / report:
+
+- `vsdk/math/matrix.cpp` turns a rotation matrix into an axis and an angle. `?fn_00510390@Mat3@@QAEXPAUVec3@@PAM@Z`: diff 93.723076, report 93.823074.
+- `vsdk/os/registry.cpp` `_fn_00511F90`: diff 99.8. The report records 100 and counts its 179 bytes in `matched_code`. Same disagreement as `_fn_00401070`. The diff is not 1:1, so it stays unmatched.
+- `vsdk/os/stringpool.cpp` `?fn_00544C40@StringPool@@QAEPADPBD@Z`: diff 61.431034, report 61.551723.
+- `vsdk/gr/opengl/gr_opengl.cpp` `_fn_0054F6F0`: diff 94.69388, report 95.081635. Window mode `0xC8` / `0xC9` / `0xCA`, then `GL_VERSION` / `GL_EXTENSIONS` for `1.2` or `GL_APPLE_packed_pixel`.
+
+The report after those four: `fuzzy_match_percent` 0.87058884, `matched_code` 622, `matched_code_percent` 0.04095921, `matched_functions` 13 of 6915. Functions under 100 are the blue band. `complete` stays false on every unit, so there is still no fully-linked band.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
 7. `bank/` units were left out of `progress_categories`, so decomp.dev's groups stayed at 0 while the project total included their matches. `bank/*` is the Banks category. Engine, Volition SDK, Game, and Level scripts only count units whose split name is an original `.cpp`. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 
