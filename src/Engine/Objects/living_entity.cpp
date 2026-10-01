@@ -17,8 +17,21 @@ struct Entity {
     void fn_0045D4C0();
     bool fn_00455950(int which);
     int fn_00461B60();
+    float fn_00462440(int which);
     float fn_004626B0(int which);
+    int fn_00462840(int which);
+    void fn_00454070();
+    void fn_004553A0(int a, int b, int c);
+    void fn_0045DE20(int mode);
+    void fn_0044DDB0();
+    void fn_00450850(float value, int source, int a, int b);
+    void fn_00454700(int slot, int value, int kind, int a, int field_80, int b);
     void fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_type, int item, int arg7, int arg8);
+};
+
+struct SubHit {
+    void fn_00468160(int value);
+    void fn_004B5790(int source);
 };
 
 struct BoneSet {
@@ -41,8 +54,18 @@ extern "C" void fn_004A13B0(Entity* ent, int a, int b, int c);
 extern "C" void fn_0048C080(int a, int b, int c, int d, int e, int f);
 extern "C" float fn_00524810(void* a, void* b);
 extern "C" int fn_0047A8C0(int kind);
+extern "C" int fn_0047A890(int kind);
+extern "C" int fn_0047AA80(int kind, int amount);
+extern "C" float fn_0047F4D0(Entity* ent, int kind, int hit, int delta, float scale);
+extern "C" float fn_005426E0();
+extern "C" void fn_0048BD80(int a, int b, int c, int d);
+extern "C" int fn_0046C240(Entity* ent, int index, int flag);
+extern "C" void fn_0044B2B0(int value);
 extern "C" void fn_00439580(int value);
 extern "C" int printf(const char* text, ...);
+extern "C" double ceil(double value);
+
+extern char g_rand_gate;
 
 extern int g_player_list;
 extern int g_spell_actor;
@@ -96,6 +119,14 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         }
         return;
     }
+
+    char apply = 1;
+    char mark = 0;
+    char use_roll = 1;
+    int hit = 0;
+    int delta = 0;
+    int slot;
+    float result = 0.0f;
 
     other = fn_0046B1A0(source);
     if (other == 0) {
@@ -174,7 +205,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         return;
     }
 
-    (void)fn_0047A8C0(kind);
+    slot = fn_0047A8C0(kind);
     if (*(int*)(*(char**)((char*)other + 0x71c) + 0x10) == 0xb6) {
         scale = (float)((int)*(short*)((char*)other + 0x600) * 2) / 100.0f;
     } else if (kind == 0x50 && *(int*)0x2480310 == 3) {
@@ -187,7 +218,214 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
     roll = fn_004626B0(3);
     factor = (0.5f + roll) - (float)amount * 0.03999999910593033f;
     factor = 1.0f - (1.0f - factor) * scale;
-    (void)factor;
+    hit = 0;
+    delta = 0;
+
+    switch (kind) {
+    case 0:
+    case 4:
+        hit = amount;
+        delta = *(int*)(g_spell_rows + (kind << 7) + 0x88);
+        break;
+    case 0xF:
+        mark = 1;
+        hit = amount;
+        if (damage_type == 0) {
+            float scaled = (float)hit;
+            hit = (int)(scaled * (other->fn_00462440(0x1e) + 1.0f));
+        }
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        mode = 0x82;
+        break;
+    case 1:
+        if (amount >= 100) {
+            fn_004553A0(0, 1, 0);
+            fn_004553A0(1, 1, 0);
+            fn_004553A0(3, 1, 0);
+            fn_004553A0(9, 1, 0);
+            fn_004553A0(0xA, 1, 0);
+            fn_004553A0(0xB, 1, 0);
+            fn_004553A0(0xC, 1, 0);
+            fn_004553A0(0xD, 1, 0);
+            fn_004553A0(0x10, 1, 0);
+        } else {
+            fn_004553A0(0, 0, 0);
+            fn_004553A0(1, 0, 0);
+            fn_004553A0(3, 0, 0);
+            fn_004553A0(9, 0, 0);
+            fn_004553A0(0xA, 0, 0);
+            fn_004553A0(0xB, 0, 0);
+            fn_004553A0(0xC, 0, 0);
+            fn_004553A0(0xD, 0, 0);
+            fn_004553A0(0x10, 0, 0);
+        }
+        break;
+    case 3:
+    case 5:
+    case 0x69:
+        if (kind == 0x69 && *(int*)(self + 0xc) != 7) {
+            result = (float)(int)*(short*)((char*)other + 0x600) * -7.0f;
+            hit = (int)*(short*)((char*)other + 0x600) * 7;
+            delta = 0;
+            mode = 0x82;
+            break;
+        }
+        apply = 0;
+        fn_00454070();
+        if (kind == 5) {
+            *(float*)(self + 0x5f8) = (float)fn_00462840(0);
+        } else if (kind == 0x69) {
+            float cap = (float)((int)*(short*)((char*)other + 0x600) * 2);
+            float current = *(float*)(self + 0x5f8);
+            if (cap > current) {
+                current = cap;
+            }
+            cap = (float)fn_00462840(0);
+            if (current < cap) {
+                current = cap;
+            }
+            *(float*)(self + 0x5f8) = current;
+        } else {
+            *(int*)(self + 0x5f8) = 0x3f800000;
+        }
+        break;
+    case 0x68:
+        mark = 1;
+        apply = 0;
+        result = (float)(int)*(short*)((char*)other + 0x600) * -20.0f;
+        hit = (int)*(short*)((char*)other + 0x600) * 0x14;
+        delta = 0;
+        mode = 0x82;
+        fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+        break;
+    case 0x6A:
+        fn_0045DEA0(0x17, source, arg3, arg4, damage_type, item, arg7, 0);
+        fn_0045DEA0(7, source, arg3, arg4, damage_type, item, arg7, 0);
+        fn_0045DEA0(8, source, arg3, arg4, damage_type, item, arg7, 0);
+        fn_0045DEA0(0x3C, source, arg3, arg4, damage_type, item, arg7, 0);
+        result = (float)(int)*(short*)((char*)other + 0x600) * -10.0f;
+        hit = (int)*(short*)((char*)other + 0x600) * 0xA;
+        delta = 0;
+        mode = 0x82;
+        apply = 0;
+        if (fn_00455950(3) || fn_00455950(0) || fn_00455950(1) || fn_00455950(0xB)) {
+            apply = 1;
+        }
+        break;
+    case 0x6B:
+        if (*(int*)(self + 0xc) == 7) {
+            fn_0045DEA0(0x16, source, arg3, arg4, damage_type, item, arg7, 0);
+            fn_0045DEA0(0x13, source, arg3, arg4, damage_type, item, arg7, 0);
+            fn_0045DEA0(2, source, arg3, arg4, damage_type, item, arg7, 0);
+            fn_0045DEA0(0x10, source, arg3, arg4, damage_type, item, arg7, 0);
+            apply = 0;
+            if (fn_00455950(2) || fn_00455950(4) || fn_00455950(5) || fn_00455950(6)) {
+                apply = 1;
+            }
+        } else {
+            result = (float)(int)*(short*)((char*)other + 0x600) * -8.0f;
+            hit = (int)*(short*)((char*)other + 0x600) << 3;
+            delta = 0;
+            apply = 0;
+            mode = 0x82;
+        }
+        break;
+    case 0x66:
+        mark = 1;
+        apply = 0;
+        if (g_rand_gate == 0 && fn_005426E0() < factor) {
+            break;
+        }
+        if (other != 0) {
+            float dist = fn_00524810((char*)other + 0x10, self + 0x10);
+            if (dist < 10.0f) {
+                result = (float)(-amount);
+            }
+        }
+        hit = amount;
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        break;
+    case 0xC:
+    case 0x54:
+    case 0x57:
+    case 0x65:
+        mark = 1;
+        apply = 0;
+        if (kind == 0x65) {
+            apply = 1;
+        }
+        if (*(int*)(self + 0xc) == 9 || (*(int*)(self + 0x320) & 0x40) != 0) {
+            break;
+        }
+        if (g_rand_gate == 0 && fn_005426E0() < factor) {
+            if (kind == 0x65) {
+                fn_0045DEA0(0x67, source, 0, 0, 0, 0, 0, 0);
+            }
+            break;
+        }
+        if (kind == 0x54) {
+            apply = 1;
+        }
+        result = -*(float*)(self + 0x5f8);
+        hit = (int)ceil((double)*(float*)(self + 0x5f8));
+        delta = 0;
+        use_roll = 0;
+        if (*(int*)(self + 0xc) != 7) {
+            int index;
+            for (index = 0; index < 9; index++) {
+                if (*(int*)(self + index * 4 + 0x754) != 0) {
+                    fn_0044B2B0(fn_0046C240(this, index, 1));
+                }
+            }
+        }
+        mode = 0x82;
+        break;
+    case 0xD:
+        if (g_rand_gate == 0 && fn_005426E0() < factor) {
+            break;
+        }
+        if (*(short*)(self + 0x600) > 1) {
+            *(short*)(self + 0x600) = (short)(*(short*)(self + 0x600) - 1);
+            fn_0044DDB0();
+        }
+        break;
+    default:
+        break;
+    }
+
+    result = fn_0047F4D0(this, kind, hit, delta, use_roll ? roll : 0.0f);
+    fn_00450850(result, source, 0, 0);
+    if (result < 0.0f && mode != 0) {
+        fn_0045DE20(mode);
+    }
+    if (apply == 1) {
+        int effect = *(int*)(g_spell_rows + (kind << 7) + 0x44);
+        if (arg8 != 0) {
+            if (effect != 0) {
+                fn_0048C080(effect, *(int*)(self + 0x80), -1, -1, 0, 1);
+            }
+        } else if (effect != 0) {
+            fn_0048C080(fn_0047A890(kind), *(int*)(self + 0x80), -1, -1, 0, 1);
+        }
+    }
+    if (kind == 0x21) {
+        float sample = fn_005426E0();
+        if (g_rand_gate == 0 && sample <= roll) {
+            ((SubHit*)(self + 0x558))->fn_00468160(2);
+        } else {
+            int picked = fn_0047AA80(0x21, amount);
+            apply = 0;
+            if (arg8 != 0) {
+                fn_00454700(slot, picked, kind, 0, *(int*)((char*)other + 0x80), 0);
+            } else {
+                fn_00454700(slot, picked, -1, 0, *(int*)((char*)other + 0x80), 0);
+            }
+            fn_0045DE20(0x81);
+        }
+    }
+    if (mark != 0) {
+        ((SubHit*)(self + 0x324))->fn_004B5790(source);
+    }
 }
 
 void Entity::fn_0045D4C0() {
