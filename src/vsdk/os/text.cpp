@@ -13,6 +13,7 @@
 extern int vfs_tolower(int value);
 extern int vfs_toupper(int value);
 extern int vfs_stricmp(const char* a, const char* b);
+extern "C" int _stricmp(const char* a, const char* b);
 extern int vfs_strnicmp(const char* a, const char* b, unsigned int count);
 extern double vfs_atof(const char* text);
 
@@ -31,7 +32,7 @@ static void text_append_z(char* dst, const char* src) {
     text_copy_z(dst + strlen(dst), src);
 }
 
-void vfs_text_clear(VfsText* text) {
+void __fastcall vfs_text_clear(VfsText* text) {
     if (text->data) {
         vfs_heap_free(text->data);
         text->data = 0;
@@ -131,14 +132,14 @@ int vfs_text_size(VfsText* text) {
     return (int)strlen(text->data);
 }
 
-int vfs_text_empty(VfsText* text) {
+bool __fastcall vfs_text_empty(VfsText* text) {
     if (text->length <= 0) {
         return 1;
     }
     return text->data[0] == 0;
 }
 
-int vfs_text_blank(VfsText* text) {
+bool __fastcall vfs_text_blank(VfsText* text) {
     if (vfs_text_empty(text)) {
         return 1;
     }
@@ -475,14 +476,14 @@ static int cstr_blank(const char* src) {
     return !src || src[0] == 0;
 }
 
-int vfs_text_eq(const VfsText* left, const VfsText* right) {
+bool vfs_text_eq(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 1;
     }
     if (!left->length || !right->length) {
         return 0;
     }
-    return vfs_stricmp(left->data, right->data) == 0;
+    return _stricmp(left->data, right->data) == 0;
 }
 
 int vfs_text_eq_cstr(const char* src, const VfsText* text) {
@@ -505,14 +506,14 @@ int vfs_text_eq_rcstr(const VfsText* text, const char* src) {
     return vfs_stricmp(text->data, src) == 0;
 }
 
-int vfs_text_ne(const VfsText* left, const VfsText* right) {
+bool vfs_text_ne(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 0;
     }
     if (!left->length || !right->length) {
         return 1;
     }
-    return vfs_stricmp(left->data, right->data) != 0;
+    return _stricmp(left->data, right->data) != 0;
 }
 
 int vfs_text_ne_cstr(const char* src, const VfsText* text) {
@@ -535,14 +536,14 @@ int vfs_text_ne_rcstr(const VfsText* text, const char* src) {
     return vfs_stricmp(text->data, src) != 0;
 }
 
-int vfs_text_lt(const VfsText* left, const VfsText* right) {
+bool vfs_text_lt(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 0;
     }
     if (!left->length || !right->length) {
         return left->length == 0;
     }
-    return vfs_stricmp(left->data, right->data) < 0;
+    return _stricmp(left->data, right->data) < 0;
 }
 
 int vfs_text_lt_cstr(const char* src, const VfsText* text) {
@@ -565,14 +566,14 @@ int vfs_text_lt_rcstr(const VfsText* text, const char* src) {
     return vfs_stricmp(text->data, src) < 0;
 }
 
-int vfs_text_gt(const VfsText* left, const VfsText* right) {
+bool vfs_text_gt(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 0;
     }
     if (!left->length || !right->length) {
         return right->length == 0;
     }
-    return vfs_stricmp(left->data, right->data) > 0;
+    return _stricmp(left->data, right->data) > 0;
 }
 
 int vfs_text_gt_cstr(const char* src, const VfsText* text) {
@@ -595,14 +596,14 @@ int vfs_text_gt_rcstr(const VfsText* text, const char* src) {
     return vfs_stricmp(text->data, src) > 0;
 }
 
-int vfs_text_le(const VfsText* left, const VfsText* right) {
+bool vfs_text_le(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 1;
     }
     if (!left->length || !right->length) {
         return right->length > 0;
     }
-    return vfs_stricmp(left->data, right->data) <= 0;
+    return _stricmp(left->data, right->data) <= 0;
 }
 
 int vfs_text_le_cstr(const char* src, const VfsText* text) {
@@ -625,14 +626,14 @@ int vfs_text_le_rcstr(const VfsText* text, const char* src) {
     return vfs_stricmp(text->data, src) <= 0;
 }
 
-int vfs_text_ge(const VfsText* left, const VfsText* right) {
+bool vfs_text_ge(const VfsText* left, const VfsText* right) {
     if (!left->length && !right->length) {
         return 1;
     }
     if (!left->length || !right->length) {
         return left->length != 0;
     }
-    return vfs_stricmp(left->data, right->data) >= 0;
+    return _stricmp(left->data, right->data) >= 0;
 }
 
 int vfs_text_ge_cstr(const char* src, const VfsText* text) {
