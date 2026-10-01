@@ -198,11 +198,15 @@ def write_ninja():
         root = msvc_root().replace("\\", "/")
         cl = root + "/VC98/Bin/cl.exe"
         include = root + "/VC98/Include"
+        bin_dir = root + "/VC98/Bin"
+        msdev = root + "/Common/MSDev98/Bin"
         # mkdir uses & so a folder that already exists does not skip cl.
-        # Do not append %PATH%: an & in the machine PATH splits this command.
+        # PATH is only the two MSVC directories. cl loads MSPDB60.DLL from
+        # MSDev98\\Bin (0xC0000135 without it). Do not append %PATH%: an &
+        # in the machine PATH splits this command.
         compile_rules = f"""
 rule cc
-  command = cmd /s /c "mkdir build\\src\\bank 2>nul & set INCLUDE={include}& {cl} /nologo /O2 /c /Fo"$out" $in"
+  command = cmd /s /c "mkdir build\\src\\bank 2>nul & set INCLUDE={include}& set PATH={bin_dir};{msdev}& {cl} /nologo /O2 /c /Fo"$out" $in"
   description = cl $in
 """
         lines = []
