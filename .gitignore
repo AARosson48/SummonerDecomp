@@ -19,6 +19,8 @@
 
 # Extracted retail archives already on disk. Never commit game data.
 /VPP/
+/notes/tbl_map.md
+/notes/tbl_map.json
 
 # decomp-toolkit binary. Downloaded, not part of the source.
 /tools/bin/
