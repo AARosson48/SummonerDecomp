@@ -54,7 +54,11 @@ def compiled_units():
     # The named Engine/s3d/s3d.cpp slice is a different 0x110-byte range.
     pairs = [
         ("bank/00401000", "src/bank/00401000.cpp"),
-        ("bank/0043B260", "src/Engine/s3d/s3d.cpp"),
+        ("bank/0043B260", "src/bank/0043B260.cpp"),
+        ("bank/00512880", "src/vsdk/vfile/vfile_paths.cpp"),
+        ("vsdk/os/memory.cpp", "src/vsdk/os/memory.cpp"),
+        ("bank/00533620", "src/vsdk/vfile/packfile/file_packfile.cpp"),
+        ("bank/005341A0", "src/vsdk/vfile/packfile/file_packfile.cpp"),
     ]
     return [(unit, src) for unit, src in pairs if os.path.isfile(os.path.join(ROOT, src))]
 
@@ -211,7 +215,7 @@ def write_ninja():
         # in the machine PATH splits this command.
         compile_rules = f"""
 rule cc
-  command = cmd /s /c "mkdir build\\src\\bank 2>nul & set INCLUDE={include}& set PATH={bin_dir};{msdev}& {cl} /nologo /O2 /c /I include /Fo"$out" $in"
+  command = cmd /s /c "for %I in ("$out") do mkdir "%~dpI" 2>nul & set INCLUDE={include}& set PATH={bin_dir};{msdev}& {cl} /nologo /O2 /c /I include /Fo"$out" $in"
   description = cl $in
 """
         lines = []

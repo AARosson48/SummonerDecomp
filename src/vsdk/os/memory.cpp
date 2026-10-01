@@ -28,7 +28,7 @@ void* vfs_heap_alloc3(int size, int unused_a, int unused_b) {
     }
     char message[0x80];
     for (;;) {
-        std::sprintf(message, "Failed to allocate %d bytes\n", size);
+        sprintf(message, "Failed to allocate %d bytes\n", size);
         vfs_error("D:\\projects\\Summoner\\pccode\\vsdk\\os\\memory.cpp", 0xDF, message);
     }
 }

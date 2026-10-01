@@ -50,7 +50,7 @@ int vfs_add_search_path(const char* path, const char* extensions) {
     lower_copy(path_buf, path ? path : "");
     lower_copy(ext_buf, extensions ? extensions : "");
 
-    int ext_len = (int)std::strlen(ext_buf);
+    int ext_len = (int)strlen(ext_buf);
     if (ext_len != 0) {
         ext_buf[ext_len] = ' ';
         ext_buf[ext_len + 1] = 0;
@@ -184,16 +184,16 @@ void vfs_init_search_paths(void) {
 }
 
 static void append_text(char* dst, const char* src) {
-    std::strcat(dst, src);
+strcat(dst, src);
 }
 
 char* vfs_resolve_path(int path_id, char* dst) {
-    std::strcpy(dst, g_hd_root);
+strcpy(dst, g_hd_root);
     if (path_id) {
         append_text(dst, g_search[path_id].path);
         return dst;
     }
-    int length = (int)std::strlen(dst);
+    int length = (int)strlen(dst);
     if (length > 0) {
         dst[length - 1] = 0;
     }
@@ -203,7 +203,7 @@ char* vfs_resolve_path(int path_id, char* dst) {
 char* vfs_copy_search_dir(int path_id, char* dst) {
     dst[0] = 0;
     if (path_id) {
-        std::strcpy(dst, g_search[path_id].path);
+strcpy(dst, g_search[path_id].path);
     }
     return dst;
 }
@@ -225,10 +225,10 @@ static char* vfs_make_path(const char* root, int path_id, const char* filename, 
     if (!vfs_path_id_ok(path_id)) {
         return 0;
     }
-    if (std::strlen(root) >= 0x100) {
+    if (strlen(root) >= 0x100) {
         return 0;
     }
-    std::strcpy(dst, root);
+strcpy(dst, root);
     if (path_id) {
         append_text(dst, g_search[path_id].path);
         append_text(dst, "\\");
@@ -248,13 +248,14 @@ char* vfs_make_cd_path(int path_id, const char* filename, char* dst) {
 }
 
 void vfs_shutdown(void) {
-    for (int i = 0; i < 4; i++) {
+    int i;
+    for (i = 0; i < 4; i++) {
         unsigned char* flag = g_vfs_cache_area + i * 0x8040;
         if (*(int*)flag) {
             vfs_file_close(*(VfsFile**)(flag + 0x8030));
         }
     }
-    for (int i = 0; i < VFS_SEARCH_SLOTS; i++) {
+    for (i = 0; i < VFS_SEARCH_SLOTS; i++) {
         g_search[i].path = 0;
         g_search[i].extensions = 0;
     }
@@ -267,8 +268,8 @@ void vfs_shutdown(void) {
 void vfs_set_root(const char* path, int mount_packs) {
     g_hd_root[0] = 0;
     if (path) {
-        std::strcpy(g_hd_root, path);
-        int length = (int)std::strlen(g_hd_root);
+strcpy(g_hd_root, path);
+        int length = (int)strlen(g_hd_root);
         if (length == 0 || g_hd_root[length - 1] != '\\') {
             g_hd_root[length] = '\\';
             g_hd_root[length + 1] = 0;
@@ -276,8 +277,8 @@ void vfs_set_root(const char* path, int mount_packs) {
     } else {
         char cwd[0x100];
         GetCurrentDirectoryA(0xFF, cwd);
-        std::strcpy(g_hd_root, cwd);
-        char* slash = std::strrchr(g_hd_root, '\\');
+strcpy(g_hd_root, cwd);
+        char* slash = strrchr(g_hd_root, '\\');
         if (slash) {
             slash[1] = 0;
         }
@@ -289,5 +290,5 @@ void vfs_set_root(const char* path, int mount_packs) {
     if (mount_packs) {
         packfile_init();
     }
-    std::atexit(vfs_shutdown);
+atexit(vfs_shutdown);
 }

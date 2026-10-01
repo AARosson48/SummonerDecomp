@@ -139,11 +139,11 @@ static void assign_sectors(Packfile* pack, int sector) {
 static int reserve_entries(Packfile* pack) {
     int total = g_file_count + pack->file_count;
     if (total > PACKFILE_MAX_FILES) {
-        std::printf("SIZEOF FILE ENTRY : %d\n", PACKFILE_ENTRY_SIZE);
-        std::printf("MAX_PACKFILE_FILES : %d\n", PACKFILE_MAX_FILES);
-        std::printf("TOTAL SIZE FOR ALL PACKFILES : %d\n", PACKFILE_MAX_FILES * PACKFILE_ENTRY_SIZE);
+printf("SIZEOF FILE ENTRY : %d\n", PACKFILE_ENTRY_SIZE);
+printf("MAX_PACKFILE_FILES : %d\n", PACKFILE_MAX_FILES);
+printf("TOTAL SIZE FOR ALL PACKFILES : %d\n", PACKFILE_MAX_FILES * PACKFILE_ENTRY_SIZE);
         for (;;) {
-            std::printf("Out of packfile space!\n");
+printf("Out of packfile space!\n");
             packfile_error(
                 "D:\\projects\\Summoner\\pccode\\vsdk\\vfile\\packfile\\file_packfile.cpp",
                 0x1A7,
@@ -158,20 +158,20 @@ static int reserve_entries(Packfile* pack) {
 
 static int load_root(Packfile* pack, const char* root) {
     char path[0x100];
-    std::sprintf(path, "%s%s", root, pack->name);
-    FILE* file = std::fopen(path, "rb");
+sprintf(path, "%s%s", root, pack->name);
+    FILE* file = fopen(path, "rb");
     if (!file) {
         return 0;
     }
 
     unsigned char sector[PACKFILE_SECTOR];
-    std::fread(sector, PACKFILE_SECTOR, 1, file);
+fread(sector, PACKFILE_SECTOR, 1, file);
     if (!check_header(pack, (const PackfileHeader*)sector)) {
-        std::fclose(file);
+fclose(file);
         return 0;
     }
     if (!reserve_entries(pack)) {
-        std::fclose(file);
+fclose(file);
         return 0;
     }
 
@@ -180,16 +180,16 @@ static int load_root(Packfile* pack, const char* root) {
     int page = 1;
     while (left > 0) {
         int batch = left > PACKFILE_ENTRIES_PER_SECTOR ? PACKFILE_ENTRIES_PER_SECTOR : left;
-        std::fread(sector, PACKFILE_SECTOR, 1, file);
+fread(sector, PACKFILE_SECTOR, 1, file);
         left -= batch;
         if (!read_entries(pack, sector, batch, &index)) {
-            std::fclose(file);
+fclose(file);
             return 0;
         }
         page++;
     }
     assign_sectors(pack, page);
-    std::fclose(file);
+fclose(file);
     return 1;
 }
 
@@ -213,9 +213,9 @@ int packfile_init(void) {
     packfile_add("cutscene.vpp");
     int elapsed = packfile_timer(1000) - start;
     double seconds = (double)elapsed * (double)kMsToSeconds;
-    std::printf("TOTAL PACKFILE LOAD TIME : %.2f\n", seconds);
-    std::printf("Packfile static alloc : %d\n", PACKFILE_MAX_FILES * PACKFILE_ENTRY_SIZE);
-    int printed = std::printf("TOTAL PACKFILE FILES: %d\n", g_file_count);
+printf("TOTAL PACKFILE LOAD TIME : %.2f\n", seconds);
+printf("Packfile static alloc : %d\n", PACKFILE_MAX_FILES * PACKFILE_ENTRY_SIZE);
+    int printed = printf("TOTAL PACKFILE FILES: %d\n", g_file_count);
     g_loaded = 1;
     return printed;
 }
@@ -229,44 +229,44 @@ void packfile_shutdown(void) {
 int packfile_add(const char* name) {
     for (int i = 0; i < g_pack_count; i++) {
         if (pack_stricmp(g_packs[i].name, name) == 0) {
-            std::printf("Ignoring packfile (%s) which was already loaded!\n", name);
+printf("Ignoring packfile (%s) which was already loaded!\n", name);
             return 1;
         }
     }
 
     char path[0x80];
-    std::sprintf(path, "%s%s", g_hd_root, name);
-    FILE* probe = std::fopen(path, "rb");
+sprintf(path, "%s%s", g_hd_root, name);
+    FILE* probe = fopen(path, "rb");
     int kind;
     if (probe) {
         kind = 1;
     } else {
-        std::sprintf(path, "%s%s", g_cd_root, name);
-        probe = std::fopen(path, "rb");
+sprintf(path, "%s%s", g_cd_root, name);
+        probe = fopen(path, "rb");
         if (!probe) {
             return 0;
         }
         kind = 2;
     }
-    std::fclose(probe);
+fclose(probe);
 
-    if (g_pack_count >= PACKFILE_MAX_ARCHIVES || !name || std::strlen(name) > 0x1f) {
+    if (g_pack_count >= PACKFILE_MAX_ARCHIVES || !name || strlen(name) > 0x1f) {
         return 0;
     }
 
     Packfile* pack = &g_packs[g_pack_count];
     g_pack_count++;
-    std::strncpy(pack->name, name, 0x1f);
+strncpy(pack->name, name, 0x1f);
     pack->name[0x1f] = 0;
     pack->is_cd = kind == 2;
     pack->unused_24 = 0;
     pack->file_count = 0;
     pack->entries = 0;
     if (kind == 2) {
-        std::printf("Adding CD PACKFILE : %s\n", name);
+printf("Adding CD PACKFILE : %s\n", name);
         return load_root(pack, g_cd_root);
     }
-    std::printf("Adding HARD DRIVE PACKFILE : %s\n", name);
+printf("Adding HARD DRIVE PACKFILE : %s\n", name);
     return load_root(pack, g_hd_root);
 }
 
@@ -309,8 +309,8 @@ int packfile_open(PackfileEntry* entry) {
     }
     char path[0x80];
     const char* root = entry->pack->is_cd ? g_cd_root : g_hd_root;
-    std::sprintf(path, "%s%s", root, entry->pack->name);
-    FILE* file = std::fopen(path, "rb");
+sprintf(path, "%s%s", root, entry->pack->name);
+    FILE* file = fopen(path, "rb");
     if (!file) {
         return 0;
     }
@@ -319,7 +319,7 @@ int packfile_open(PackfileEntry* entry) {
     } else {
         entry->hd_file = file;
     }
-    std::fseek(file, entry->sector << 11, SEEK_SET);
+fseek(file, entry->sector << 11, SEEK_SET);
     return 1;
 }
 
@@ -329,13 +329,13 @@ void packfile_close_file(PackfileEntry* entry) {
     }
     if (entry->pack->is_cd) {
         if (entry->cd_file) {
-            std::fclose((FILE*)entry->cd_file);
+fclose((FILE*)entry->cd_file);
             entry->cd_file = 0;
         }
         return;
     }
     if (entry->hd_file) {
-        std::fclose((FILE*)entry->hd_file);
+fclose((FILE*)entry->hd_file);
         entry->hd_file = 0;
     }
 }
@@ -348,22 +348,22 @@ int packfile_seek(PackfileEntry* entry, int offset, int origin) {
     if (!file) {
         return 0;
     }
-    return std::fseek(file, (entry->sector << 11) + offset, origin) == 0;
+    return fseek(file, (entry->sector << 11) + offset, origin) == 0;
 }
 
 int packfile_read(void* dst, int size, int count, PackfileEntry* entry) {
     if (!entry || !entry->pack) {
-        std::printf("FREAD BAIL\n");
+printf("FREAD BAIL\n");
         return 0;
     }
     FILE* file = entry->pack->is_cd ? (FILE*)entry->cd_file : (FILE*)entry->hd_file;
     if (!file) {
         if (entry->pack->is_cd) {
-            std::printf("FREAD BAIL\n");
+printf("FREAD BAIL\n");
         }
         return 0;
     }
-    return (int)std::fread(dst, (size_t)size, (size_t)count, file);
+    return (int)fread(dst, (size_t)size, (size_t)count, file);
 }
 
 int packfile_lookup(const char* pack_name, const char* file_name, int* out_size, int* out_offset) {
@@ -389,22 +389,22 @@ int packfile_read_ok(void) {
 int packfile_read_archive(void* dst, int offset, const char* name) {
     Packfile* pack = packfile_find(name);
     if (!pack) {
-        std::printf("A\n");
+printf("A\n");
         return 0;
     }
     if (offset >= (int)pack->archive_size) {
-        std::printf("B : (%d %d)\n", offset, pack->archive_size);
+printf("B : (%d %d)\n", offset, pack->archive_size);
         return 0;
     }
     if (pack->is_cd) {
         return 1;
     }
-    FILE* file = std::fopen(pack->name, "rb");
+    FILE* file = fopen(pack->name, "rb");
     if (!file) {
-        std::printf("C\n");
+printf("C\n");
         return 0;
     }
-    std::fread(dst, pack->archive_size, 1, file);
-    std::fclose(file);
+fread(dst, pack->archive_size, 1, file);
+fclose(file);
     return 1;
 }

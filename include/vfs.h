@@ -106,6 +106,8 @@ typedef struct VfsText {
     char* data;
 } VfsText;
 
+void* vfs_heap_alloc3(int size, int unused_a, int unused_b);
+void* vfs_heap_forward(int size, int unused_a, int unused_b);
 void* vfs_heap_alloc(int size);
 void vfs_heap_free(void* block);
 void vfs_text_set(VfsText* text, const char* src, int max_len);
