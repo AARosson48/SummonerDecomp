@@ -113,7 +113,7 @@ The split left those as absolute addresses. Same-unit `call _fn_00401190` is a r
 4. A function stays unmatched until that objdiff output says so. `bank/00401000` is `.text` `0x00401000`–`0x00404BD0` (~15KB). The seven functions are only the start. Leave the split object in `objs.rsp`. Do not mark the unit `complete` or swap it into the link until objdiff matches the whole object.
 5. After the seven show up in an objdiff report, the next code in that bank is `fn_004011B0`, then `fn_004011D0`.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
-7. GitHub's current job is Ubuntu and has no `cl.exe`. A match in the uploaded report needs a Windows compile of step 1. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
+7. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 
 ## Still true, separate from the link
 

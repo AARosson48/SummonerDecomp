@@ -31,7 +31,13 @@ def category_for(rel):
     return "engine"
 
 
-MSVC_CL = r"C:\projects\MSVC600\VC98\Bin\cl.exe"
+def msvc_root():
+    """MSVC 6 tree. CI sets MSVC6_ROOT; a local tree defaults to C:\\projects\\MSVC600."""
+    return os.path.normpath(os.environ.get("MSVC6_ROOT", r"C:\projects\MSVC600"))
+
+
+def msvc_cl():
+    return os.path.join(msvc_root(), "VC98", "Bin", "cl.exe")
 
 
 def compiled_units():
@@ -40,7 +46,7 @@ def compiled_units():
     Only files that already compile with MSVC 6. The rest of src/ stays out
     until each file compiles on its own. See notes/build.md.
     """
-    if not os.path.isfile(MSVC_CL):
+    if not os.path.isfile(msvc_cl()):
         return []
     ready = ["bank/00401000"]
     found = []
@@ -189,9 +195,10 @@ def write_ninja():
             "&& python tools/scrub_report.py build/report.json"
         )
     if compiled:
-        compile_rules = """
+        root = msvc_root().replace("\\", "/")
+        compile_rules = f"""
 rule cc
-  command = cmd /c "if not exist build\\src\\bank mkdir build\\src\\bank&& set PATH=C:\\projects\\MSVC600\\VC98\\Bin;C:\\projects\\MSVC600\\Common\\MSDev98\\Bin;%PATH%&& set INCLUDE=C:\\projects\\MSVC600\\VC98\\Include&& C:\\projects\\MSVC600\\VC98\\Bin\\cl.exe /nologo /O2 /c /Fo$out $in"
+  command = cmd /c "if not exist build\\src\\bank mkdir build\\src\\bank&& set PATH={root}/VC98/Bin;{root}/Common/MSDev98/Bin;%PATH%&& set INCLUDE={root}/VC98/Include&& {root}/VC98/Bin/cl.exe /nologo /O2 /c /Fo$out $in"
   description = cl $in
 """
         lines = []

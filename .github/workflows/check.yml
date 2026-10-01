@@ -6,13 +6,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Clear orig/sum-pc for the retail checkout
-        run: rm -rf orig/sum-pc && mkdir -p orig/sum-pc
+        shell: pwsh
+        run: |
+          if (Test-Path orig/sum-pc) { Remove-Item -Recurse -Force orig/sum-pc }
+          New-Item -ItemType Directory -Force -Path orig/sum-pc | Out-Null
 
       - name: Checkout Retail Binary
         uses: actions/checkout@v4
@@ -22,26 +25,37 @@ jobs:
           path: orig/sum-pc
 
       - name: Verify orig/sum-pc/Sum.exe
+        shell: pwsh
         run: |
-          echo "cdc5d71d447a89e9a1c5e176c65c9b129321d7fc  orig/sum-pc/Sum.exe" | sha1sum -c -
+          $hash = (Get-FileHash orig/sum-pc/Sum.exe -Algorithm SHA1).Hash
+          if ($hash -ne "CDC5D71D447A89E9A1C5E176C65C9B129321D7FC") {
+            throw "sha1 $hash"
+          }
+
+      - name: Checkout MSVC 6
+        uses: actions/checkout@v4
+        with:
+          repository: itsmattkc/MSVC600
+          path: msvc6
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
       - name: Install ninja
-        run: sudo apt-get update && sudo apt-get install -y ninja-build
+        run: pip install ninja
 
       - name: Download dtk and objdiff
+        shell: pwsh
         run: |
-          mkdir -p tools/bin
-          curl -fsSL -o tools/bin/dtk \
-            https://github.com/openblack/decomp-toolkit/releases/download/v0.0.27/dtk-linux-x86_64
-          curl -fsSL -o tools/bin/objdiff-cli \
-            https://github.com/encounter/objdiff/releases/download/v3.8.2/objdiff-cli-linux-x86_64
-          chmod +x tools/bin/dtk tools/bin/objdiff-cli
+          New-Item -ItemType Directory -Force -Path tools/bin | Out-Null
+          curl.exe -fsSL -o tools/bin/dtk.exe https://github.com/openblack/decomp-toolkit/releases/download/v0.0.27/dtk-windows-x86_64.exe
+          curl.exe -fsSL -o tools/bin/objdiff-cli.exe https://github.com/encounter/objdiff/releases/download/v3.8.2/objdiff-cli-windows-x86_64.exe
 
-      - name: Split Sum.exe and write the objdiff report
+      - name: Split, compile, and write the objdiff report
+        shell: pwsh
+        env:
+          MSVC6_ROOT: ${{ github.workspace }}/msvc6
         run: |
           python configure.py
           ninja
