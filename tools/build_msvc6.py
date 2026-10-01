@@ -12,13 +12,14 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
-def compiler_env():
-    env = os.environ.copy()
-    root = env.get("MSVC6", r"C:\projects\MSVC600")
+def compiler_paths():
+    root = os.environ.get("MSVC6", r"C:\projects\MSVC600")
     bin_dir = os.path.join(root, "VC98", "Bin")
     cl = os.path.join(bin_dir, "cl.exe")
-    if not os.path.isfile(cl):
+    link = os.path.join(bin_dir, "link.exe")
+    if not os.path.isfile(cl) or not os.path.isfile(link):
         sys.exit(f"MSVC 6 cl.exe not found at {cl}")
+    env = os.environ.copy()
     env["PATH"] = os.pathsep.join(
         [
             bin_dir,
@@ -28,7 +29,7 @@ def compiler_env():
     )
     env["INCLUDE"] = os.path.join(root, "VC98", "Include")
     env["LIB"] = os.path.join(root, "VC98", "Lib")
-    return env
+    return cl, link, env
 
 
 def sources():
@@ -42,7 +43,7 @@ def sources():
 
 
 def main():
-    env = compiler_env()
+    cl, link, env = compiler_paths()
     cpp_files = sources()
     if not cpp_files:
         sys.exit("no .cpp files under src/")
@@ -58,7 +59,7 @@ def main():
         obj = os.path.join(obj_dir, leaf + ".obj")
         print(f"cl /O2 /Zi /c {rel}")
         result = subprocess.run(
-            ["cl", "/nologo", "/O2", "/Zi", "/c", "/Fo" + obj, path],
+            [cl, "/nologo", "/O2", "/Zi", "/c", "/Fo" + obj, path],
             cwd=ROOT,
             env=env,
         )
@@ -68,7 +69,7 @@ def main():
 
     out = os.path.join(ROOT, "build", "Sum.exe")
     pdb = os.path.join(ROOT, "build", "Sum.pdb")
-    command = ["link", "/nologo", "/DEBUG", "/OUT:" + out, "/PDB:" + pdb] + objects
+    command = [link, "/nologo", "/DEBUG", "/OUT:" + out, "/PDB:" + pdb] + objects
     print("link /OUT:build/Sum.exe")
     result = subprocess.run(command, cwd=ROOT, env=env)
     sys.exit(result.returncode)
