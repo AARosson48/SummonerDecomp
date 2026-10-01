@@ -149,7 +149,13 @@ The same Red Faction files, next pass. `objdiff-cli diff` / report:
 
 All three are under 100, so they stay unmatched. `fn_00544090` in that file has no C yet.
 
-The report after the skeleton functions: `fuzzy_match_percent` 0.9465685, `matched_code` 821, `matched_code_percent` 0.05406352, `matched_functions` 18 of 6915. None of the skeleton functions added matched bytes. `complete` stays false on every unit, so there is still no fully-linked band.
+`Engine/gamesound/gamesound.cpp` is `_fn_004691E0`. It reads `music.tbl` (`$Name` / `$Filename`), then `feedback.tbl` for `Rosalind`, `Flece`, `Joseph`, and `Jekhar`. `objdiff-cli diff` reports 93.223175. The report function is 93.45493. Under 100.
+
+The large functions in `Engine/Objects/living_entity.cpp` and the 8,864-byte function at `0x450E30` are compiled with a frame pointer. `_fn_0045CCB0` (77 bytes) is an objdiff 1:1 match under `#pragma optimize("", off)`. **[STATE 3].** `?fn_0045D4C0@Entity@@QAEXXZ` stores the `BDBN-Foot-L` / `BDBN-Foot-R` bones. Diff 73.45238, report 73.5.
+
+`Engine/characterinfo/characterinfo.cpp` `_fn_00447E80` is the name hash (`rol` by 6, then xor). Diff 96.92308, report 96.92308. `_fn_00446DE0` walks four info rows. Diff 99.888885. The report records 100 and counts its 51 bytes. The diff is not 1:1, so it stays unmatched. The 5,200-byte reader in that file has no C yet.
+
+The report after sound and those functions: `fuzzy_match_percent` 1.0208236, `matched_code` 949, `matched_code_percent` 0.062492426, `matched_functions` 20 of 6916. The new 1:1 function is the living-entity flag update. `complete` stays false on every unit, so there is still no fully-linked band.
 6. The exe SHA-1 stays a separate last gate: Rich header, timestamp `0x3BFBCD1C`, file characteristics `0x10F`, and the extra uninitialized `.data` from `auto__02__005B3000__data.o`. Do not change `splits.txt` to chase it. `configure.py`'s default target stays `build/report.json` until a link hash matches.
 7. `bank/` units were left out of `progress_categories`, so decomp.dev's groups stayed at 0 while the project total included their matches. `bank/*` is the Banks category. Engine, Volition SDK, Game, and Level scripts only count units whose split name is an original `.cpp`. The report decomp.dev shows is the GitHub artifact `sum-pc_report`. A job that does not compile leaves every item at 0. The workflow runs on `windows-latest`, checks out `itsmattkc/MSVC600` to `msvc6/`, and sets `MSVC6_ROOT` so `configure.py` finds `cl.exe`. Do not invent match percents in `tools/scrub_report.py` to stand in for that.
 

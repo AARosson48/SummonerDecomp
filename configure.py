@@ -75,6 +75,9 @@ def compiled_units():
         ("vsdk/ca/character.cpp", "src/vsdk/ca/character.cpp"),
         ("vsdk/ca/character_instance.cpp", "src/vsdk/ca/character_instance.cpp"),
         ("vsdk/ca/skeleton.cpp", "src/vsdk/ca/skeleton.cpp"),
+        ("Engine/gamesound/gamesound.cpp", "src/Engine/gamesound/gamesound.cpp"),
+        ("Engine/Objects/living_entity.cpp", "src/Engine/Objects/living_entity.cpp"),
+        ("Engine/characterinfo/characterinfo.cpp", "src/Engine/characterinfo/characterinfo.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
     ]
