@@ -49,7 +49,7 @@ extern "C" void fn_0045CCB0(Entity* ent) {
 }
 
 extern "C" Entity* fn_0046B1A0(int id);
-extern "C" int fn_004A28B0(Entity* ent);
+extern "C" unsigned char fn_004A28B0(Entity* ent);
 extern "C" void fn_004A13B0(Entity* ent, int a, int b, int c);
 extern "C" void fn_0048C080(int a, int b, int c, int d, int e, int f);
 extern "C" float fn_00524810(void* a, void* b);
