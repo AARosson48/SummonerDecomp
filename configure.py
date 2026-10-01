@@ -196,9 +196,13 @@ def write_ninja():
         )
     if compiled:
         root = msvc_root().replace("\\", "/")
+        cl = root + "/VC98/Bin/cl.exe"
+        include = root + "/VC98/Include"
+        # mkdir uses & so a folder that already exists does not skip cl.
+        # Do not append %PATH%: an & in the machine PATH splits this command.
         compile_rules = f"""
 rule cc
-  command = cmd /c "if not exist build\\src\\bank mkdir build\\src\\bank&& set PATH={root}/VC98/Bin;{root}/Common/MSDev98/Bin;%PATH%&& set INCLUDE={root}/VC98/Include&& {root}/VC98/Bin/cl.exe /nologo /O2 /c /Fo$out $in"
+  command = cmd /s /c "mkdir build\\src\\bank 2>nul & set INCLUDE={include}& {cl} /nologo /O2 /c /Fo"$out" $in"
   description = cl $in
 """
         lines = []

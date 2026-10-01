@@ -97,7 +97,7 @@ The sha1 miss does not block function matching. `.text` / `.rdata` / initialized
 | `_fn_00401190` | 100 |
 | `_fn_00401070` | 99.11842 (27 `DIFF_ARG_MISMATCH`) |
 
-`configure.py` compiles `src/bank/00401000.cpp` and sets that unit's `base_path` only when `C:\projects\MSVC600\VC98\Bin\cl.exe` exists. The unit stays `complete: false` and the split object stays in `objs.rsp`. On Windows the report rule is `cmd /s /c` because ninja does not run `&&` itself, and `tools/bin/...` is a switch to `cmd` (the slash). Ubuntu keeps `&&`.
+`configure.py` compiles `src/bank/00401000.cpp` and sets that unit's `base_path` only when `cl.exe` exists. The compile rule calls `cl` by full path with `INCLUDE` set, and does not append `%PATH%`. `if not exist ... && cl` returns 0 without compiling once `build\src\bank` exists; `mkdir ... & cl` always compiles. `/Fo` is quoted so the forward slashes in `$out` are not extra `cl` switches. The unit stays `complete: false` and the split object stays in `objs.rsp`. On Windows the report rule is `cmd /s /c` because ninja does not run `&&` itself, and `tools/bin/...` is a switch to `cmd` (the slash). Ubuntu keeps `&&`.
 
 `ninja build/report.json` on 2026-10-01 wrote `build/report.json`. Unit `bank/00401000` measures: `matched_code` 362, `matched_code_percent` 2.4048362, `matched_functions` 7 of 27. Project: `matched_code` 362 of `total_code` 1519213 (`matched_code_percent` 0.023828126), `matched_functions` 7 of 6826. Not uploaded.
 
