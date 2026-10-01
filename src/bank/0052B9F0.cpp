@@ -53,3 +53,26 @@ int __fastcall fn_0052F050(void* self)
 }
 
 }
+
+struct Obj52F400 {
+	void* fn_0052F400(unsigned int flags);
+};
+
+struct Obj52C690 {
+	void fn_0052C690(int value, int index);
+};
+
+extern "C" void vfs_heap_free(void* block);
+
+void* Obj52F400::fn_0052F400(unsigned int flags)
+{
+	fn_0052D560(this);
+	if (flags & 1)
+		vfs_heap_free(this);
+	return this;
+}
+
+void Obj52C690::fn_0052C690(int value, int index)
+{
+	*(int*)((char*)this + index * 4 + 0x24c) = value;
+}

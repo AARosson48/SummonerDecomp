@@ -40,3 +40,17 @@ float __fastcall fn_004943F0(float* self)
 }
 
 }
+
+struct Obj493F40 {
+	void* fn_00493F40(unsigned int flags);
+};
+
+extern "C" void vfs_heap_free(void* block);
+
+void* Obj493F40::fn_00493F40(unsigned int flags)
+{
+	fn_00493F60(this);
+	if (flags & 1)
+		vfs_heap_free(this);
+	return this;
+}

@@ -35,15 +35,15 @@ typedef void (*VoidFn)(void);
 VoidFn DAT_00588A70[];
 
 void fn_00401190(void);
-void FUN_004138A0(void);
-void FUN_00414020(void);
-void FUN_00501510(void);
-void FUN_00500A90(void);
-void FUN_005011E0(int* a, int* b, void* c);
-void FUN_004413D0(void);
-void FUN_004408A0(void);
-void FUN_00431640(void);
-void FUN_004328B0(void);
+void fn_004138A0(void);
+void fn_00414020(void);
+void fn_00501510(void);
+void fn_00500A90(void);
+void fn_005011E0(int* a, int* b, void* c);
+void fn_004413D0(void);
+void fn_004408A0(void);
+void fn_00431640(void);
+void fn_004328B0(void);
 int sprintf(char* dst, const char* fmt, ...);
 
 void fn_00401000(void)
@@ -93,8 +93,8 @@ int fn_00401070(void)
 			if (DAT_00588A70[DAT_005B27E0 * 3 + 2])
 				DAT_00588A70[DAT_005B27E0 * 3 + 2]();
 			fn_00401190();
-			FUN_004138A0();
-			FUN_00414020();
+			fn_004138A0();
+			fn_00414020();
 			if (DAT_00588A70[DAT_005B27E0 * 3])
 				DAT_00588A70[DAT_005B27E0 * 3]();
 		} while (DAT_005B27EC);
@@ -103,20 +103,20 @@ int fn_00401070(void)
 	if (DAT_02491A5C == 1)
 		DAT_005A5740 = 0;
 	else
-		FUN_00501510();
+		fn_00501510();
 
-	FUN_00500A90();
-	FUN_005011E0(&DAT_005FBFDC, &DAT_005FBFE0, DAT_0257EF80);
+	fn_00500A90();
+	fn_005011E0(&DAT_005FBFDC, &DAT_005FBFE0, DAT_0257EF80);
 
 	if (DAT_005FBFD8 & 2)
 	{
 		for (cursor = (int)&DAT_005951C4; cursor < (int)&DAT_005958FC; cursor += 0x1C)
 			*(int*)cursor = 0;
-		FUN_004413D0();
+		fn_004413D0();
 	}
 
 	if (DAT_0065139C == 1)
-		FUN_004408A0();
+		fn_004408A0();
 
 	if (DAT_00588A70[DAT_005B27E0 * 3 + 1])
 		DAT_00588A70[DAT_005B27E0 * 3 + 1]();
@@ -135,8 +135,8 @@ int fn_00401070(void)
 		}
 	}
 
-	FUN_00431640();
-	FUN_004328B0();
+	fn_00431640();
+	fn_004328B0();
 	return DAT_005B27E0;
 }
 

@@ -27,4 +27,15 @@ void fn_00432E50(int value)
 	*(int*)0x5931b4 = value;
 }
 
+int fn_00432710(void);
+void fn_004119A0(int value);
+void fn_00411CD0(void);
+
+void fn_00431E00(void)
+{
+	*(unsigned char*)0x5fc01c = 1;
+	fn_004119A0(fn_00432710());
+	fn_00411CD0();
+}
+
 }

@@ -37,3 +37,18 @@ int __fastcall fn_00542FF0(void* self)
 }
 
 }
+
+struct Obj543010 {
+	void* fn_00543010(unsigned int flags);
+};
+
+extern "C" void fn_0055EF50(void);
+extern "C" void vfs_heap_free(void* block);
+
+void* Obj543010::fn_00543010(unsigned int flags)
+{
+	fn_0055EF50();
+	if (flags & 1)
+		vfs_heap_free(this);
+	return this;
+}
