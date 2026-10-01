@@ -210,14 +210,15 @@ strcpy(dst, g_search[path_id].path);
     return dst;
 }
 
-int vfs_path_id_ok(int path_id) {
+unsigned char vfs_path_id_ok(int path_id) {
     if (path_id == 0x98967F) {
         return 1;
     }
     if (path_id < 0 || path_id >= VFS_SEARCH_SLOTS) {
         return 0;
     }
-    if (path_id > 0 && !g_search[path_id].path) {
+    // g_search[path_id].path. A scaled load stays an immediate in the split object.
+    if (path_id > 0 && !*(char**)(path_id * 8 + 0x2693068)) {
         return 0;
     }
     return 1;

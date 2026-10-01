@@ -82,7 +82,7 @@ int vfs_path_root(void);
 const char* vfs_search_extensions(int index);
 char* vfs_resolve_path(int path_id, char* dst);
 char* vfs_copy_search_dir(int path_id, char* dst);
-int vfs_path_id_ok(int path_id);
+unsigned char vfs_path_id_ok(int path_id);
 char* vfs_make_hd_path(int path_id, const char* filename, char* dst);
 char* vfs_make_cd_path(int path_id, const char* filename, char* dst);
 void vfs_shutdown(void);

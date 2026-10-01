@@ -505,7 +505,7 @@ void fn_00401380(int arg)
 {
 	unsigned char flags;
 
-	flags = *(unsigned char*)0x005FBFD8;
+	flags = DAT_005FBFD8;
 	*(int*)0x005B2800 = 0;
 	if (flags & 1)
 	{
