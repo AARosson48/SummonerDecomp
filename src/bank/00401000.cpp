@@ -1,5 +1,8 @@
-// bank/00401000. Original .cpp is not known yet. Names stay FUN_/DAT_
-// until a string or a 100% match proves one. Not annotated FUNCTION.
+// bank/00401000. Original .cpp is not known yet.
+// Function names match config/dtk_symbols.txt so objdiff can pair them.
+// Not annotated FUNCTION.
+
+extern "C" {
 
 int DAT_005B27E0;
 int DAT_005B27E4;
@@ -22,7 +25,7 @@ typedef void (*VoidFn)(void);
 
 VoidFn DAT_00588A70[];
 
-void FUN_00401190(void);
+void fn_00401190(void);
 void FUN_004138A0(void);
 void FUN_00414020(void);
 void FUN_00501510(void);
@@ -34,42 +37,42 @@ void FUN_00431640(void);
 void FUN_004328B0(void);
 void FUN_0056C740(char* dst, char* fmt, int type, int count);
 
-void FUN_00401000(void)
+void fn_00401000(void)
 {
 	DAT_005B27E0 = 0;
 	DAT_005B27E4 = 0;
 	DAT_005B27E8 = 0;
 }
 
-void FUN_00401020(int value)
+void fn_00401020(int value)
 {
 	DAT_005B27EC = 1;
 	DAT_005B27E8 = value;
 }
 
-int FUN_00401040(void)
+int fn_00401040(void)
 {
 	return DAT_005B27E0;
 }
 
-int FUN_00401050(void)
+int fn_00401050(void)
 {
 	return DAT_005B27E4;
 }
 
-int FUN_00401060(void)
+int fn_00401060(void)
 {
 	return DAT_005B27E8;
 }
 
-void FUN_00401190(void)
+void fn_00401190(void)
 {
 	DAT_005B27E4 = DAT_005B27E0;
 	DAT_005B27E0 = DAT_005B27E8;
 	DAT_005B27EC = 0;
 }
 
-int FUN_00401070(void)
+int fn_00401070(void)
 {
 	int cursor;
 	int type;
@@ -80,7 +83,7 @@ int FUN_00401070(void)
 		{
 			if (DAT_00588A70[DAT_005B27E0 * 3 + 2])
 				DAT_00588A70[DAT_005B27E0 * 3 + 2]();
-			FUN_00401190();
+			fn_00401190();
 			FUN_004138A0();
 			FUN_00414020();
 			if (DAT_00588A70[DAT_005B27E0 * 3])
@@ -126,4 +129,6 @@ int FUN_00401070(void)
 	FUN_00431640();
 	FUN_004328B0();
 	return DAT_005B27E0;
+}
+
 }

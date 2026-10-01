@@ -1,12 +1,12 @@
 // Every .text address. Names come from symbols.txt when we have them.
 // fn_XXXXXXXX entries are functions decomp-toolkit found, or a gap it left.
-fn_00401000 = .text:0x00401000; // type:function size:0x20
-fn_00401020 = .text:0x00401020; // type:function size:0x20
-fn_00401040 = .text:0x00401040; // type:function size:0x10
-fn_00401050 = .text:0x00401050; // type:function size:0x10
-fn_00401060 = .text:0x00401060; // type:function size:0x10
-fn_00401070 = .text:0x00401070; // type:function size:0x120
-fn_00401190 = .text:0x00401190; // type:function size:0x20
+_fn_00401000 = .text:0x00401000; // type:function size:0x20
+_fn_00401020 = .text:0x00401020; // type:function size:0x20
+_fn_00401040 = .text:0x00401040; // type:function size:0x10
+_fn_00401050 = .text:0x00401050; // type:function size:0x10
+_fn_00401060 = .text:0x00401060; // type:function size:0x10
+_fn_00401070 = .text:0x00401070; // type:function size:0x120
+_fn_00401190 = .text:0x00401190; // type:function size:0x20
 fn_004011B0 = .text:0x004011B0; // type:function size:0x20
 fn_004011D0 = .text:0x004011D0; // type:function size:0x1B0
 fn_00401380 = .text:0x00401380; // type:function size:0xB00
@@ -7182,5 +7182,9 @@ __imp___BinkDoFrame@4 = .rdata:0x0057E4A4; // type:object size:0x4
 __imp__CoInitialize = .rdata:0x0057E4AC; // type:object size:0x4
 __imp__CoUninitialize = .rdata:0x0057E4B0; // type:object size:0x4
 lbl_0057E4B4 = .rdata:0x0057E4B4; // type:object size:0x8D70
+_DAT_005B27E0 = .data:0x005B27E0; // type:object size:0x4
+_DAT_005B27E4 = .data:0x005B27E4; // type:object size:0x4
+_DAT_005B27E8 = .data:0x005B27E8; // type:object size:0x4
+_DAT_005B27EC = .data:0x005B27EC; // type:object size:0x1
 g_vfs_string_pool = .data:0x026B4268; // type:object
 g_default_ext = .data:0x026B638C; // type:object
