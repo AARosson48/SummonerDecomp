@@ -22,6 +22,8 @@ def modules():
 
 def category_for(rel):
     lowered = rel.lower()
+    if lowered.startswith("bank/"):
+        return "bank"
     if lowered.startswith("vsdk/"):
         return "vsdk"
     if lowered.startswith("levelscripts/"):
@@ -77,8 +79,9 @@ def write_objdiff():
     compiled = set(compiled_units())
     for name in split_units():
         metadata = {"complete": False}
-        if name.endswith(".cpp"):
+        if name.endswith(".cpp") or name.startswith("bank/"):
             metadata["progress_categories"] = [category_for(name)]
+        if name.endswith(".cpp"):
             stem = name[:-4]
         else:
             stem = name
@@ -106,6 +109,7 @@ def write_objdiff():
             {"id": "vsdk", "name": "Volition SDK"},
             {"id": "game", "name": "Game"},
             {"id": "scripts", "name": "Level scripts"},
+            {"id": "bank", "name": "Banks"},
         ],
         "units": units,
     }
