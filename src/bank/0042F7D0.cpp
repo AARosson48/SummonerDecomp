@@ -31,6 +31,19 @@ int fn_00432710(void);
 void fn_004119A0(int value);
 void fn_00411CD0(void);
 
+void fn_00412620(int kind, int flags);
+void fn_00401020(int value);
+
+void fn_00430B80()
+{
+	fn_00412620(0x15, 0);
+}
+
+void fn_00431E70()
+{
+	fn_00401020(4);
+}
+
 void fn_00431E00(void)
 {
 	*(unsigned char*)0x5fc01c = 1;

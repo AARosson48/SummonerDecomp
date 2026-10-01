@@ -8,3 +8,12 @@ unsigned char __fastcall fn_00553EF0(void* self)
 }
 
 }
+
+struct Obj53EE0 {
+	void fn_00553EE0(unsigned char value);
+};
+
+void Obj53EE0::fn_00553EE0(unsigned char value)
+{
+	*((unsigned char*)this + 0x274) = value;
+}

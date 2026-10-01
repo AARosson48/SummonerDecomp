@@ -11,4 +11,9 @@ void fn_0050AF50(int value)
 	*(int*)0x5a6f28 = value;
 }
 
+unsigned char fn_00509F00(char* row)
+{
+	return row[0x25da94c];
+}
+
 }

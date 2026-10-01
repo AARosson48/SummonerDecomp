@@ -38,6 +38,13 @@ int __fastcall fn_00530B80(void* self)
 	return *(int*)((char*)self + 0x4d8);
 }
 
+void fn_00530CB0(int value);
+
+void fn_00530CA0()
+{
+	fn_00530CB0(0);
+}
+
 void fn_00530C20(int value)
 {
 	int index;

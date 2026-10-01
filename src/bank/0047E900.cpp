@@ -14,4 +14,11 @@ float fn_00481E50()
 	return *(float*)0x57eb84;
 }
 
+void fn_00482070()
+{
+	*(int*)0x59bda4 = 0xff;
+	*(unsigned char*)0x22fb717 = 1;
+	*(unsigned char*)0x22fb716 = 0;
+}
+
 }

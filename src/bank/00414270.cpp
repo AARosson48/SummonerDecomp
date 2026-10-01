@@ -28,6 +28,13 @@ void fn_004326C0(void);
 void fn_00412E50(int value);
 void fn_00406360(int value);
 
+void fn_00410760(int first, int second);
+
+void fn_00414DC0()
+{
+	fn_00410760(0x5bd980, 0x58cbc8);
+}
+
 void fn_004158B0()
 {
 	if (*(unsigned char*)0x5c100c & 1)

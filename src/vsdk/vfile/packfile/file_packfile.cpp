@@ -413,3 +413,37 @@ extern "C" void __fastcall fn_00536920(void* self)
 {
     *(int*)self = 0xffffffff;
 }
+
+extern "C" void* __fastcall fn_005368A0(void* self)
+{
+	void* result;
+
+	result = self;
+	*(int*)result = -1;
+	return result;
+}
+
+extern "C" int __fastcall fn_005368D0(unsigned int* self)
+{
+	return (int)((*self >> 5) & 0x1f);
+}
+
+extern "C" int __fastcall fn_005368E0(unsigned int* self)
+{
+	return (int)((*self >> 0xa) & 0x1f);
+}
+
+extern "C" int __fastcall fn_005368F0(unsigned int* self)
+{
+	return (int)((*self >> 0xf) & 0x1f);
+}
+
+extern "C" int __fastcall fn_00536900(unsigned int* self)
+{
+	return (int)((*self >> 0x14) & 0x1f);
+}
+
+extern "C" int __fastcall fn_00536910(unsigned int* self)
+{
+	return (int)((*self >> 0x19) & 0x1f);
+}

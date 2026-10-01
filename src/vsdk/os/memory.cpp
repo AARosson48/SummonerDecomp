@@ -44,3 +44,8 @@ void* vfs_heap_alloc(int size) {
 void vfs_heap_free(void* block) {
     crt_free(block);
 }
+
+extern "C" void fn_005127F0(int value)
+{
+	*(int*)0x2693048 = value;
+}

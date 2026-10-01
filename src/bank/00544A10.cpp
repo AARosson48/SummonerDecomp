@@ -17,3 +17,16 @@ int __fastcall fn_00544C10(void* self)
 }
 
 }
+
+struct Obj44B20 {
+	void* fn_00544B20(int value);
+};
+
+void* Obj44B20::fn_00544B20(int value)
+{
+	void* result;
+
+	result = this;
+	*(int*)result = value;
+	return result;
+}

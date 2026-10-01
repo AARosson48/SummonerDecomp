@@ -25,6 +25,12 @@ extern "C" int fn_00447E80(const char* text) {
     return (int)hash;
 }
 
+extern "C" void fn_00446770(char* node)
+{
+	*(int*)(node + 0x40) = *(int*)0x7916dc;
+	*(int*)0x7916dc = (int)node;
+}
+
 extern "C" InfoRow* fn_00446DE0(char* slot) {
     int index;
     for (index = 0; index < 4; index++) {

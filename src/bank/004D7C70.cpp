@@ -23,3 +23,13 @@ int __fastcall fn_004DAC20(void* self)
 }
 
 }
+
+struct ObjD7CC0 {
+	void fn_004D7CC0(int* node);
+};
+
+void ObjD7CC0::fn_004D7CC0(int* node)
+{
+	*node = *(int*)((char*)this + 0x20c);
+	*(int*)((char*)this + 0x20c) = (int)node;
+}
