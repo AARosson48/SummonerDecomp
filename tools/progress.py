@@ -255,22 +255,25 @@ def report(facts, code_total, data_total, code_matched, data_matched):
             continue
         start, end, unit = found
         clipped = min(size, end - address)
+        # ReportItem fields from objdiff's report.proto. virtual_address and
+        # address are uint64, so they are decimal strings. A 0x address makes
+        # decomp.dev reject the file and keep the previous report.
         buckets[id(unit)].append(
             {
                 "name": name,
                 "size": str(clipped),
                 "fuzzy_match_percent": 0.0,
-                "metadata": {"virtual_address": f"0x{address:08X}"},
-                "measures": measures(clipped, 0, 0, 0, 0, 0, 1, 0),
+                "metadata": {"virtual_address": str(address)},
+                "address": str(address - start),
             }
         )
 
     units = []
     categories = {
-        "engine": [0, 0, 0],
-        "vsdk": [0, 0, 0],
-        "game": [0, 0, 0],
-        "scripts": [0, 0, 0],
+        "engine": [0, 0, 0, 0],
+        "vsdk": [0, 0, 0, 0],
+        "game": [0, 0, 0, 0],
+        "scripts": [0, 0, 0, 0],
     }
     function_count = 0
     for unit in splits:
@@ -290,6 +293,7 @@ def report(facts, code_total, data_total, code_matched, data_matched):
             categories[category][0] += code
             categories[category][1] += data
             categories[category][2] += len(functions)
+            categories[category][3] += 1
         units.append(
             {
                 "name": unit["name"],
@@ -312,14 +316,14 @@ def report(facts, code_total, data_total, code_matched, data_matched):
     return {
         "measures": overall,
         "units": units,
-        "version": 1,
+        "version": 2,
         "categories": [
             {
                 "id": key,
                 "name": names[key],
-                "measures": measures(code, data, 0, 0, 0, 0, functions, 0),
+                "measures": measures(code, data, 0, 0, unit_count, 0, functions, 0),
             }
-            for key, (code, data, functions) in categories.items()
+            for key, (code, data, functions, unit_count) in categories.items()
         ],
     }
 
