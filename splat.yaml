@@ -6,7 +6,7 @@ options:
   platform: x86
   basename: sum-pc
   base_path: .
-  target_path: retail_bin/Sum.exe
+  target_path: orig/sum-pc/Sum.exe
   asm_path: asm
   src_path: src
   build_path: build

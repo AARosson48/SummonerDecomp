@@ -31,13 +31,13 @@ Python 3.10 or newer. On Windows, Developer Mode or an elevated shell is require
 
 ```sh
 python tools/extract_game.py
-python tools/build_msvc6.py
-reccmp-reccmp --target SUM
+python configure.py
+ninja
 ```
 
 `extract_game.py` finds the install from the Steam uninstall key for app 2750, the GOG registry key, and every library listed in Steam's `libraryfolders.vdf`. A saved path from an earlier run is read from `project.local.json`, which is gitignored. If none of those locate `Sum.exe`, set `SUMMONER_DIR` to the install folder, or pass that folder with `--game-dir`.
 
-The script copies the executable to `retail_bin/Sum.exe`. That directory is gitignored. The GitHub build checks the same file out from the private repo `AARosson48/SummonerDecomp-retail`. It symlinks `*.vpp` and the runtime DLLs into `build/` and `assets/`. It stops if the executable hash is not `sum-pc`.
+The script copies the executable to `orig/sum-pc/Sum.exe`. That file is gitignored. The GitHub build checks the same file out from the private repo `AARosson48/SummonerDecomp-retail`. `ninja` runs `dtk coff split`, which unpacks the executable into one object per unit, then objdiff writes `build/report.json` from those objects. `.text`, `.rdata`, and `.data` are compared there. Linking `build/sum-pc/Sum.exe` is the last step, checked against `config/sum-pc/build.sha1`. It symlinks `*.vpp` and the runtime DLLs into `build/` and `assets/`. It stops if the executable hash is not `sum-pc`.
 
 ## What is in the executable
 
@@ -52,7 +52,7 @@ Assert strings in the executable still carry the source paths from the original 
 | Multiplayer | `WSOCK32.dll` and PXO (`pxo.net`) |
 | Middleware | `binkw32.dll`, `EAX.DLL` |
 
-Matching follows the Windows projects that use [reccmp](https://github.com/isledecomp/reccmp). You compile this source with MSVC 6, link `build/Sum.exe`, and reccmp compares each function in that executable with the same address in `retail_bin/Sum.exe`. `reccmp-project.yml` names that retail file and its hash. `config/reccmp.csv` is that full address list. A function with no name yet is still an address, written as `fn_` plus the address. `extract_game.py` writes `reccmp-user.yml` with `retail_bin/Sum.exe`, and that file is gitignored.
+Matching follows the Windows projects that use [reccmp](https://github.com/isledecomp/reccmp) once a unit is linked, and the object split used by decomp-toolkit until then. `dtk coff split` writes one object per unit from `orig/sum-pc/Sum.exe`. objdiff compares `.text`, `.rdata`, and `.data` in that object with the object compiled from `src/`. `config/sum-pc/build.sha1` is the hash the finished `build/sum-pc/Sum.exe` has to meet. `reccmp-project.yml` names the retail file. `config/reccmp.csv` is the address list. A function with no name yet is still an address, written as `fn_` plus the address.
 
 ```sh
 pip install reccmp

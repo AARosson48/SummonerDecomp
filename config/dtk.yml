@@ -1,4 +1,4 @@
-object_base: retail_bin
+object_base: orig/sum-pc
 name: Sum
 object: Sum.exe
 hash: cdc5d71d447a89e9a1c5e176c65c9b129321d7fc

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Point the workspace at a local Summoner install without copying assets.
 
-Copies Sum.exe to retail_bin/Sum.exe and symlinks the VPP packages and
-runtime DLLs into assets/ and build/. retail_bin/ is gitignored. The public
-repository does not contain the retail executable.
+Copies Sum.exe to orig/sum-pc/Sum.exe and symlinks the VPP packages and
+runtime DLLs into assets/ and build/. orig/sum-pc/Sum.exe is gitignored. The
+public repository does not contain the retail executable.
 """
 
 import argparse
@@ -142,10 +142,10 @@ def setup(game_dir):
     os.makedirs(build, exist_ok=True)
     os.makedirs(assets, exist_ok=True)
 
-    retail = os.path.join(ROOT, "retail_bin")
+    retail = os.path.join(ROOT, "orig", "sum-pc")
     os.makedirs(retail, exist_ok=True)
     shutil.copy2(src_exe, os.path.join(retail, "Sum.exe"))
-    print(f"isolated {exe_name} -> retail_bin/Sum.exe ({digest})")
+    print(f"isolated {exe_name} -> orig/sum-pc/Sum.exe ({digest})")
     shutil.copy2(src_exe, os.path.join(baserom, "baserom.exe"))
 
     names = [name for name in os.listdir(game_dir) if name.lower().endswith(".vpp")]
@@ -170,7 +170,7 @@ def setup(game_dir):
     with open(user_yml, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("targets:\n")
         handle.write("  SUM:\n")
-        handle.write('    path: "retail_bin/Sum.exe"\n')
+        handle.write('    path: "orig/sum-pc/Sum.exe"\n')
     print("original executable recorded in reccmp-user.yml")
 
 

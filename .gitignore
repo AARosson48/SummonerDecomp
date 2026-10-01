@@ -3,6 +3,9 @@
 /baserom/*.exe
 /baserom/*.dll
 /retail_bin/
+/orig/**
+!/orig/sum-pc/
+!/orig/sum-pc/.gitkeep
 /assets/**
 !/assets/.gitkeep
 /project.local.json

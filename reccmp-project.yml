@@ -1,4 +1,4 @@
-# reccmp compares retail_bin/Sum.exe (private repo, checked out in CI) with build/Sum.exe.
+# reccmp compares orig/sum-pc/Sum.exe with build/sum-pc/Sum.exe once that link exists.
 # https://github.com/isledecomp/reccmp
 targets:
   SUM:
