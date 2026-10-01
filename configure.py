@@ -65,6 +65,7 @@ def compiled_units():
         ("bank/00555CF0", "src/vsdk/os/text.cpp"),
         ("bank/00559B80", "src/vsdk/vfile/vfs_file.cpp"),
         ("vsdk/parse/parse.cpp", "src/vsdk/parse/parse.cpp"),
+        ("vsdk/os/cmdline.cpp", "src/vsdk/os/cmdline.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
     ]
