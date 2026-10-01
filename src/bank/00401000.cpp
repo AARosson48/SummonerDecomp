@@ -461,7 +461,16 @@ void fn_00401C80(void);
 void fn_00401CE0(void);
 void fn_00401DA0(void);
 void fn_004011D0(void);
+void fn_00401EF0(void);
+void fn_004048D0(void);
+int* fn_00404960(int index);
+int fn_004049C0(int id);
+void fn_00404A00(void);
+void fn_00404A20(void);
 float fn_004134A0(void);
+void fn_00430030(float* a, float* b);
+void fn_00410760(void* dst, const char* name);
+unsigned char fn_0044B6B0(int id);
 int fn_00503E80(int kind);
 int fn_005026E0(const char* name, int group, int flags);
 unsigned char fn_00501360(int which);
@@ -1191,6 +1200,228 @@ void __stdcall fn_00404880(char* item, int stride, int count, StepFn step)
 		step(item);
 		item += stride;
 	} while (--count);
+}
+
+// Map panel. Nine images at 0x57E6B8: Map-Bkgrnd, the left and right arrows,
+// MapRecenter, and the close icon. hud-mapmask01.tga, Map-Label, hud-mapcamera.tga,
+// and You-R-Here.tga are loaded after the loop.
+
+void fn_00401EF0(void)
+{
+	char name[0x70];
+	float scale;
+	float mode_scale;
+	float span_x;
+	float span_y;
+	float larger;
+	int i;
+	int mode;
+	int image;
+	int width;
+	int height;
+	int* slot;
+	char* src;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 9; i++)
+	{
+		slot = (int*)(i * 0x18 + 0x005B2CC0);
+		src = (char*)(i * 0x40 + 0x0057E6B8);
+		slot[0] = 0;
+		slot[1] = -1;
+		slot[2] = 0;
+		slot[3] = 0;
+		slot[4] = 0;
+		slot[5] = 0;
+		fn_00503E80(0);
+		if (src[0] == 0)
+			continue;
+		strcpy(name, src);
+		strcat(name, *(char**)(*(int*)0x005BD318 * 4 + 0x0058BDA4));
+		image = fn_005026E0(name, *(int*)0x0060AC10, -1);
+		slot[1] = image;
+		mode = *(int*)0x0060AD68;
+		slot[2] = *(int*)(src + mode * 8 + 0x24);
+		slot[3] = *(int*)(src + mode * 8 + 0x28);
+		fn_00503500(image, &slot[4], &slot[5]);
+		slot[4] = (int)((float)slot[4] * scale + *(float*)0x0057E6B0);
+		slot[5] = (int)((float)slot[5] * scale + *(float*)0x0057E6B0);
+		if (i == 0)
+			slot[0] |= 1;
+	}
+	if (*(int*)0x0060A340 > 0)
+	{
+		mode = *(int*)0x0060AD68;
+		if (mode == 1)
+			mode_scale = 1.25f;
+		else if (mode == 2)
+			mode_scale = 1.6f;
+		else
+			mode_scale = 1.0f;
+		fn_00503500(*(int*)0x0060A344, &width, &height);
+		fn_00430030(&span_x, &span_y);
+		*(float*)0x005B2B3C = (float)width * span_x * mode_scale;
+		*(float*)0x005B2B40 = (float)height * span_y * mode_scale;
+	}
+	image = fn_005026E0(*(char**)0x00588BC0, *(int*)0x0060AC10, -1);
+	*(int*)0x005B2B34 = image;
+	fn_00503500(image, (int*)0x005B2C8C, (int*)0x005B2C90);
+	if (*(float*)0x005B2B3C > *(float*)0x005B2B40)
+		larger = *(float*)0x005B2B3C;
+	else
+		larger = *(float*)0x005B2B40;
+	*(int*)0x005B2B54 = (int)(*(float*)0x005B2B3C + larger + *(float*)0x0057E990);
+	if (*(float*)0x005B2B3C > *(float*)0x005B2B40)
+		larger = *(float*)0x005B2B3C;
+	else
+		larger = *(float*)0x005B2B40;
+	*(int*)0x005B2B58 = (int)(*(float*)0x005B2B40 + larger + *(float*)0x0057E990);
+	fn_00503E80(0);
+	image = fn_005026E0(*(char**)(*(int*)0x005BD318 * 4 + 0x00588BC8), *(int*)0x0060AC10, -1);
+	*(int*)0x005B2CA4 = image;
+	fn_00503500(image, (int*)0x005B2B70, (int*)0x005B2B74);
+	*(int*)0x005B2B70 = (int)((float)*(int*)0x005B2B70 * scale + *(float*)0x0057E6B0);
+	*(int*)0x005B2B74 = (int)((float)*(int*)0x005B2B74 * scale + *(float*)0x0057E6B0);
+	fn_00503E80(0);
+	image = fn_005026E0((char*)0x0057E928, *(int*)0x0060AC10, -1);
+	*(int*)0x005B2D9C = image;
+	fn_00503500(image, (int*)0x005B2DA0, (int*)0x005B2DA4);
+	fn_00503E80(0);
+	image = fn_005026E0((char*)0x0057E93C, *(int*)0x0060AC10, -1);
+	*(int*)0x005B2CB4 = image;
+	fn_00503500(image, (int*)0x005B2C80, (int*)0x005B2C84);
+	*(float*)0x005B2B6C =
+		((float)*(int*)0x005B2B58 / (float)*(int*)0x005B2C90
+			+ (float)*(int*)0x005B2B54 / (float)*(int*)0x005B2C8C)
+		* *(float*)0x0057E98C;
+}
+
+void fn_004048B0(void)
+{
+	((ConsoleCmd*)0x005B640C)->fn_005019E0();
+}
+
+int fn_004049C0(int id)
+{
+	int key;
+	int* table;
+	int count;
+	int* entry;
+	int i;
+
+	key = (id - 0x008CBEC0) >> 8;
+	table = *(int**)0x005B67F4;
+	count = table[3];
+	entry = (int*)table[4];
+	for (i = 0; i < count; i++)
+	{
+		if (entry[0] == key)
+			return i;
+		entry += 2;
+	}
+	return -1;
+}
+
+int* fn_00404960(int index)
+{
+	int left;
+	int i;
+	int* rec;
+
+	if (*(int*)0x005B6410 == 0)
+		return (int*)(*(int*)0x005B642C + index * 8);
+	left = index;
+	rec = (int*)0x00970824;
+	for (i = 0; i < *(int*)0x0097186C; i++)
+	{
+		if (fn_004049C0(*(int*)(rec[0] + 4)) >= 0)
+		{
+			if (left == 0)
+				return (int*)(*(int*)0x005B642C + index * 8);
+			left--;
+		}
+		rec += 2;
+	}
+	return 0;
+}
+
+void fn_004048D0(void)
+{
+	int index;
+	int* row;
+	int id;
+
+	index = *(int*)0x005B6424;
+	if (index < 0)
+	{
+		*(int*)0x005B6760 |= 4;
+		*(int*)0x005B6790 |= 4;
+		return;
+	}
+	row = fn_00404960(index);
+	id = (row[0] << 8) + 0x008CBEC0;
+	if (*(int*)0x005B6410 == 1 || *(int*)0x00971868 >= row[1])
+		*(int*)0x005B6760 &= ~4;
+	else
+		*(int*)0x005B6760 |= 4;
+	if (fn_0044B6B0(id))
+	{
+		*(int*)0x005B6790 &= ~4;
+		return;
+	}
+	*(int*)0x005B6790 |= 4;
+}
+
+void fn_00404A00(void)
+{
+	fn_00410760((void*)0x005B2DC0, (char*)0x00589810);
+}
+
+// Buy/Sell. Forty images at 0x588E08, from BuySell-Bkgrnd through the close icon.
+// The scrollbar is ScrollBarMid, chosen by the resolution int at 0x5BD318.
+
+void fn_00404A20(void)
+{
+	char name[0x70];
+	float scale;
+	int i;
+	int mode;
+	int image;
+	int* slot;
+	char* src;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 0x28; i++)
+	{
+		slot = (int*)(i * 0x18 + 0x005B6430);
+		src = (char*)(i * 0x40 + 0x00588E08);
+		slot[0] = 0;
+		slot[1] = -1;
+		slot[2] = 0;
+		slot[3] = 0;
+		slot[4] = 0;
+		slot[5] = 0;
+		fn_00503E80(0);
+		if (src[0] == 0)
+			continue;
+		strcpy(name, src);
+		strcat(name, *(char**)(*(int*)0x005BD318 * 4 + 0x0058BDA4));
+		image = fn_005026E0(name, *(int*)0x0060AC10, -1);
+		slot[1] = image;
+		mode = *(int*)0x0060AD68;
+		slot[2] = *(int*)(src + mode * 8 + 0x24);
+		slot[3] = *(int*)(src + mode * 8 + 0x28);
+		fn_00503500(image, &slot[4], &slot[5]);
+		slot[4] = (int)((float)slot[4] * scale + *(float*)0x0057E6B0);
+		slot[5] = (int)((float)slot[5] * scale + *(float*)0x0057E6B0);
+		if (i == 0)
+			slot[0] |= 1;
+	}
+	image = fn_005026E0(*(char**)(*(int*)0x005BD318 * 4 + 0x00589808), *(int*)0x0060AC10, -1);
+	*(int*)0x005B67F8 = image;
+	fn_00503500(image, (int*)0x005B641C, (int*)0x005B6420);
+	*(int*)0x005B641C = (int)((float)*(int*)0x005B641C * scale);
+	*(int*)0x005B6420 = (int)((float)*(int*)0x005B6420 * scale);
 }
 
 }
