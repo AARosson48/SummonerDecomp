@@ -1,0 +1,11 @@
+Sections:
+	.text       type:code align:4096
+	.rdata      type:rodata align:4096
+	.data       type:data align:4096
+	.rsrc       type:rodata align:4096
+
+Sum.exe:
+	.text       start:0x00401000 end:0x0057DB40
+	.rdata      start:0x0057E000 end:0x00587224
+	.data       start:0x00588000 end:0x005B3000
+	.rsrc       start:0x02FC0000 end:0x02FC0980

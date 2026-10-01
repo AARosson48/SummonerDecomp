@@ -1,0 +1,42 @@
+{
+  "version_id": "sum-pc",
+  "title": "Summoner (PC)",
+  "sha1": "cdc5d71d447a89e9a1c5e176c65c9b129321d7fc",
+  "size": 1785856,
+  "timestamp": 1006357788,
+  "linker": "6.0",
+  "imagebase": 4194304,
+  "entry_rva": 1499445,
+  "notes": [
+    "Optional-header linker version is 6.0 (MSVC 6.0).",
+    "COFF timestamp 1006357788 is 2001-11-21 15:49:48 UTC, a later compile than the March 2001 retail release.",
+    "On this install Sum.exe, Summ.exe, and rf.exe are byte-identical.",
+    "The import table has WSOCK32, OPENGL32, DDRAW, DINPUT, DSOUND, EAX.DLL, and binkw32. It does not import a DirectPlay DLL.",
+    "Multiplayer strings name PXO (pxo.net), the Parallax Online service also used by other Volition games.",
+    "Code total is .text VirtualSize. Data total is .rdata VirtualSize plus .data SizeOfRawData plus .rsrc VirtualSize. The .data virtual size is mostly uninitialized storage and is not included."
+  ],
+  "sections": [
+    {"name": ".text", "va": 4096, "vsize": 1559360, "rawptr": 4096, "rawsize": 1560576, "characteristics": 1610612768},
+    {"name": ".rdata", "va": 1564672, "vsize": 37412, "rawptr": 1564672, "rawsize": 40960, "characteristics": 1073741888},
+    {"name": ".data", "va": 1605632, "vsize": 44204792, "rawptr": 1605632, "rawsize": 176128, "characteristics": 3221225536},
+    {"name": ".rsrc", "va": 45842432, "vsize": 2432, "rawptr": 1781760, "rawsize": 4096, "characteristics": 1073741888}
+  ],
+  "imports": [
+    "KERNEL32.dll",
+    "USER32.dll",
+    "SHELL32.dll",
+    "OPENGL32.dll",
+    "DINPUT.dll",
+    "WINMM.dll",
+    "binkw32.dll",
+    "WSOCK32.dll",
+    "DDRAW.dll",
+    "DSOUND.dll",
+    "EAX.DLL",
+    "MSACM32.dll",
+    "GDI32.dll",
+    "ADVAPI32.dll",
+    "ole32.dll",
+    "GLU32.dll"
+  ]
+}

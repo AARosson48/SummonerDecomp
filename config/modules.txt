@@ -1,0 +1,37 @@
+# Assert paths recovered from Sum.exe. These are the translation units that
+# still name their original file. They are not the full source list.
+D:\projects\Summoner\pccode\Summoner\player\player.cpp
+D:\projects\Summoner\pccode\Engine\characterinfo\characterinfo.cpp
+D:\projects\Summoner\pccode\Engine\Objects\items.cpp
+D:\projects\Summoner\pccode\Engine\Objects\living_entity.cpp
+D:\projects\Summoner\pccode\Engine\gamesound\gamesound.cpp
+D:\projects\Summoner\pccode\Engine\Objects\objects.cpp
+D:\projects\Summoner\pccode\Engine\objects\item_paging.cpp
+D:\projects\Summoner\pccode\Engine\s3d\s3d.cpp
+D:\projects\Summoner\pccode\Engine\rendering\levelrender.cpp
+D:\projects\Summoner\pccode\Engine\ai\pathfinding.cpp
+D:\projects\Summoner\pccode\Engine\ai\boss_ai.cpp
+D:\projects\Summoner\pccode\Engine\ai\pathfinding_visibility.cpp
+D:\projects\Summoner\pccode\levelscripts\Scripts\level_scripts_common.cpp
+D:\projects\Summoner\pccode\levelscripts\conversation.cpp
+D:\projects\Summoner\pccode\levelscripts\script_internal.cpp
+D:\projects\Summoner\pccode\vsdk\bmpman\bmpman.cpp
+D:\projects\Summoner\pccode\vsdk\gr\gr.cpp
+D:\projects\Summoner\pccode\vsdk\gr\gr_font.cpp
+D:\projects\Summoner\pccode\vsdk\math\matrix.cpp
+D:\projects\Summoner\pccode\vsdk\os\registry.cpp
+D:\projects\Summoner\pccode\vsdk\os\memory.cpp
+D:\projects\Summoner\pccode\vsdk\parse\parse.cpp
+D:\projects\Summoner\pccode\vsdk\ca\character_instance.cpp
+D:\projects\Summoner\pccode\vsdk\geom\effect_mem.cpp
+D:\projects\Summoner\pccode\vsdk\ui\window.cpp
+D:\projects\Summoner\pccode\vsdk\vfile\packfile\file_packfile.cpp
+D:\projects\Summoner\pccode\vsdk\gr\directx\gr_direct3d.cpp
+D:\projects\Summoner\pccode\vsdk\os\cmdline.cpp
+D:\projects\Summoner\pccode\vsdk\ca\character.cpp
+D:\projects\Summoner\pccode\vsdk\ca\skeleton.cpp
+D:\projects\Summoner\pccode\vsdk\os\stringpool.cpp
+D:\projects\Summoner\pccode\vsdk\gr\glide\gr_glide.cpp
+D:\projects\Summoner\pccode\vsdk\gr\opengl\gr_opengl.cpp
+D:\projects\Summoner\pccode\vsdk\ui\ui_container.cpp
+D:\projects\Summoner\pccode\vsdk\bmpman\targautils.cpp

@@ -1,0 +1,82 @@
+# va size name
+# Symbols recovered code still references, with no body in src/.
+# Same columns as symbols.txt. Size 0 means the extent is not measured yet.
+# Not byte-matched.
+
+# Game functions. One address is one symbol; a second source name is only a comment.
+0043EA20 00000000 level_mount_fallback
+00503E80 00000000 vfs_note_open
+00511050 00000000 vfs_after_root_2
+005127C0 00000000 vfs_block_alloc
+00513160 00000000 packfile_basename
+005131E0 00000000 vfs_prepare_directory
+00523500 00000000 vfs_after_root_1
+00524640 00000000 vfs_after_root_0
+00531CB0 00000000 vfs_error
+005328D0 00000000 packfile_timer
+00544BA0 00000000 packfile_pool_init
+00544BE0 00000000 packfile_pool_shutdown
+00544C40 00000000 string_pool_copy
+00544CD0 00000000 string_pool_keep
+
+# packfile_error is vfs_error. packfile_pool_copy is string_pool_copy.
+# vfs_after_root_0 zeros 12 bytes. vfs_after_root_1 writes (0,0,0,1).
+# vfs_after_root_2 writes a 3x3 identity. Each is a thiscall on a BSS object.
+
+# CRT used by the recovered VFS and text code.
+0056C740 00000000 crt_sprintf
+0056C810 00000000 crt_strncpy
+0056CEBE 00000000 crt_tolower
+0056D02C 00000000 crt_fclose
+0056D13C 00000000 crt_fopen
+0056D1CD 00000000 crt_atexit
+0056D590 00000000 crt_strrchr
+0056DA2B 00000000 crt_printf
+0056DCF0 00000000 crt_strstr
+0056EA9B 00000000 crt_free
+0056EB84 00000000 crt_malloc
+0056ECFA 00000000 crt_atof
+0056F32C 00000000 crt_remove
+0056F5A6 00000000 crt_strlen
+0056F6DA 00000000 crt_setvbuf
+0056F789 00000000 crt_filelength
+0056F813 00000000 crt_fflush
+0056F979 00000000 crt_fseek
+0056FA32 00000000 crt_rename
+0056FA60 00000000 crt_toupper
+0056FBC8 00000000 crt_fread
+0056FCDF 00000000 crt_fwrite
+00570140 00000000 crt_strnicmp
+0057AE80 00000000 crt_stricmp
+0057B688 00000000 crt_stat
+
+# crt_remove calls DeleteFileA. crt_rename calls MoveFileA.
+# crt_filelength is vfs_loose_length. crt_stat is vfs_stat.
+# crt_tolower is vfs_tolower. crt_toupper is vfs_toupper.
+# crt_stricmp is vfs_stricmp. crt_strnicmp is vfs_strnicmp. crt_atof is vfs_text_float's converter.
+# crt_malloc is the fallback in vfs_heap_alloc3. crt_free is vfs_heap_free.
+
+# Import address table slots. Each slot is 4 bytes.
+0057E080 00000004 MoveFileA
+0057E088 00000004 DeleteFileA
+0057E1EC 00000004 GetLastError
+0057E20C 00000004 GetFileAttributesA
+0057E214 00000004 GetCurrentDirectoryA
+0057E218 00000004 SetFileAttributesA
+
+# Data the recovered code names but does not define.
+026B4268 00000000 g_vfs_string_pool
+026B638C 00000000 g_default_ext
+
+# Present in Sum.exe, already written inline in src. Kept here so the address stays attached to a name.
+00413190 00000000 vec3_assign_out
+004A4320 00000000 basis_copy
+00503DC0 00000010 signed_min
+0050F9B0 00000000 vec4_copy
+005131C0 00000020 extension_of
+005140B0 00000020 vfs_alloc_slot
+00514EB0 00000000 checksum_clear
+00515500 000000E0 vfs_ext_listed
+005155E0 00000040 vfs_lower_text
+# vfs_ext_listed lowercases a needle and searches an extension list. vfs_lower_text folds one string.
+0051B6C0 00000000 mat34_copy

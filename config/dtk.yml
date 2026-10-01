@@ -1,0 +1,8 @@
+object_base: baserom
+name: Sum
+object: baserom.exe
+hash: cdc5d71d447a89e9a1c5e176c65c9b129321d7fc
+symbols: config/dtk_symbols.txt
+splits: config/splits.txt
+linker_version: "6.0"
+timestamp: "2001-11-21T15:49:48+00:00"

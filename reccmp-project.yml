@@ -1,0 +1,10 @@
+# Compared with reccmp the same way LEGO Island compares a rebuild to the retail binary.
+# https://github.com/isledecomp/reccmp
+targets:
+  SUM:
+    filename: Sum.exe
+    source-root: src
+    hash:
+      sha256: f22c84a17ae4023a9113a68c76647feee41044ecde56ffb358744db47f8bf9d3
+    data-sources:
+      - config/reccmp.csv

@@ -1,0 +1,40 @@
+# PE layout for Sum.exe (sha1 cdc5d71d447a89e9a1c5e176c65c9b129321d7fc).
+# splat has no MSVC PE backend, so configure.py does not invoke it yet.
+# make_full_disasm_for_code stays on so a future splitter emits one object
+# per translation unit for objdiff.
+options:
+  platform: x86
+  basename: sum-pc
+  base_path: .
+  target_path: baserom/baserom.exe
+  asm_path: asm
+  src_path: src
+  build_path: build
+  compiler: MSVC
+  symbol_addrs_path: config/symbols.txt
+  make_full_disasm_for_code: True
+  sha1: cdc5d71d447a89e9a1c5e176c65c9b129321d7fc
+
+segments:
+  - name: text
+    type: code
+    start: 0x1000
+    vram: 0x401000
+    size: 0x17CB40
+    subsegments:
+      - [0x1000, c, main]
+  - name: rdata
+    type: rodata
+    start: 0x17E000
+    vram: 0x57E000
+    size: 0x9224
+  - name: data
+    type: data
+    start: 0x188000
+    vram: 0x588000
+    size: 0x2B000
+  - name: rsrc
+    type: rsrc
+    start: 0x1B3000
+    vram: 0x2BC0000
+    size: 0x980
