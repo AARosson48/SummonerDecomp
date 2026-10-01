@@ -55,10 +55,14 @@ def compiled_units():
     pairs = [
         ("bank/00401000", "src/bank/00401000.cpp"),
         ("bank/0043B260", "src/bank/0043B260.cpp"),
-        ("bank/00512880", "src/vsdk/vfile/vfile_paths.cpp"),
+        ("bank/00512880", "src/bank/00512880.cpp"),
         ("vsdk/os/memory.cpp", "src/vsdk/os/memory.cpp"),
+        ("bank/00524C10", "src/vsdk/vfile/vfs_file.cpp"),
         ("bank/00533620", "src/vsdk/vfile/packfile/file_packfile.cpp"),
         ("bank/005341A0", "src/vsdk/vfile/packfile/file_packfile.cpp"),
+        ("bank/0054F790", "src/vsdk/vfile/vfs_file.cpp"),
+        ("bank/00555CF0", "src/vsdk/os/text.cpp"),
+        ("bank/00559B80", "src/vsdk/vfile/vfs_file.cpp"),
     ]
     return [(unit, src) for unit, src in pairs if os.path.isfile(os.path.join(ROOT, src))]
 

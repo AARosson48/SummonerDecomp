@@ -24,11 +24,11 @@ static int text_ws(unsigned char ch) {
 }
 
 static void text_copy_z(char* dst, const char* src) {
-    std::memcpy(dst, src, std::strlen(src) + 1);
+memcpy(dst, src, strlen(src) + 1);
 }
 
 static void text_append_z(char* dst, const char* src) {
-    text_copy_z(dst + std::strlen(dst), src);
+    text_copy_z(dst + strlen(dst), src);
 }
 
 void vfs_text_clear(VfsText* text) {
@@ -42,7 +42,7 @@ void vfs_text_set(VfsText* text, const char* src, int max_len) {
     vfs_text_clear(text);
     int length = 0;
     if (src) {
-        length = (int)std::strlen(src);
+        length = (int)strlen(src);
     }
     if (max_len >= 0 && max_len < length) {
         length = max_len;
@@ -54,7 +54,7 @@ void vfs_text_set(VfsText* text, const char* src, int max_len) {
     }
     char* data = (char*)vfs_heap_alloc(length + 1);
     text->data = data;
-    std::memcpy(data, src, (size_t)length);
+memcpy(data, src, (size_t)length);
     data[length] = 0;
 }
 
@@ -128,7 +128,7 @@ int vfs_text_size(VfsText* text) {
     if (!text->data) {
         return 0;
     }
-    return (int)std::strlen(text->data);
+    return (int)strlen(text->data);
 }
 
 int vfs_text_empty(VfsText* text) {
@@ -172,7 +172,7 @@ VfsText* vfs_text_assign(VfsText* text, const char* src) {
     if (src == text->data) {
         return text;
     }
-    int length = (int)std::strlen(src);
+    int length = (int)strlen(src);
     if (length != text->length) {
         vfs_text_clear(text);
         vfs_text_set(text, src, -1);
@@ -181,7 +181,7 @@ VfsText* vfs_text_assign(VfsText* text, const char* src) {
     if (!text->data) {
         return text;
     }
-    std::memcpy(text->data, src, (size_t)length + 1);
+memcpy(text->data, src, (size_t)length + 1);
     return text;
 }
 
@@ -203,7 +203,7 @@ VfsText* vfs_text_slice(VfsText* text, VfsText* out, int start, int end) {
     }
     int count = end - start + 1;
     vfs_text_ctor_len(&local, count);
-    std::strncpy(local.data, text->data + start, (size_t)count);
+strncpy(local.data, text->data + start, (size_t)count);
     local.data[count] = 0;
     vfs_text_ctor_copy(out, &local);
     vfs_text_dtor(&local);
@@ -234,7 +234,7 @@ VfsText* vfs_text_right(VfsText* text, VfsText* out, int count) {
     } else if (count > 0) {
         int n = count + 1;
         vfs_text_resize(&local, n);
-        std::strncpy(local.data, text->data + (text->length - count), (size_t)n);
+strncpy(local.data, text->data + (text->length - count), (size_t)n);
     }
     vfs_text_ctor_copy(out, &local);
     vfs_text_dtor(&local);
@@ -248,7 +248,7 @@ VfsText* vfs_text_mid(VfsText* text, VfsText* out, int start, int count) {
         count = text->length - start;
     }
     if (count > 0) {
-        std::strncpy(local.data, text->data + start, (size_t)count);
+strncpy(local.data, text->data + start, (size_t)count);
         local.data[count] = 0;
     }
     vfs_text_ctor_copy(out, &local);
@@ -260,7 +260,7 @@ int vfs_text_find(VfsText* text, const char* needle, int from_end) {
     if (!needle) {
         return 0;
     }
-    int nlen = (int)std::strlen(needle);
+    int nlen = (int)strlen(needle);
     if (!nlen) {
         return 0;
     }
@@ -308,7 +308,7 @@ void vfs_text_trim_left(VfsText* text) {
         return;
     }
     char* src = text->data + index;
-    std::memmove(text->data, src, std::strlen(src) + 1);
+memmove(text->data, src, strlen(src) + 1);
 }
 
 void vfs_text_trim_right(VfsText* text) {
@@ -386,7 +386,7 @@ VfsText* vfs_text_concat_cstr(VfsText* out, const VfsText* text, const char* src
         return out;
     }
     VfsText local;
-    vfs_text_ctor_len(&local, (int)std::strlen(src) + text->length);
+    vfs_text_ctor_len(&local, (int)strlen(src) + text->length);
     if (local.length) {
         if (text->data) {
             text_copy_z(local.data, text->data);
@@ -404,7 +404,7 @@ VfsText* vfs_text_concat_cstr_left(VfsText* out, const char* src, const VfsText*
         return out;
     }
     VfsText local;
-    vfs_text_ctor_len(&local, (int)std::strlen(src) + text->length);
+    vfs_text_ctor_len(&local, (int)strlen(src) + text->length);
     if (local.length) {
         text_copy_z(local.data, src);
         if (text->data) {
@@ -419,7 +419,7 @@ VfsText* vfs_text_concat_cstr_left(VfsText* out, const char* src, const VfsText*
 VfsText* vfs_text_concat_char(VfsText* out, const VfsText* text, char value) {
     int n = 0;
     if (text->data) {
-        n = (int)std::strlen(text->data);
+        n = (int)strlen(text->data);
     }
     VfsText local;
     vfs_text_ctor_len(&local, n + 1);
@@ -436,7 +436,7 @@ VfsText* vfs_text_concat_char(VfsText* out, const VfsText* text, char value) {
 VfsText* vfs_text_concat_char_left(VfsText* out, char value, const VfsText* text) {
     int n = 0;
     if (text->data) {
-        n = (int)std::strlen(text->data);
+        n = (int)strlen(text->data);
     }
     VfsText local;
     vfs_text_ctor_len(&local, n + 1);
@@ -665,7 +665,7 @@ char* vfs_text_at(VfsText* text, int index) {
 
 VfsText* vfs_text_from_int(VfsText* out, int value) {
     char buf[0x40];
-    std::sprintf(buf, "%d", value);
+sprintf(buf, "%d", value);
     VfsText local;
     vfs_text_ctor_str(&local, buf);
     vfs_text_ctor_copy(out, &local);
@@ -675,7 +675,7 @@ VfsText* vfs_text_from_int(VfsText* out, int value) {
 
 VfsText* vfs_text_from_hex(VfsText* out, unsigned int value) {
     char buf[0x40];
-    std::sprintf(buf, "0x%x", value);
+sprintf(buf, "0x%x", value);
     VfsText local;
     vfs_text_ctor_str(&local, buf);
     vfs_text_ctor_copy(out, &local);
@@ -685,7 +685,7 @@ VfsText* vfs_text_from_hex(VfsText* out, unsigned int value) {
 
 VfsText* vfs_text_from_float(VfsText* out, float value, int precision) {
     char buf[0x40];
-    std::sprintf(buf, "%.*f", precision, (double)value);
+sprintf(buf, "%.*f", precision, (double)value);
     VfsText local;
     vfs_text_ctor_str(&local, buf);
     vfs_text_ctor_copy(out, &local);

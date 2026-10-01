@@ -61,7 +61,7 @@ static int ext_listed(const char* list, const char* ext) {
         needle[n] = (char)ch;
     }
     needle[n] = 0;
-    return std::strstr(list, needle) != 0;
+    return strstr(list, needle) != 0;
 }
 
 static unsigned char* cache_slot(int index) {
@@ -88,7 +88,7 @@ static int is_absolute(const char* name) {
 }
 
 static const char* extension_of(const char* name) {
-    const char* dot = std::strrchr(name, '.');
+    const char* dot = strrchr(name, '.');
     if (!dot) {
         return g_default_ext;
     }
@@ -113,7 +113,7 @@ int vfs_file_close(VfsFile* file) {
     } else {
         FILE* loose = *(FILE**)(slot + 0x802C);
         if (loose) {
-            failed = std::fclose(loose);
+            failed = fclose(loose);
         }
     }
     *(FILE**)(slot + 0x802C) = 0;
@@ -132,7 +132,7 @@ void vfs_file_dtor(VfsFile* file) {
     }
 }
 
-static int vfs_file_probe(VfsFile* file, const char* path, PackfileEntry** out_entry, int search_packs) {
+extern "C" int vfs_file_probe(VfsFile* file, const char* path, PackfileEntry** out_entry, int search_packs) {
     char scratch[0x24];
     *out_entry = 0;
     if (vfs_stat(path, scratch) == 0) {
@@ -150,35 +150,36 @@ static int vfs_file_probe(VfsFile* file, const char* path, PackfileEntry** out_e
     return 0;
 }
 
-static int vfs_file_try_hd(VfsFile* file, const char* name, int path_id, PackfileEntry** out_entry, int search_packs) {
+extern "C" int vfs_file_try_hd(VfsFile* file, const char* name, int path_id, PackfileEntry** out_entry, int search_packs) {
     vfs_make_hd_path(path_id, name, file->path);
     file->path_id = path_id;
     return vfs_file_probe(file, file->path, out_entry, search_packs);
 }
 
 int vfs_file_open(VfsFile* file, const char* name, int path_id) {
+    int i;
     if (!name || !name[0]) {
         return 0;
     }
     file->found = 0;
     file->opened = 0;
     if (is_absolute(name)) {
-        std::strcpy(file->path, name);
+strcpy(file->path, name);
         file->path_id = -1;
         return vfs_file_probe(file, file->path, &file->entry, 0);
     }
     if (path_id == VFS_ANY_PATH) {
         char ext[64];
-        const char* dot = std::strrchr(name, '.');
+        const char* dot = strrchr(name, '.');
         ext[0] = 0;
         if (dot) {
-            std::strncpy(ext, dot, 62);
+strncpy(ext, dot, 62);
             ext[62] = 0;
-            int len = (int)std::strlen(ext);
+            int len = (int)strlen(ext);
             ext[len] = ' ';
             ext[len + 1] = 0;
         }
-        for (int i = 0; i < VFS_SEARCH_SLOTS; i++) {
+        for (i = 0; i < VFS_SEARCH_SLOTS; i++) {
             if (!vfs_path_id_ok(i)) {
                 continue;
             }
@@ -204,17 +205,17 @@ int vfs_file_open(VfsFile* file, const char* name, int path_id) {
     }
 
     char ext[64];
-    const char* dot = std::strrchr(name, '.');
+    const char* dot = strrchr(name, '.');
     ext[0] = 0;
     if (dot) {
-        std::strncpy(ext, dot, 62);
+strncpy(ext, dot, 62);
         ext[62] = 0;
-        int len = (int)std::strlen(ext);
+        int len = (int)strlen(ext);
         ext[len] = ' ';
         ext[len + 1] = 0;
     }
     int found = -1;
-    for (int i = 0; i < VFS_SEARCH_SLOTS; i++) {
+    for (i = 0; i < VFS_SEARCH_SLOTS; i++) {
         if (!vfs_path_id_ok(i)) {
             continue;
         }
@@ -243,7 +244,7 @@ int vfs_file_acquire(VfsFile* file, unsigned int mode) {
             vfs_prepare_directory(file->path_id);
         }
         const char* how = (mode & 0x80000000u) ? "wt" : "wb";
-        FILE* loose = std::fopen(file->path, how);
+        FILE* loose = fopen(file->path, how);
         *(FILE**)(cache + 0x802C) = loose;
         if (!loose) {
             return (int)VFS_OPEN_FAILED;
@@ -271,7 +272,7 @@ int vfs_file_acquire(VfsFile* file, unsigned int mode) {
         }
         *(unsigned int*)(cache + 0x1C) = file->entry->size;
     } else {
-        FILE* loose = std::fopen(file->path, "rb");
+        FILE* loose = fopen(file->path, "rb");
         *(FILE**)(cache + 0x802C) = loose;
         if (!loose) {
             return (int)VFS_OPEN_FAILED;
@@ -280,7 +281,7 @@ int vfs_file_acquire(VfsFile* file, unsigned int mode) {
     }
     FILE* loose = *(FILE**)(cache + 0x802C);
     if (loose) {
-        std::setvbuf(loose, 0, _IONBF, 0);
+setvbuf(loose, 0, _IONBF, 0);
     }
     *(unsigned int*)cache = mode;
     *(int*)(cache + 4) = 0;
@@ -301,7 +302,7 @@ int vfs_file_acquire(VfsFile* file, unsigned int mode) {
 int vfs_file_open_mode(VfsFile* file, const char* name, int path_id, unsigned int mode) {
     const char* ext = extension_of(name);
     if (path_id != VFS_ANY_PATH && vfs_file_open(file, name, path_id)) {
-        std::strncpy(g_cached_ext, ext, 31);
+strncpy(g_cached_ext, ext, 31);
         g_cached_ext[31] = 0;
         return vfs_file_acquire(file, mode);
     }
@@ -316,7 +317,7 @@ int vfs_file_open_mode(VfsFile* file, const char* name, int path_id, unsigned in
         return code;
     }
     g_cached_path = file->path_id;
-    std::strncpy(g_cached_ext, ext, 31);
+strncpy(g_cached_ext, ext, 31);
     g_cached_ext[31] = 0;
     return 0;
 }
@@ -333,12 +334,12 @@ int vfs_file_archive_path(VfsFile* file, char* dst, int* out_offset, int max_len
         return 0;
     }
     char built[0x200];
-    std::strcpy(built, g_hd_root);
-    std::strcat(built, file->entry->pack->name);
-    if ((unsigned)std::strlen(built) > (unsigned)(max_len - 1)) {
+strcpy(built, g_hd_root);
+strcat(built, file->entry->pack->name);
+    if ((unsigned)strlen(built) > (unsigned)(max_len - 1)) {
         return 0;
     }
-    std::strcpy(dst, built);
+strcpy(dst, built);
     *out_offset = file->entry->sector << 11;
     return 1;
 }
@@ -364,7 +365,7 @@ char* vfs_file_path(VfsFile* file) {
 }
 
 char* vfs_file_leaf(VfsFile* file) {
-    char* slash = std::strrchr(file->path, '\\');
+    char* slash = strrchr(file->path, '\\');
     if (!slash) {
         return file->path;
     }
@@ -385,7 +386,7 @@ int vfs_file_read_ready(VfsFile* file) {
 int vfs_file_flush(VfsFile* file) {
     unsigned char* slot = cache_slot(file->slot);
     FILE* loose = *(FILE**)(slot + 0x802C);
-    if (loose && std::fflush(loose) != 0 && *(int*)(slot + 0x0C) == 0) {
+    if (loose && fflush(loose) != 0 && *(int*)(slot + 0x0C) == 0) {
         *(int*)(slot + 0x0C) = (int)VFS_OPEN_FAILED;
     }
     return *(int*)(slot + 0x0C);
@@ -401,12 +402,12 @@ int vfs_file_length(VfsFile* file, const char* name, int path_id) {
         return (int)file->entry->size;
     }
     if (file->slot < 0) {
-        FILE* loose = std::fopen(file->path, "rb");
+        FILE* loose = fopen(file->path, "rb");
         if (!loose) {
             return (int)VFS_OPEN_NOTFOUND;
         }
         int length = vfs_loose_length(*(void**)((unsigned char*)loose + 0x10));
-        std::fclose(loose);
+fclose(loose);
         return length;
     }
     return *(int*)(cache_slot(file->slot) + 0x1C);
@@ -444,7 +445,7 @@ int vfs_file_seek(VfsFile* file, int offset, int origin) {
     if (file->entry) {
         failed = !packfile_seek(file->entry, pos, 0);
     } else {
-        failed = std::fseek(*(FILE**)(slot + 0x802C), pos, 0) != 0;
+        failed = fseek(*(FILE**)(slot + 0x802C), pos, 0) != 0;
     }
     if (failed) {
         return (int)VFS_OPEN_FAILED;
@@ -498,14 +499,14 @@ int vfs_file_rename(VfsFile* file, const char* new_name, const char* name, int p
         return (int)VFS_OPEN_PACKED;
     }
     char dir[0x200];
-    std::strcpy(dir, file->path);
-    *std::strrchr(dir, '\\') = 0;
+strcpy(dir, file->path);
+    *strrchr(dir, '\\') = 0;
     char built[0x100];
-    std::sprintf(built, "%s\\%s", dir, new_name);
+sprintf(built, "%s\\%s", dir, new_name);
     if (!MoveFileA(file->path, built)) {
         return (int)VFS_OPEN_FAILED;
     }
-    std::strcpy(file->path, built);
+strcpy(file->path, built);
     return 0;
 }
 
@@ -608,7 +609,7 @@ static int lesser(int a, int b) {
 static unsigned int g_crc_table[256];
 static int g_crc_ready;
 
-static void crc32_build(unsigned int* scratch) {
+extern "C" void crc32_build(unsigned int* scratch) {
     for (int i = 0; i < 256; i++) {
         *scratch = (unsigned int)i;
         for (int bit = 0; bit < 8; bit++) {
@@ -626,7 +627,7 @@ static void crc32_build(unsigned int* scratch) {
     *scratch = 0;
 }
 
-static unsigned int crc32_update(unsigned int* crc, const unsigned char* data, int length) {
+extern "C" unsigned int crc32_update(unsigned int* crc, const unsigned char* data, int length) {
     if (!g_crc_ready) {
         crc32_build(crc);
     }
@@ -642,19 +643,19 @@ static unsigned int crc32_update(unsigned int* crc, const unsigned char* data, i
     return value;
 }
 
-static void scramble_save(const unsigned int* state, unsigned int* dst) {
+extern "C" void scramble_save(const unsigned int* state, unsigned int* dst) {
     dst[0] = state[0];
     dst[1] = state[1];
     dst[2] = state[2];
 }
 
-static void scramble_init(unsigned int* state, const unsigned int* seed) {
+extern "C" void scramble_init(unsigned int* state, const unsigned int* seed) {
     state[0] = seed[0] ? seed[0] : 0x891E7682u;
     state[1] = seed[1] ? seed[1] : 0x6C485F72u;
     state[2] = seed[2] ? seed[2] : 0x5BD48E3Au;
 }
 
-static void scramble_update(unsigned int* state, unsigned char* data, int length) {
+extern "C" void scramble_update(unsigned int* state, unsigned char* data, int length) {
     if (length == 0) {
         return;
     }
@@ -713,7 +714,7 @@ int vfs_file_read(VfsFile* file, void* dst, int count, int min_user, int unused)
     int from_window = lesser(slot->window_size - slot->window_pos, count);
     int copy_len = from_window < 0 ? 0 : from_window;
     unsigned char* out = (unsigned char*)dst;
-    std::memcpy(out, slot->window + slot->window_pos, (size_t)copy_len);
+memcpy(out, slot->window + slot->window_pos, (size_t)copy_len);
     slot->window_pos += from_window;
     int remain = count - from_window;
     if (remain > 0) {
@@ -724,7 +725,7 @@ int vfs_file_read(VfsFile* file, void* dst, int count, int min_user, int unused)
             slot->window_base = -1;
             int got;
             if (slot->loose) {
-                got = (int)std::fread(cursor, 1, (size_t)remain, slot->loose);
+                got = (int)fread(cursor, 1, (size_t)remain, slot->loose);
             } else {
                 got = packfile_read(cursor, 1, remain, file->entry);
             }
@@ -733,7 +734,7 @@ int vfs_file_read(VfsFile* file, void* dst, int count, int min_user, int unused)
             int left = slot->size - from_window - slot->position;
             int fill = lesser(left, 0x8000);
             if (slot->loose) {
-                int got = (int)std::fread(slot->window, 1, (size_t)fill, slot->loose);
+                int got = (int)fread(slot->window, 1, (size_t)fill, slot->loose);
                 slot->window_size = got;
                 if (got < fill && !vfs_file_at_end(file)) {
                     slot->error = (int)VFS_OPEN_FAILED;
@@ -747,7 +748,7 @@ int vfs_file_read(VfsFile* file, void* dst, int count, int min_user, int unused)
             if (take < 0) {
                 take = 0;
             }
-            std::memcpy(cursor, slot->window, (size_t)take);
+memcpy(cursor, slot->window, (size_t)take);
             slot->window_pos = take;
             from_window += take;
         }
@@ -924,7 +925,7 @@ void vfs_write_raw(VfsFile* file, void* data, int count) {
         unsigned int saved[3];
         scramble_save(slot->scramble, saved);
         scramble_update(slot->scramble, bytes, count);
-        int wrote = (int)std::fwrite(bytes, (size_t)count, 1, slot->loose);
+        int wrote = (int)fwrite(bytes, (size_t)count, 1, slot->loose);
         scramble_init(slot->scramble, saved);
         scramble_update(slot->scramble, bytes, count);
         if (!wrote) {
@@ -932,7 +933,7 @@ void vfs_write_raw(VfsFile* file, void* data, int count) {
             return;
         }
     } else {
-        int wrote = (int)std::fwrite(bytes, (size_t)count, 1, slot->loose);
+        int wrote = (int)fwrite(bytes, (size_t)count, 1, slot->loose);
         if (!wrote) {
             slot->error = (int)VFS_IO_FAILED;
             return;
@@ -1001,7 +1002,7 @@ void vfs_write_mat34(VfsFile* file, const void* value) {
     const unsigned char* v = (const unsigned char*)value;
     for (int i = 0; i < 12; i++) {
         unsigned int bits;
-        std::memcpy(&bits, v + offsets[i], 4);
+memcpy(&bits, v + offsets[i], 4);
         vfs_write_dword_c(file, bits);
     }
 }
@@ -1011,7 +1012,7 @@ void vfs_write_string(VfsFile* file, const char* text, int length) {
         text = g_blank_string;
     }
     if (length < 0) {
-        length = (int)std::strlen(text);
+        length = (int)strlen(text);
     }
     vfs_write_word_b(file, (unsigned short)length);
     if (length) {
@@ -1023,7 +1024,7 @@ void vfs_write_cstr(VfsFile* file, const char* text) {
     if (!text) {
         text = g_blank_cstr;
     }
-    vfs_write_raw(file, (void*)text, (int)std::strlen(text) + 1);
+    vfs_write_raw(file, (void*)text, (int)strlen(text) + 1);
 }
 
 void vfs_write_line(VfsFile* file, const char* text, int length) {
@@ -1035,16 +1036,16 @@ void vfs_write_line(VfsFile* file, const char* text, int length) {
         text = g_blank_line;
     }
     if (length < 0) {
-        length = (int)std::strlen(text);
+        length = (int)strlen(text);
     }
     if (length) {
-        if (!std::fwrite(text, (size_t)length, 1, slot->loose)) {
+        if (!fwrite(text, (size_t)length, 1, slot->loose)) {
             slot->error = (int)VFS_IO_FAILED;
             return;
         }
     }
     char newline = '\n';
-    if (!std::fwrite(&newline, 1, 1, slot->loose)) {
+    if (!fwrite(&newline, 1, 1, slot->loose)) {
         slot->error = (int)VFS_IO_FAILED;
     }
 }
@@ -1110,7 +1111,7 @@ void vfs_io_float(VfsFile* file, float* value, int version, float fallback) {
         *value = vfs_read_float(file, version, fallback);
     } else {
         unsigned int bits;
-        std::memcpy(&bits, value, 4);
+memcpy(&bits, value, 4);
         vfs_write_dword_c(file, bits);
     }
 }
@@ -1129,7 +1130,7 @@ static void copy_n(char* dst, const char* src, int count) {
 
 void vfs_read_vec3(VfsFile* file, void* dst, int version, const void* fallback) {
     if (!vfs_file_user_ge(file, version)) {
-        std::memcpy(dst, fallback, 12);
+memcpy(dst, fallback, 12);
         return;
     }
     vfs_file_read(file, dst, 12, version, 0);
@@ -1137,7 +1138,7 @@ void vfs_read_vec3(VfsFile* file, void* dst, int version, const void* fallback) 
 
 void vfs_read_vec4(VfsFile* file, void* dst, int version, const void* fallback) {
     if (!vfs_file_user_ge(file, version)) {
-        std::memcpy(dst, fallback, 16);
+memcpy(dst, fallback, 16);
         return;
     }
     float* out = (float*)dst;
@@ -1149,7 +1150,7 @@ void vfs_read_vec4(VfsFile* file, void* dst, int version, const void* fallback) 
 
 void vfs_read_basis(VfsFile* file, void* dst, int version, const void* fallback) {
     if (!vfs_file_user_ge(file, version)) {
-        std::memcpy(dst, fallback, 0x24);
+memcpy(dst, fallback, 0x24);
         return;
     }
     unsigned char* out = (unsigned char*)dst;
@@ -1160,7 +1161,7 @@ void vfs_read_basis(VfsFile* file, void* dst, int version, const void* fallback)
 
 void vfs_read_mat34(VfsFile* file, void* dst, int version, const void* fallback) {
     if (!vfs_file_user_ge(file, version)) {
-        std::memcpy(dst, fallback, 0x30);
+memcpy(dst, fallback, 0x30);
         return;
     }
     float* out = (float*)dst;
@@ -1257,7 +1258,7 @@ void vfs_read_cstr(VfsFile* file, char* dst, int max_len, int version, const cha
     }
     if (!vfs_file_user_ge(file, version)) {
         if (fallback) {
-            std::strcpy(dst, fallback);
+strcpy(dst, fallback);
         }
         return;
     }
