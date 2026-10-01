@@ -83,6 +83,43 @@ void fn_004191B0(void)
 	load_ui_bar((int*)0x5C1848, (int*)0x5C184C, (int*)0x5C1850, 0x58D4A0, scale);
 }
 
+void fn_004185A0(void)
+{
+	float scale;
+	int i;
+	int image;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 7; i++) {
+		fn_00503E80(0);
+		load_ui_slot((UiSlot*)0x5C1470 + i, (char*)(0x58CBD8 + i * 0x40), scale, i == 0);
+	}
+	fn_00503E80(0);
+	image = fn_005026E0(*(char**)(*(int*)0x5BD318 * 4 + 0x58CD98), *(int*)0x60AC10, -1);
+	*(int*)0x5C1558 = image;
+	fn_00503500(image, (int*)0x5C1550, (int*)0x5C1554);
+	*(int*)0x5C1550 = (int)((float)*(int*)0x5C1550 * scale);
+	*(int*)0x5C1554 = (int)((float)*(int*)0x5C1554 * scale);
+}
+
+void fn_0041A960(void)
+{
+	float scale;
+	int i;
+	int image;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 19; i++) {
+		fn_00503E80(0);
+		load_ui_slot((UiSlot*)0x5C18C0 + i, (char*)(0x58D4B8 + i * 0x40), scale, i == 0);
+	}
+	image = fn_005026E0(*(char**)(*(int*)0x5BD318 * 4 + 0x58D978), *(int*)0x60AC10, -1);
+	*(int*)0x5C1A88 = image;
+	fn_00503500(image, (int*)0x5C1AA8, (int*)0x5C1AAC);
+	*(int*)0x5C1AA8 = (int)((float)*(int*)0x5C1AA8 * scale);
+	*(int*)0x5C1AAC = (int)((float)*(int*)0x5C1AAC * scale);
+}
+
 void fn_0041BEE0(void)
 {
 	float scale;

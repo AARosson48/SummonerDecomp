@@ -1,19 +1,13 @@
-// Leaf functions in bank/00422DD0. Each one is a load, a store, or a constant return.
-// fn_004254E0 builds the save and load screen.
+// Menus in bank/0041EF30. fn_0041EF30 builds Options. fn_00421590 builds the pause popup.
 
 #include <string.h>
 
 extern "C" {
 
-void fn_00425260()
-{
-	*(unsigned char*)0x5c4274 = 0;
-}
-
 float fn_004134A0(void);
 int fn_005026E0(char* name, int pack, int mode);
 void fn_00503500(int id, int* w, int* h);
-int fn_00503CF0(int a, int b, int c, int d, int e, int f);
+void fn_00503E80(int value);
 
 static void load_menu_slot(int* slot, char* src, float scale, int mark)
 {
@@ -46,21 +40,31 @@ static void load_menu_slot(int* slot, char* src, float scale, int mark)
 		slot[0] |= 1;
 }
 
-void fn_004254E0(void)
+void fn_0041EF30(void)
 {
 	float scale;
 	int i;
-	int image;
 
 	scale = fn_004134A0();
-	for (i = 0; i < 23; i++)
-		load_menu_slot((int*)(i * 0x18 + 0x5C5970), (char*)(i * 0x40 + 0x590068), scale, i == 0);
-	image = fn_005026E0(*(char**)(*(int*)0x5BD318 * 4 + 0x590628), *(int*)0x60AC10, -1);
-	*(int*)0x5E35E8 = image;
-	fn_00503500(image, (int*)0x5E35E0, (int*)0x5E35E4);
-	*(int*)0x5E35E0 = (int)((float)*(int*)0x5E35E0 * scale);
-	*(int*)0x5E35E4 = (int)((float)*(int*)0x5E35E4 * scale);
-	*(int*)0x590630 = fn_00503CF0(3, 0xC9, 0x97, 0x5E5D28, 0, -1);
+	for (i = 0; i < 75; i++) {
+		load_menu_slot(
+			(int*)(i * 0x18 + 0x5C3328),
+			(char*)(i * 0x40 + 0x58E0D0),
+			scale,
+			i == 0 || i == 1 || i == 2 || i == 19 || i == 70);
+	}
+}
+
+void fn_00421590(void)
+{
+	float scale;
+	int i;
+
+	scale = fn_004134A0();
+	for (i = 0; i < 9; i++) {
+		fn_00503E80(0);
+		load_menu_slot((int*)(i * 0x18 + 0x5C3B80), (char*)(i * 0x40 + 0x58F4B8), scale, i == 0);
+	}
 }
 
 }
