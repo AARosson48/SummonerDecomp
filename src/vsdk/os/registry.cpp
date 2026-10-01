@@ -4,7 +4,7 @@
 #include <cstdio>
 
 extern "C" int _stricmp(const char* a, const char* b);
-extern "C" void parse_fail(const char* file, int line, const char* msg);
+extern "C" void fn_00531CB0(const char* file, int line, const char* msg);
 
 extern "C" unsigned fn_00511F90(const char* name) {
     char message[0x100];
@@ -22,6 +22,6 @@ extern "C" unsigned fn_00511F90(const char* name) {
     }
     sprintf(message, "Bogus HKEY_ string: %s", name);
     for (;;) {
-        parse_fail("D:\\projects\\Summoner\\pccode\\vsdk\\os\\registry.cpp", 0xB9, message);
+        fn_00531CB0("D:\\projects\\Summoner\\pccode\\vsdk\\os\\registry.cpp", 0xB9, message);
     }
 }
