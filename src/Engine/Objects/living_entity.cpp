@@ -2,17 +2,34 @@
 // This file keeps a frame pointer. The large bodies are the same shape.
 
 struct Entity {
-    char pad_0[0x34];
+    char pad_0[0xc];
+    int kind;
+    char pad_10[0x34 - 0x10];
     int field_34;
     char pad_38[0x84 - 0x38];
     int field_84;
-    char pad_88[0x314 - 0x88];
+    char pad_88[0x98 - 0x88];
+    int field_98;
+    char pad_9c[0x314 - 0x9c];
     void* anim;
     char pad_318[0x320 - 0x318];
     int flags_320;
-    char pad_324[0x678 - 0x324];
+    char pad_324[0x56c - 0x324];
+    int field_56c;
+    char pad_570[0x60c - 0x570];
+    int field_60c;
+    char pad_610[0x678 - 0x610];
     short foot_l;
     short foot_r;
+    char pad_67c[0x698 - 0x67c];
+    float field_698;
+    char pad_69c[0x6ac - 0x69c];
+    int field_6ac;
+    char pad_6b0[0x6cc - 0x6b0];
+    int anim_id;
+    void* clip;
+    char pad_6d4[0x71c - 0x6d4];
+    void* level;
 
     void fn_0045D4C0();
     bool fn_00455950(int which);
@@ -34,7 +51,7 @@ struct Entity {
     void* fn_00461370(int kind, int value);
     void* fn_004613B0(int kind, int value);
     float fn_004613F0(int id);
-    int fn_00461450(int id, float* out);
+    bool fn_00461450(int id, float* out);
     int fn_004614D0(int id);
     void* fn_00461500();
     void* fn_00461540();
@@ -69,6 +86,8 @@ struct Entity {
     float fn_0045A930(float value);
     void fn_004616F0(int id);
     int fn_00461840();
+    bool fn_00462DE0();
+    void fn_00454670(int value);
 };
 
 struct SubHit {
@@ -78,6 +97,19 @@ struct SubHit {
 
 struct BoneSet {
     int fn_00540F70(const char* name);
+};
+
+struct AnimInst {
+    char pad_0[0x3c];
+    BoneSet* bones;
+
+    float fn_0051B000(int id);
+    float fn_0051B0C0(int id);
+};
+
+struct ClipRec {
+    char pad_0[8];
+    int id;
 };
 
 #pragma optimize("", off)
@@ -826,17 +858,19 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
 }
 
 void Entity::fn_0045D4C0() {
-    int left = 0;
-    int right = 0;
-    BoneSet* bones = *(BoneSet**)((char*)anim + 0x3c);
-    left = bones->fn_00540F70("BDBN-Foot-L");
-    bones = *(BoneSet**)((char*)anim + 0x3c);
-    right = bones->fn_00540F70("BDBN-Foot-R");
+    BoneSet* right_bones;
+    BoneSet* left_bones;
+    int right;
+    int left;
+    left = 0;
+    right = 0;
+    left_bones = ((AnimInst*)anim)->bones;
+    left = left_bones->fn_00540F70("BDBN-Foot-L");
+    right_bones = ((AnimInst*)anim)->bones;
+    right = right_bones->fn_00540F70("BDBN-Foot-R");
     foot_l = (short)left;
     foot_r = (short)right;
 }
-
-#pragma optimize("", on)
 
 struct Vec3 {
     float x;
@@ -851,17 +885,15 @@ struct ConsoleCmd {
     void fn_0050A180(const char* name, const char* help, void (*handler)());
 };
 
-extern "C" int fn_00462DE0(Entity* ent);
+extern "C" void fn_00461890();
+extern "C" void fn_004619B0();
 extern "C" void* fn_004A1B70(Entity* ent, int* value);
 extern "C" void* fn_004A1BE0(Entity* ent, void* value);
-extern "C" float fn_0051B000(void* anim, int id);
-extern "C" float fn_0051B0C0(void* anim, int id);
 extern "C" void* fn_00446CB0(void* table, int kind, int value, int flag);
 extern "C" void* fn_00446D10(void* table, int kind, int value, int flag);
 extern "C" int fn_00570140(void* text, const char* name, int length);
 extern "C" int fn_0056D790();
 extern "C" int fn_0046A100(Entity* ent);
-extern "C" void fn_00454670(Entity* ent, int value);
 extern "C" void fn_0044E1C0(void* slot, int a, int b, float* c, int* d, int e);
 extern "C" void fn_00472450(void* node);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
@@ -877,26 +909,26 @@ extern "C" int fn_004587F0() {
 }
 
 float Entity::fn_00456F80() {
-    if (fn_00462DE0(this) == 0) {
-        return *(float*)((char*)this + 0x698);
+    if (fn_00462DE0()) {
+        return 0.0f;
     }
-    return 0.0f;
+    return field_698;
 }
 
 Entity* Entity::fn_004570D0(int value) {
-    *(int*)((char*)this + 0x6ac) = value;
+    field_6ac = value;
     return this;
 }
 
 Entity* Entity::fn_004570F0(int* value) {
-    if (*(int*)((char*)this + 0xc) != 9) {
+    if (kind != 9) {
         return this;
     }
     return (Entity*)fn_004A1B70(this, value);
 }
 
 Entity* Entity::fn_00457120(void* value) {
-    if (*(int*)((char*)this + 0xc) != 9) {
+    if (kind != 9) {
         return this;
     }
     return (Entity*)fn_004A1BE0(this, value);
@@ -925,79 +957,77 @@ extern "C" void fn_0045DD80(Entity* ent, int value) {
             *(int*)(index * 0xc + 0x9416CC) = value;
             row = ent->fn_00461500();
             *(float*)(index * 0xc + 0x9416D0) =
-                0.5f / fn_0051B0C0(*(void**)((char*)ent + 0x314), *(int*)((char*)row + 8));
+                0.5f / ((AnimInst*)ent->anim)->fn_0051B0C0(*(int*)((char*)row + 8));
             break;
         }
     }
 }
 
 Entity* Entity::fn_0045DE20(int mode) {
-    char* self = (char*)this;
-    void* clip;
-    int played;
-    if (*(int*)(self + 0xc) == 9) {
+    void* played_clip;
+    if (kind == 9) {
         return this;
     }
-    clip = fn_00461370(4, mode);
-    if (clip == 0) {
+    played_clip = fn_00461370(4, mode);
+    if (played_clip == 0) {
         return 0;
     }
-    played = (int)fn_00460F20(clip, 1.0f, 1, 1, 0);
-    if (played == -1) {
+    if ((int)fn_00460F20(played_clip, 1.0f, 1, 1, 0) == -1) {
         return (Entity*)-1;
     }
-    fn_00454670(this, -1);
-    *(int*)(self + 0x320) |= 4;
-    *(int*)(self + 0x56c) = 0;
+    fn_00454670(-1);
+    flags_320 |= 4;
+    field_56c = 0;
     return this;
 }
 
-void* Entity::fn_00461370(int kind, int value) {
-    if (kind == 4 && *(int*)((char*)this + 0xc) == 9) {
+void* Entity::fn_00461370(int clip_kind, int value) {
+    if (clip_kind == 4 && kind == 9) {
         return 0;
     }
-    return fn_00446CB0(*(void**)((char*)this + 0x71c), kind, value, 1);
+    return fn_00446CB0(level, clip_kind, value, 1);
 }
 
-void* Entity::fn_004613B0(int kind, int value) {
-    if (kind == 4 && *(int*)((char*)this + 0xc) == 9) {
+void* Entity::fn_004613B0(int clip_kind, int value) {
+    if (clip_kind == 4 && kind == 9) {
         return 0;
     }
-    return fn_00446D10(*(void**)((char*)this + 0x71c), kind, value, 1);
+    return fn_00446D10(level, clip_kind, value, 1);
 }
 
 float Entity::fn_004613F0(int id) {
     float sample;
     float length;
-    char* self = (char*)this;
-    if (fn_00461450(id, &sample) == 0) {
+    if (!fn_00461450(id, &sample)) {
         return 1.0f;
     }
-    length = fn_0051B0C0(*(void**)(self + 0x314), *(int*)(*(char**)(self + 0x6d0) + 8));
+    length = ((AnimInst*)anim)->fn_0051B0C0(((ClipRec*)clip)->id);
     return (length - sample) / length;
 }
 
-int Entity::fn_00461450(int id, float* out) {
+bool Entity::fn_00461450(int id, float* out) {
     float local;
     float value;
-    char* self = (char*)this;
-    if (id == -1 || id != *(int*)(self + 0x6cc)) {
-        return 0;
+    if (id == -1) {
+        return false;
+    }
+    if (id != anim_id) {
+        return false;
     }
     if (out == 0) {
         out = &local;
     }
-    value = fn_0051B000(*(void**)(self + 0x314), *(int*)(*(char**)(self + 0x6d0) + 8));
+    value = ((AnimInst*)anim)->fn_0051B000(((ClipRec*)clip)->id);
     *out = value;
-    if (!(value < 0.00009999999747378752f)) {
-        return 1;
+    if (value < 0.0001f) {
+        anim_id = -1;
+        return false;
     }
-    *(int*)(self + 0x6cc) = -1;
-    return 0;
+    return true;
 }
 
 int Entity::fn_004614D0(int id) {
-    return fn_00461450(id, 0) != 0;
+    return ((unsigned char)fn_00461450(id, 0)) != 0;
 }
 
 void* Entity::fn_00461500() {
@@ -1098,7 +1128,7 @@ int Entity::fn_004617F0() {
 }
 
 extern "C" void fn_00461870() {
-    ((ConsoleCmd*)0x8ED970)->fn_0050A180("immortal", "Toggles Players_immortal", (void (*)())0x461890);
+    ((ConsoleCmd*)0x8ED970)->fn_0050A180("immortal", "Toggles Players_immortal", fn_00461890);
 }
 
 extern "C" void fn_00461860() {
@@ -1107,7 +1137,7 @@ extern "C" void fn_00461860() {
 
 extern "C" void fn_00461990() {
     ((ConsoleCmd*)0x941508)->fn_0050A180(
-        "health", "Sets the percentage health for the debug object", (void (*)())0x4619B0);
+        "health", "Sets the percentage health for the debug object", fn_004619B0);
 }
 
 extern "C" void fn_00461980() {
@@ -1134,7 +1164,7 @@ int Entity::fn_00461AD0(Entity* other) {
 }
 
 int Entity::fn_00461B60() {
-    return *(int*)((char*)this + 0x98);
+    return field_98;
 }
 
 extern "C" void* fn_00461B80(int arg1, int arg2, float* arg3, int* arg4, char arg5, int arg6, int arg7, char arg8) {
@@ -1892,7 +1922,7 @@ int* Entity::fn_0045CD00() {
     char* self = (char*)this;
     float sample = 0.0f;
     if (*(int*)(self + 0xa8) != 0) {
-        sample = fn_0051B000(*(void**)(self + 0x314), *(int*)(*(char**)(self + 0xa8) + 8));
+        sample = ((AnimInst*)anim)->fn_0051B000(*(int*)(*(char**)(self + 0xa8) + 8));
     }
     fn_004530D0(this);
     fn_0046ADF0(this, *(float*)0x5A5740);
@@ -2225,7 +2255,7 @@ float Entity::fn_00456ED0(float value) {
 int Entity::fn_00456FB0(float* out) {
     char* self = (char*)this;
     float scale;
-    if (fn_00462DE0(this) != 0) {
+    if (fn_00462DE0()) {
         return fn_00524640(out);
     }
     scale = *(float*)(self + 0x698);
@@ -2263,7 +2293,7 @@ void Entity::fn_004616F0(int id) {
 }
 
 int Entity::fn_00461840() {
-    return *(int*)((char*)this + 0x60c);
+    return field_60c;
 }
 
 extern "C" void fn_00461890() {
