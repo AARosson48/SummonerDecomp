@@ -150,6 +150,7 @@ def compiled_units():
         ("vsdk/ca/skeleton.cpp", "src/vsdk/ca/skeleton.cpp"),
         ("Engine/gamesound/gamesound.cpp", "src/Engine/gamesound/gamesound.cpp"),
         ("Engine/Objects/living_entity.cpp", "src/Engine/Objects/living_entity.cpp"),
+        ("Engine/rendering/levelrender.cpp", "src/Engine/rendering/levelrender.cpp"),
         ("Engine/characterinfo/characterinfo.cpp", "src/Engine/characterinfo/characterinfo.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("levelscripts/Scripts/level_scripts_common.cpp", "src/levelscripts/Scripts/level_scripts_common.cpp"),
