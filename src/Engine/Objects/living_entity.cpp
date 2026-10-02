@@ -22,11 +22,28 @@ struct Entity {
     int fn_00462840(int which);
     void fn_00454070();
     void fn_004553A0(int a, int b, int c);
-    void fn_0045DE20(int mode);
     void fn_0044DDB0();
     void fn_00450850(float value, int source, int a, int b);
     void fn_00454700(int slot, int value, int kind, float scale, int field_80, int flag);
     void fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_type, int item, int arg7, int arg8);
+    float fn_00456F80();
+    Entity* fn_004570D0(int value);
+    Entity* fn_004570F0(int* value);
+    Entity* fn_00457120(void* value);
+    Entity* fn_0045DE20(int mode);
+    void* fn_00461370(int kind, int value);
+    void* fn_004613B0(int kind, int value);
+    float fn_004613F0(int id);
+    int fn_00461450(int id, float* out);
+    int fn_004614D0(int id);
+    void* fn_00461500();
+    void* fn_00461540();
+    int fn_00461620(int id);
+    float fn_00461670(int id);
+    int fn_00461740(int id);
+    int fn_004617F0();
+    int fn_00461AD0(Entity* other);
+    void* fn_00460F20(void* clip, float scale, int a, int b, int c);
 };
 
 struct SubHit {
@@ -795,3 +812,360 @@ void Entity::fn_0045D4C0() {
 }
 
 #pragma optimize("", on)
+
+struct Vec3 {
+    float x;
+    float y;
+    float z;
+
+    float* fn_0045B680(float* out, float* other);
+    float* fn_0045B6B0(float* out, float* other);
+};
+
+struct ConsoleCmd {
+    void fn_0050A180(const char* name, const char* help, void (*handler)());
+};
+
+extern "C" int fn_00462DE0(Entity* ent);
+extern "C" void* fn_004A1B70(Entity* ent, int* value);
+extern "C" void* fn_004A1BE0(Entity* ent, void* value);
+extern "C" float fn_0051B000(void* anim, int id);
+extern "C" float fn_0051B0C0(void* anim, int id);
+extern "C" void* fn_00446CB0(void* table, int kind, int value, int flag);
+extern "C" void* fn_00446D10(void* table, int kind, int value, int flag);
+extern "C" int fn_00570140(void* text, const char* name, int length);
+extern "C" int fn_0056D790();
+extern "C" int fn_0046A100(Entity* ent);
+extern "C" void fn_00454670(Entity* ent, int value);
+extern "C" void fn_0044E1C0(void* slot, int a, int b, float* c, int* d, int e);
+extern "C" void fn_00472450(void* node);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int fn_0057AE80(void* left, void* right);
+extern "C" void fn_0044EDB0(void* slot, char* name);
+extern "C" void fn_0049E8C0(void* pos, int a, int b);
+extern "C" void fn_00455FB0(void* slot);
+extern "C" void fn_00515800(void* out, float* in, int flag);
+extern "C" void fn_00531CB0(const char* file, int line, const char* msg);
+
+extern "C" int fn_004587F0() {
+    return 0x17c;
+}
+
+float Entity::fn_00456F80() {
+    if (fn_00462DE0(this) == 0) {
+        return *(float*)((char*)this + 0x698);
+    }
+    return 0.0f;
+}
+
+Entity* Entity::fn_004570D0(int value) {
+    *(int*)((char*)this + 0x6ac) = value;
+    return this;
+}
+
+Entity* Entity::fn_004570F0(int* value) {
+    if (*(int*)((char*)this + 0xc) != 9) {
+        return this;
+    }
+    return (Entity*)fn_004A1B70(this, value);
+}
+
+Entity* Entity::fn_00457120(void* value) {
+    if (*(int*)((char*)this + 0xc) != 9) {
+        return this;
+    }
+    return (Entity*)fn_004A1BE0(this, value);
+}
+
+float* Vec3::fn_0045B680(float* out, float* other) {
+    out[0] = other[0] + x;
+    out[1] = other[1] + y;
+    out[2] = other[2] + z;
+    return out;
+}
+
+float* Vec3::fn_0045B6B0(float* out, float* other) {
+    out[0] = x - other[0];
+    out[1] = y - other[1];
+    out[2] = z - other[2];
+    return out;
+}
+
+extern "C" void fn_0045DD80(Entity* ent, int value) {
+    int index;
+    void* row;
+    for (index = 0; index < 5; index++) {
+        if (*(int*)(index * 0xc + 0x9416C8) == -1) {
+            *(int*)(index * 0xc + 0x9416C8) = *(int*)((char*)ent + 0x80);
+            *(int*)(index * 0xc + 0x9416CC) = value;
+            row = ent->fn_00461500();
+            *(float*)(index * 0xc + 0x9416D0) =
+                0.5f / fn_0051B0C0(*(void**)((char*)ent + 0x314), *(int*)((char*)row + 8));
+            break;
+        }
+    }
+}
+
+Entity* Entity::fn_0045DE20(int mode) {
+    char* self = (char*)this;
+    void* clip;
+    int played;
+    if (*(int*)(self + 0xc) == 9) {
+        return this;
+    }
+    clip = fn_00461370(4, mode);
+    if (clip == 0) {
+        return 0;
+    }
+    played = (int)fn_00460F20(clip, 1.0f, 1, 1, 0);
+    if (played == -1) {
+        return (Entity*)-1;
+    }
+    fn_00454670(this, -1);
+    *(int*)(self + 0x320) |= 4;
+    *(int*)(self + 0x56c) = 0;
+    return this;
+}
+
+void* Entity::fn_00461370(int kind, int value) {
+    if (kind == 4 && *(int*)((char*)this + 0xc) == 9) {
+        return 0;
+    }
+    return fn_00446CB0(*(void**)((char*)this + 0x71c), kind, value, 1);
+}
+
+void* Entity::fn_004613B0(int kind, int value) {
+    if (kind == 4 && *(int*)((char*)this + 0xc) == 9) {
+        return 0;
+    }
+    return fn_00446D10(*(void**)((char*)this + 0x71c), kind, value, 1);
+}
+
+float Entity::fn_004613F0(int id) {
+    float sample;
+    float length;
+    char* self = (char*)this;
+    if (fn_00461450(id, &sample) == 0) {
+        return 1.0f;
+    }
+    length = fn_0051B0C0(*(void**)(self + 0x314), *(int*)(*(char**)(self + 0x6d0) + 8));
+    return (length - sample) / length;
+}
+
+int Entity::fn_00461450(int id, float* out) {
+    float local;
+    float value;
+    char* self = (char*)this;
+    if (id == -1 || id != *(int*)(self + 0x6cc)) {
+        return 0;
+    }
+    if (out == 0) {
+        out = &local;
+    }
+    value = fn_0051B000(*(void**)(self + 0x314), *(int*)(*(char**)(self + 0x6d0) + 8));
+    *out = value;
+    if (!(value < 0.00009999999747378752f)) {
+        return 1;
+    }
+    *(int*)(self + 0x6cc) = -1;
+    return 0;
+}
+
+int Entity::fn_004614D0(int id) {
+    return fn_00461450(id, 0) != 0;
+}
+
+void* Entity::fn_00461500() {
+    if (fn_00461450(*(int*)((char*)this + 0x6cc), 0) == 0) {
+        return 0;
+    }
+    return *(void**)((char*)this + 0x6d0);
+}
+
+void* Entity::fn_00461540() {
+    char* node;
+    char* first = 0;
+    int count = 0;
+    int pick;
+    char* head = *(char**)(*(char**)((char*)this + 0x71c) + 0x6c);
+    for (node = head; node != 0; node = *(char**)(node + 0x40)) {
+        if (fn_00570140(*(void**)node, "talk", 4) == 0) {
+            if (first == 0) {
+                first = node;
+            }
+            count += 1;
+        }
+    }
+    if (count == 0) {
+        return 0;
+    }
+    if (count == 1) {
+        return first;
+    }
+    pick = fn_0056D790() % count;
+    for (node = first; node != 0; node = *(char**)(node + 0x40)) {
+        if (fn_00570140(*(void**)node, "talk", 4) == 0) {
+            if (pick == 0) {
+                return node;
+            }
+            pick -= 1;
+        }
+    }
+    return 0;
+}
+
+int Entity::fn_00461620(int id) {
+    int index;
+    char* row;
+    for (index = 0; index < 3; index++) {
+        row = *(char**)((char*)this + 0x6d0) + (index << 3);
+        if (*(int*)(row + 0x1c) == id) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+float Entity::fn_00461670(int id) {
+    int index;
+    char* row;
+    char* self = (char*)this;
+    if (*(int*)(self + 0x6d0) != 0) {
+        for (index = 0; index < 3; index++) {
+            row = *(char**)(self + 0x6d0) + (index << 3);
+            if (*(int*)(row + 0x1c) == id) {
+                return *(float*)(row + 0x20) - (*(float*)0x60A328 - *(float*)(self + 0x9c));
+            }
+        }
+    }
+    return 0.0f;
+}
+
+int Entity::fn_00461740(int id) {
+    int index;
+    char* row;
+    char* self = (char*)this;
+    for (index = 0; index < 3; index++) {
+        if (*(int*)(self + 0x6d0) == 0) {
+            return -1;
+        }
+        row = *(char**)(self + 0x6d0) + (index << 3);
+        if (*(int*)(row + 0x1c) == id) {
+            if (*(char*)(self + index + 0xa0) != 0) {
+                return 0;
+            }
+            if (!(fn_00461670(id) <= 0.00009999999747378752f)) {
+                return 0;
+            }
+            *(char*)(self + index + 0xa0) = 1;
+            return 1;
+        }
+    }
+    return -1;
+}
+
+int Entity::fn_004617F0() {
+    float threshold = (float)fn_00462840(0) * 0.30000001192092896f;
+    if (threshold <= *(float*)((char*)this + 0x5f8)) {
+        return fn_00455950(0xd) != 0;
+    }
+    return 1;
+}
+
+extern "C" void fn_00461870() {
+    ((ConsoleCmd*)0x8ED970)->fn_0050A180("immortal", "Toggles Players_immortal", (void (*)())0x461890);
+}
+
+extern "C" void fn_00461860() {
+    fn_00461870();
+}
+
+extern "C" void fn_00461990() {
+    ((ConsoleCmd*)0x941508)->fn_0050A180(
+        "health", "Sets the percentage health for the debug object", (void (*)())0x4619B0);
+}
+
+extern "C" void fn_00461980() {
+    fn_00461990();
+}
+
+int Entity::fn_00461AD0(Entity* other) {
+    char* self = (char*)this;
+    int bit;
+    if (*(int*)((char*)other + 0xc) == 4 || *(int*)((char*)other + 0xc) == 1) {
+        return 0;
+    }
+    if (fn_0046A100(other) != 0) {
+        return 0;
+    }
+    bit = 1 << (*(int*)((char*)other + 0x98) & 0x1f);
+    if ((*(int*)(self + 0x2f0) & bit) != 0) {
+        return 1;
+    }
+    if (*(int*)(self + 0x98) != 0 || *(int*)((char*)other + 0x98) != 0) {
+        return 0;
+    }
+    return other->fn_00455950(0x10) != 0;
+}
+
+int Entity::fn_00461B60() {
+    return *(int*)((char*)this + 0x98);
+}
+
+extern "C" void* fn_00461B80(int arg1, int arg2, float* arg3, int* arg4, char arg5, int arg6, int arg7, char arg8) {
+    int index;
+    char* slot;
+    int number;
+    int unique;
+    char name[0x40];
+    int cursor;
+    int taken;
+    (void)arg5;
+    for (index = 0; index < 0xaf; index++) {
+        slot = (char*)(index * 0x788 + 0x8ED980);
+        if (*(int*)(slot + 0xc) == 0) {
+            break;
+        }
+    }
+    if (index == 0xaf) {
+        while (1) {
+            fn_00531CB0(
+                "D:\\projects\\Summoner\\pccode\\Engine\\Objects\\living_entity.cpp",
+                0x20e8,
+                "No more space for living entities.  Please increase MAX_LIVING_ENTIITES in living_entity.cpp");
+        }
+    }
+    fn_0044E1C0(slot, arg1, arg2, arg3, arg4, arg7);
+    *(int*)(slot + 0x68c) = arg6;
+    fn_00472450(slot + 0x324);
+    if (*(int*)(slot + 0xc) == 5 || *(int*)(slot + 0xc) == 4) {
+        *(int*)(slot + 0x374) |= 0x40;
+    }
+    number = 1;
+    unique = 0;
+    while (unique == 0) {
+        taken = 0;
+        sprintf(name, "%s#%d", **(char***)(slot + 0x71c), number);
+        for (cursor = *(int*)0x8ECD78; cursor != 0x8ECA60; cursor = *(int*)(cursor + 0x318)) {
+            if (fn_0057AE80((void*)(cursor + 0x2f4), name) == 0) {
+                taken = 1;
+                break;
+            }
+        }
+        if (taken == 0) {
+            unique = 1;
+            fn_0044EDB0(slot, name);
+        }
+        number += 1;
+    }
+    if (*(int*)(slot + 0xc) == 7 || arg8 != 0) {
+        return slot;
+    }
+    fn_0049E8C0(slot + 0x10, *(int*)(*(char**)(slot + 0x71c) + 0x90), *(int*)(slot + 0x68c));
+    *(float*)(slot + 0x14) += 1.0f;
+    fn_00455FB0(slot);
+    if (*(int*)(slot + 0x68a) == -1) {
+        fn_00515800(name, arg3, 1);
+    }
+    return slot;
+}
