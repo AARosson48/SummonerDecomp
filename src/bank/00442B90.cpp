@@ -12,3 +12,19 @@ void fn_00444A20(void)
 }
 
 }
+
+// Two character pools. ecx is the pool object; the three pushes are the
+// buffer, the byte count, and a flags dword.
+struct Obj44DE0 {
+	void fn_00544DE0(void* mem, int bytes, int flags);
+};
+
+extern "C" void fn_00444B20(void)
+{
+	((Obj44DE0*)0x68e1a8)->fn_00544DE0((void*)0x74469c, 0x14c00, 0);
+}
+
+extern "C" void fn_00444B70(void)
+{
+	((Obj44DE0*)0x68e1c0)->fn_00544DE0((void*)0x7dfeb8, 0x1400, 0);
+}

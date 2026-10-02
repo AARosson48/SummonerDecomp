@@ -31,4 +31,18 @@ void fn_0049C840(void)
 	((ConsoleCmd*)0x2452d40)->fn_0050A180((char*)0x59cb2c, (char*)0x59cb40, (void (*)(void))0x49c870);
 }
 
+// Index of the pointer at 0x2452c40 inside the 0x20-byte table at 0x2452b80.
+// Six entries. Anything outside that range is -1.
+int fn_0049A0A0(void)
+{
+	int ptr = *(int*)0x2452c40;
+	int index;
+	if (ptr == 0)
+		return -1;
+	index = (ptr - 0x2452b80) >> 5;
+	if (index < 0 || index >= 6)
+		return -1;
+	return index;
+}
+
 }

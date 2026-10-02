@@ -27,3 +27,18 @@ void fn_004CA940(void)
 }
 
 }
+
+struct Obj4902A8 {
+	char fn_00501910(void);
+	void fn_00501880(int count);
+};
+
+// If the object at 0x248ce28 reports ready, arm it for 0x1388 ticks.
+extern "C" int fn_004CA5C0(void)
+{
+	if (((Obj4902A8*)0x248ce28)->fn_00501910() == 1) {
+		((Obj4902A8*)0x248ce28)->fn_00501880(0x1388);
+		return 1;
+	}
+	return 0;
+}

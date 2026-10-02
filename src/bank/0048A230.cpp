@@ -21,4 +21,28 @@ void fn_0048DDA0(void)
 	((ConsoleCmd*)0x23f81d8)->fn_0050A180((char*)0x59c4d8, (char*)0x59c4f0, (void (*)(void))0x48ddd0);
 }
 
+void* fn_0046B130(int id);
+
+// Attach a value at +0xc0 when the object kind at +0xc is 2 and the slot is empty.
+void fn_0048CF50(int id, int value)
+{
+	int* obj = (int*)fn_0046B130(id);
+	if (obj == 0)
+		return;
+	if (obj[3] != 2)
+		return;
+	if (obj[0x30] != 0)
+		return;
+	obj[0x30] = value;
+}
+
+// Rows are 152 bytes at 0x2cb45d0. A first byte of 0xFF means the row is unused.
+unsigned char* fn_0048D180(int index)
+{
+	unsigned char* row = (unsigned char*)(0x2cb45d0 + index * 152);
+	if (row[0] == 0xff)
+		return 0;
+	return row;
+}
+
 }
