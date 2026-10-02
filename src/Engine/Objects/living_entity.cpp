@@ -2347,3 +2347,34 @@ extern "C" void fn_004619B0() {
             "debug\ncharacters health to (i.e. between 0.0 and 1.0).");
     }
 }
+
+extern "C" __declspec(naked) void pad_004587FA() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
+
+extern "C" __declspec(naked) void pad_0045CCFD() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
+
+extern "C" __declspec(naked) void pad_00461854() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
+
+extern "C" __declspec(naked) void pad_0046186A() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
+
+extern "C" __declspec(naked) void pad_0046198A() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
+
+extern "C" __declspec(naked) void pad_00461B74() {
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+    __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC __asm _emit 0xCC
+}
