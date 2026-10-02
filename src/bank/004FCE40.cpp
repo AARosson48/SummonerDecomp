@@ -166,3 +166,140 @@ extern "C" int __stdcall fn_004FEE50(char* dir)
 	file.fn_005159D0();
 	return 0;
 }
+
+// Picks the random-encounter level into 0x60a2c8 and the variant into 0x60a2e8.
+// Region 0 is Iceland or the hills, region 1 is the forest tome pages, region 2
+// is grassland. The page-8 path returns before the region split.
+int fn_004CFCA0(void* table, int kind, const char* name);
+void fn_004CFD30(void* table, int kind, const char* name, int value);
+int fn_004CE9A0(const char* item);
+void fn_004FC2A0(float* out);
+void fn_004FC350(float* out);
+void fn_004FC400(float* out);
+float fn_005426E0(void);
+void strcat(char* dst, const char* src);
+
+static int quest_set(int kind, const char* name)
+{
+	return fn_004CFCA0((void*)0x2493a38, kind, name);
+}
+
+static int owns_item(const char* item)
+{
+	return fn_004CE9A0(item) == 0;
+}
+
+static void copy_level(const char* level, const char* variant)
+{
+	strcpy((char*)0x60a2c8, level);
+	strcpy((char*)0x60a2e8, variant);
+}
+
+static void add_suffix(const char* suffix)
+{
+	strcat((char*)0x60a2e8, suffix);
+}
+
+static int below(float roll, unsigned int constant)
+{
+	return roll < *(float*)constant;
+}
+
+extern "C" void fn_004FCE40(void)
+{
+	float first;
+	float second;
+	float roll;
+	float roll_b;
+	int region = 0;
+	int page;
+
+	fn_004FC2A0(&first);
+	fn_004FC350(&second);
+	if (second < first) {
+		region = 1;
+		first = second;
+	}
+	fn_004FC400(&second);
+	if (second < first)
+		region = 2;
+
+	if (quest_set(0x12, (const char*)0x5a4f20) && owns_item((const char*)0x599954)
+		&& !quest_set(0x22, (const char*)0x598964)) {
+		copy_level((const char*)0x5a4f0c, (const char*)0x5a4ef4);
+		return;
+	}
+
+	if (region == 0) {
+		if (quest_set(0x17, (const char*)0x5a4ed8) && !quest_set(2, (const char*)0x5a4ed0)
+			&& owns_item((const char*)0x5998cc)) {
+			copy_level((const char*)0x59ffb4, (const char*)0x5a4ebc);
+			fn_004CFD30((void*)0x2493a38, 2, (const char*)0x5a4ed0, 1);
+			return;
+		}
+		roll = fn_005426E0();
+		if (below(roll, 0x58021c)) {
+			copy_level((const char*)0x5a0048, (const char*)0x5a4eac);
+			return;
+		}
+		if (below(roll, 0x57e6b0)) {
+			copy_level((const char*)0x59ffb4, (const char*)0x59ffb4);
+			if (below(roll, 0x581cdc))
+				add_suffix((const char*)0x5a4e28);
+			else if (below(roll, 0x581c08))
+				add_suffix((const char*)0x5a4e10);
+			return;
+		}
+		copy_level((const char*)0x5a4f0c, (const char*)0x5a4f0c);
+		if (below(roll, 0x580e04))
+			add_suffix((const char*)0x5a4e10);
+		return;
+	}
+
+	if (region == 1) {
+		roll = fn_005426E0();
+		roll_b = fn_005426E0();
+		page = 0;
+		while (page < 6 && !owns_item((const char*)(0x5a35f0 - page * 0x18)))
+			page++;
+		if (page == 6 && !quest_set(0x22, (const char*)0x598964)) {
+			copy_level((const char*)0x5a0014, (const char*)0x5a365c);
+			return;
+		}
+		if (below(roll, 0x57e6b0)) {
+			copy_level((const char*)0x5a0014, (const char*)0x5a0014);
+			if (below(roll_b, 0x57ef10))
+				add_suffix((const char*)0x5a4ea8);
+			else
+				add_suffix((const char*)0x5a4ea0);
+			return;
+		}
+		copy_level((const char*)0x5a0000, (const char*)0x5a0000);
+		if (below(roll_b, 0x57ef10))
+			add_suffix((const char*)0x5a4e10);
+		else if (below(roll_b, 0x581ad8))
+			add_suffix((const char*)0x5a4ea4);
+		else if (below(roll_b, 0x5819a4))
+			add_suffix((const char*)0x5a4ea8);
+		else if (below(roll_b, 0x58020c))
+			add_suffix((const char*)0x5a4ea0);
+		else
+			add_suffix((const char*)0x5a4e9c);
+		return;
+	}
+
+	if (region != 2)
+		return;
+	roll = fn_005426E0();
+	if (below(roll, 0x580214) && quest_set(0x17, (const char*)0x59ee28)
+		&& quest_set(0x22, (const char*)0x598964)) {
+		copy_level((const char*)0x59ffa0, (const char*)0x5a4e88);
+		return;
+	}
+	if (below(roll, 0x57e6b0) && !quest_set(2, (const char*)0x5a4e80)) {
+		fn_004CFD30((void*)0x2493a38, 2, (const char*)0x5a4e80, 1);
+		copy_level((const char*)0x59ffa0, (const char*)0x5a4e6c);
+		return;
+	}
+	copy_level((const char*)0x5a4d00, (const char*)0x5a4e54);
+}
