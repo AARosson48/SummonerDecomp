@@ -152,6 +152,7 @@ def compiled_units():
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("levelscripts/Scripts/level_scripts_common.cpp", "src/levelscripts/Scripts/level_scripts_common.cpp"),
         ("bank/004D39C0", "src/bank/004D39C0.cpp"),
+        ("rsrc", "src/rsrc.cpp"),
     ]
     return [(unit, src) for unit, src in pairs if os.path.isfile(os.path.join(ROOT, src))]
 
