@@ -431,7 +431,7 @@ int fn_0048E6C0(LrMesh* mesh, int arg2, int arg3, void** lights)
 	return cursor;
 }
 
-void fn_0048FDB0(int esi_arg, LrMesh* mesh, int arg3, char* arg4, void** lights)
+int fn_0048FDB0(LrMesh* mesh, int arg2, int arg3, void** lights)
 {
 	if ((*(unsigned char*)0x23d3600 & 1) == 0) {
 		*(unsigned char*)0x23d3600 |= 1;
@@ -441,15 +441,11 @@ void fn_0048FDB0(int esi_arg, LrMesh* mesh, int arg3, char* arg4, void** lights)
 		*(unsigned char*)0x23d3600 |= 2;
 		fn_0056D1CD((void (*)())0x4914e0);
 	}
-	(void)esi_arg;
 	char* section = (char*)mesh->section;
 	int wide = (mesh->flags & 0x200400) != 0;
 	int use_far = *(float*)(section + 0x30) > *(float*)0x59c47c;
 	float near_z = use_far ? *(float*)0x25d8db8 : *(float*)0x25d8dac;
 	float far_z = use_far ? *(float*)0x25d8dbc : *(float*)0x25d8db0;
-	(void)near_z;
-	(void)far_z;
-	(void)wide;
 	float* positions;
 	if (mesh->flags & 0x20) {
 		fn_0048DE60(mesh, (void*)0x23ec658);
@@ -457,63 +453,210 @@ void fn_0048FDB0(int esi_arg, LrMesh* mesh, int arg3, char* arg4, void** lights)
 	} else {
 		positions = *(float**)(section + 0xc);
 	}
-	int fog = *(unsigned char*)0x25d8dc0 != 0;
-	int special = fog || ((*(int*)(*(int*)mesh->faces + 4) << 8) < 0) || (mesh->flags & 0x80000);
-	if (!special) {
+	int surfaces = *(int*)(section + 0x50);
+	int submitted = 0;
+	int normal = *(unsigned char*)0x25d8dc0 == 0
+		&& (*(int*)(*(int*)((char*)mesh + 0xc) + 4) << 8) >= 0
+		&& (mesh->flags & 0x80000) == 0;
+	if (normal) {
 		int queued = *(int*)0x240d9e8;
-		if (queued >= 0x1f40)
+		int state;
+		if (queued >= 0x1f40) {
 			*(int*)0x240d9e8 = 0;
-		fn_00534A40(queued ? *(int*)0x5a9d28 : *(int*)0x5a9d24);
-		void* device = *(void**)0x243e03c;
-		LockFn lock = (LockFn)(*(int*)(*(int*)device + 0xc));
-		int err = lock(device, *(int*)0x5a9d28, 0, 0);
-		if (err < 0)
-			lr_assert(err, 0x727);
-		int surfaces = *(int*)(section + 0x50);
-		int cursor = 0;
-		for (int s = 0; s < surfaces; s++) {
-			short* group = (short*)(*(int*)(section + 0x4c) + s * 4);
+			state = *(int*)0x5a9d24;
+		} else if (queued != 0) {
+			state = *(int*)0x5a9d28;
+		} else {
+			state = *(int*)0x5a9d24;
+		}
+		float scale_a = 0;
+		float scale_b = 0;
+		int last_tex = -1;
+		fn_00534A40(*(int*)0x25d8d1c);
+		int vert_base = 0;
+		int face_base = 0;
+		int s;
+		for (s = 0; s < surfaces; s++) {
+			unsigned short* group = (unsigned short*)(*(int*)(section + 0x4c) + s * 4);
 			int vert_count = group[1];
-			for (int v = 0; v < vert_count; v++) {
-				int index = cursor + v;
+			int face_count = group[0];
+			int tex_id = *(unsigned short*)(*(int*)((char*)mesh + 0xc) + face_base * 8);
+			if (tex_id > 0) {
+				int tex = ((int*)*(int*)0xa5a320)[tex_id - 1];
+				fn_0054D050(0, tex, 0, (int)&scale_a, (int*)&scale_b, 1);
+				last_tex = tex;
+			}
+			int v;
+			for (v = 0; v < vert_count; v++) {
+				int index = vert_base + v;
 				short src = *(short*)(*(int*)(section + 0x18) + index * 2);
+				float* scratch = (float*)(0x23dfb08 + index * 12);
 				float* pos = positions + index * 3;
 				if (src < 0) {
-					if (arg4)
-						fn_0048FBB0((float*)(0x23d3608 + index * 12), pos, (float*)(*(int*)(section + 0x10) + index * 12), lights, arg3);
-					float local[3];
-					local[0] = pos[0] - *(float*)0x26924a8;
-					local[1] = pos[1] - *(float*)0x26924ac;
-					local[2] = pos[2] - *(float*)0x26924b0;
-					fn_005245A0((void*)0x26924d8);
-					((unsigned char*)0x2437a74)[index] = (unsigned char)lr_clip_flags(local, wide);
+					if (arg3)
+						((unsigned char*)0x23eb690)[index] = (unsigned char)fn_0048FBB0(
+							(float*)(0x235b1f0 + index * 12), pos,
+							(float*)(*(int*)(section + 0x10) + index * 12), lights, arg2);
+					scratch[0] = pos[0] - *(float*)0x26924a8;
+					scratch[1] = pos[1] - *(float*)0x26924ac;
+					scratch[2] = pos[2] - *(float*)0x26924b0;
+					fn_005245A0(scratch);
+					((unsigned char*)0x2432484)[index] = (unsigned char)lr_clip_flags(scratch, wide);
+					if (((unsigned char*)0x2432484)[index] == 0 && wide)
+						scratch[2] = 1.0f / (scratch[2] - fn_0050ECB0(0.1f));
+				} else {
+					int from = index - src;
+					((unsigned char*)0x2432484)[index] = ((unsigned char*)0x2432484)[from];
+					scratch[0] = ((float*)(0x23dfb08 + from * 12))[0];
+					scratch[1] = ((float*)(0x23dfb08 + from * 12))[1];
+					scratch[2] = ((float*)(0x23dfb08 + from * 12))[2];
+					if (arg3)
+						((unsigned char*)0x23eb690)[index] = ((unsigned char*)0x23eb690)[from];
 				}
+				(void)near_z;
+				(void)far_z;
+				(void)scale_a;
+				(void)scale_b;
 			}
-			int face_count = group[0];
-			for (int f = 0; f < face_count; f++) {
-				int* face = (int*)(*(int*)(section + 0x20) + (cursor + f) * 0x14);
+			void* buffer = *(void**)0x243e03c;
+			void* locked = 0;
+			LockFn lock = (LockFn)(*(int*)(*(int*)buffer + 0xc));
+			int err = lock(buffer, state, (int)&locked, 0);
+			state = *(int*)0x5a9d28;
+			if (err < 0)
+				lr_assert(err, 0x6d9);
+			int f;
+			int batch = 0;
+			for (f = 0; f < face_count; f++) {
+				int* face = (int*)(*(int*)(section + 0x20) + (face_base + f) * 0x14);
 				int visible = 1;
-				if ((face[1] & 2) == 0)
-					visible = fn_0050EB30(face + 2, positions + (*(short*)((char*)face + 8)) * 3);
-				if (visible) {
+				if ((face[1] & 2) == 0) {
+					int vi = *(short*)((char*)face + 8);
+					visible = fn_0050EB30(face + 2, positions + vi * 3);
+				}
+				if (!visible)
+					continue;
+				int i0 = *(short*)((char*)face + 4);
+				int i1 = *(short*)((char*)face + 8);
+				int i2 = *(short*)((char*)face + 12);
+				unsigned char c0 = ((unsigned char*)0x2432484)[i0];
+				unsigned char c1 = ((unsigned char*)0x2432484)[i1];
+				unsigned char c2 = ((unsigned char*)0x2432484)[i2];
+				if ((c0 & c1 & c2) != 0)
+					continue;
+				if ((c0 | c1 | c2) != 0) {
 					int tri_count = 3;
-					fn_0048F8C0(mesh, face, 0, (void*)0x2437a74, (int)(void*)0x2400ec8, (unsigned char*)&tri_count, (float*)0x23d3608, (unsigned char*)arg4, &tri_count);
-					fn_0054D050(1, face[1], 0, (int)(void*)0, (int*)0, 1);
+					fn_0048F8C0(mesh, face, 0, (void*)0x2432484, (int)(void*)0x2400ec8,
+						(unsigned char*)&tri_count, (float*)0x235b1f0, (unsigned char*)arg3, &tri_count);
+					if (tri_count >= 3 && tri_count <= 8)
+						batch += tri_count * 3 - 6;
+				} else {
+					batch += 3;
+				}
+				if (last_tex != face[1]) {
+					fn_0054D050(1, face[1], 0, (int)&scale_a, (int*)&scale_b, 1);
+					last_tex = face[1];
 				}
 			}
-			cursor += vert_count;
+			UnlockFn unlock = (UnlockFn)(*(int*)(*(int*)buffer + 0x10));
+			unlock(buffer);
+			if (batch > 0) {
+				void* device = *(void**)0x2dc6c40;
+				typedef int (__stdcall *DrawPrim)(void* self, int prim, void* vb, int start, int count, int zero);
+				DrawPrim draw = (DrawPrim)(*(int*)(*(int*)device + 0x7c));
+				draw(device, 4, buffer, *(int*)0x240d9e8 + submitted, batch, 0);
+				if (arg3) {
+					fn_00534A40(*(int*)0x25d88a8);
+					draw(device, 4, buffer, *(int*)0x240d9e8 + submitted, batch, 0);
+					fn_00534A40(*(int*)0x25d8d1c);
+				}
+			}
+			submitted += batch;
+			vert_base += vert_count;
+			face_base += face_count;
+			if (*(int*)0x240d9e8 + submitted > 0x1f40)
+				*(int*)0x240d9e8 = 0;
 		}
-		UnlockFn unlock = (UnlockFn)(*(int*)(*(int*)device + 0x10));
-		unlock(device);
-		void* draw_dev = *(void**)0x2dc6c40;
-		DrawFn draw = (DrawFn)(*(int*)(*(int*)draw_dev + 0x80));
-		draw(draw_dev, 4, device, *(int*)0x240d9e8, mesh, (void*)0x2433424, 0, 0);
-		*(int*)0x240d9e8 += cursor;
-	} else {
-		fn_00534A40(*(int*)0x25d8d1c);
-		fn_0048E6C0(mesh, arg3, arg4 != 0, lights);
+		*(int*)0x240d9e8 += submitted;
+		return *(int*)0x240d9e8;
 	}
-	(void)positions;
+	int queued_b = *(int*)0x240d9e8;
+	int state_b;
+	if (*(int*)(section + 8) + queued_b >= 0x1f40) {
+		*(int*)0x240d9e8 = 0;
+		state_b = *(int*)0x5a9d24;
+	} else if (queued_b != 0) {
+		state_b = *(int*)0x5a9d28;
+	} else {
+		state_b = *(int*)0x5a9d24;
+	}
+	fn_00534A40(*(int*)0x25d8d1c);
+	int vert_base_b = 0;
+	int face_base_b = 0;
+	int drawn_b = 0;
+	int s_b;
+	for (s_b = 0; s_b < surfaces; s_b++) {
+		unsigned short* group = (unsigned short*)(*(int*)(section + 0x4c) + s_b * 4);
+		int tex_id = *(unsigned short*)(*(int*)((char*)mesh + 0xc) + face_base_b * 8);
+		if (tex_id > 0) {
+			int tex = ((int*)*(int*)0xa5a320)[tex_id - 1];
+			fn_0054D050(0, tex, 0, (int)(void*)0, (int*)0, 1);
+		}
+		void* buffer = *(void**)0x243e03c;
+		void* locked = 0;
+		LockFn lock = (LockFn)(*(int*)(*(int*)buffer + 0xc));
+		int err = lock(buffer, state_b, (int)&locked, 0);
+		if (err < 0)
+			lr_assert(err, 0x7b1);
+		int vert_count = group[1];
+		int v;
+		for (v = 0; v < vert_count; v++) {
+			int index = vert_base_b + v;
+			short src = *(short*)(*(int*)(section + 0x18) + index * 2);
+			float* pos = positions + index * 3;
+			float* scratch = (float*)(0x23dfb08 + index * 12);
+			if (src < 0) {
+				if (arg3)
+					fn_0048FBB0((float*)(0x235b1f0 + index * 12), pos,
+						(float*)(*(int*)(section + 0x10) + index * 12), lights, arg2);
+				scratch[0] = pos[0] - *(float*)0x26924a8;
+				scratch[1] = pos[1] - *(float*)0x26924ac;
+				scratch[2] = pos[2] - *(float*)0x26924b0;
+				fn_005245A0((void*)0x26924d8);
+				((unsigned char*)0x2432484)[index] = (unsigned char)lr_clip_flags(scratch, wide);
+			} else {
+				((unsigned char*)0x2432484)[index] = ((unsigned char*)0x2432484)[index - src];
+			}
+		}
+		int face_count = group[0];
+		int f;
+		for (f = 0; f < face_count; f++) {
+			int* face = (int*)(*(int*)(section + 0x20) + (face_base_b + f) * 0x14);
+			int visible = 1;
+			if ((face[1] & 2) == 0) {
+				int vi = *(short*)((char*)face + 8);
+				visible = fn_0050EB30(face + 2, positions + vi * 3);
+			}
+			if (!visible)
+				continue;
+			int tri_count = 3;
+			fn_0048F8C0(mesh, face, 0, (void*)0x2432484, (int)(void*)0x2400ec8,
+				(unsigned char*)&tri_count, (float*)0x235b1f0, (unsigned char*)arg3, &tri_count);
+			if (tri_count >= 3)
+				drawn_b += tri_count;
+		}
+		UnlockFn unlock = (UnlockFn)(*(int*)(*(int*)buffer + 0x10));
+		unlock(buffer);
+		if (drawn_b != 0) {
+			void* device = *(void**)0x2dc6c40;
+			DrawFn draw = (DrawFn)(*(int*)(*(int*)device + 0x80));
+			draw(device, 4, buffer, *(int*)0x240d9e8, (void*)drawn_b, (void*)0x2433424, drawn_b, 0);
+		}
+		vert_base_b += vert_count;
+		face_base_b += face_count;
+	}
+	*(int*)0x240d9e8 += drawn_b;
+	return drawn_b;
 }
 
 }
