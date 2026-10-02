@@ -104,4 +104,67 @@ int fn_0044B6B0(unsigned char* row)
 	return (~row[0x5c]) & 1;
 }
 
+int _stricmp(const char* a, const char* b);
+int sprintf(char* dst, const char* fmt, ...);
+char* strcat(char* dst, const char* src);
+int fn_004D0030(void* table, const char* name, int kind);
+int fn_005152A0(char* dst, int max_len, int value);
+int fn_004CFCA0(const char* name);
+
+// Kind 2 writes a ring blurb into 0x8ec7c4. The quest value is read from
+// the table at 0x2493a38. 60000 is the charged threshold. Ring of Darkness
+// tests got_laharah_spirit instead. Kind 0 and kind 1 format other item
+// text, and the tail appends Joseph, Jekhar, Flece, and Rosalind.
+char* fn_0044B7A0(int* rec)
+{
+	static const unsigned int rings[][3] = {
+		{ 0x593e64, 0x5994ac, 0x598964 },
+		{ 0x598a08, 0x598954, 0 },
+		{ 0x593e78, 0x593e54, 0 },
+		{ 0x5989f8, 0x598944, 0 },
+		{ 0x5989e8, 0x598934, 0 },
+		{ 0x598978, 0x598924, 0 },
+		{ 0x5989c4, 0x598914, 0 },
+		{ 0x5989a0, 0x598904, 0 }
+	};
+	int* item = *(int**)((char*)rec + 4);
+	int kind = item[1];
+	char* out = (char*)0x8ec7c4;
+	char tmp[0x80];
+	const char* name;
+	int value;
+	int i;
+
+	*out = 0;
+	if (kind != 2)
+		return out;
+	name = *(const char**)item;
+	for (i = 0; i < 8; i++) {
+		if (_stricmp(name, (const char*)rings[i][0]) != 0)
+			continue;
+		sprintf(tmp, *(const char**)0x25cd940);
+		strcat(out, tmp);
+		strcat(out, (const char*)rings[i][1]);
+		strcat(out, *(const char**)0x25cd92c);
+		value = fn_004D0030((void*)0x2493a38, (const char*)rings[i][1], 4);
+		fn_005152A0(tmp, 0x7f, value);
+		strcat(out, tmp);
+		strcat(out, (const char*)0x588ba4);
+		sprintf(tmp, *(const char**)0x25cd944);
+		strcat(out, tmp);
+		sprintf(tmp, *(const char**)0x25cd950);
+		strcat(out, tmp);
+		if (rings[i][2] != 0) {
+			if (fn_004CFCA0((const char*)rings[i][2]) == 0)
+				break;
+		} else if (fn_004D0030((void*)0x2493a38, (const char*)rings[i][1], 4) < 0xea60) {
+			break;
+		}
+		sprintf(tmp, *(const char**)0x25cd954);
+		strcat(out, tmp);
+		break;
+	}
+	return out;
+}
+
 }
