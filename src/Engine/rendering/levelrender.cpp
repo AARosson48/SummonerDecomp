@@ -62,6 +62,7 @@ extern "C" int fn_0054D050(int a, int b, int c, int d, int* e, int f);
 extern "C" char* fn_00538C70(int err);
 extern "C" void fn_00531CB0(const char* file, int line, const char* message);
 extern "C" int fn_0053E9D0(int kind, void* verts);
+extern "C" void fn_0056D1CD(void (*fn)());
 
 static const char* lr_file = "D:\\projects\\Summoner\\pccode\\Engine\\rendering\\levelrender.cpp";
 
@@ -312,10 +313,19 @@ static int lr_clip_flags(float* p, int wide)
 	return flags;
 }
 
-void fn_0048E6C0(LrMesh* mesh, void* arg, int* extra, void* lights)
+int fn_0048E6C0(LrMesh* mesh, int arg2, int arg3, void** lights)
 {
+	int done = -1;
 	if (*(unsigned char*)0x2f132b8 == 1 && *(int*)0x2f132b0 == -1)
-		return;
+		return done;
+	if ((*(unsigned char*)0x23eb68c & 1) == 0) {
+		*(unsigned char*)0x23eb68c |= 1;
+		fn_0056D1CD(fn_0048FDA0);
+	}
+	if ((*(unsigned char*)0x23eb68c & 2) == 0) {
+		*(unsigned char*)0x23eb68c |= 2;
+		fn_0056D1CD(fn_0048FD90);
+	}
 	int wide = (mesh->flags & 0x200400) != 0;
 	float* positions;
 	if (mesh->flags & 0x20) {
@@ -324,65 +334,186 @@ void fn_0048E6C0(LrMesh* mesh, void* arg, int* extra, void* lights)
 	} else {
 		positions = *(float**)(*(int*)mesh->section + 0xc);
 	}
-	float* section = (float*)mesh->section;
-	int use_far = section[0x30 / 4] > 3.0f;
+	char* section = (char*)mesh->section;
+	int use_far = *(float*)(section + 0x30) > *(float*)0x59c47c;
+	float near_z = use_far ? *(float*)0x25d8db8 : *(float*)0x25d8dac;
+	float far_z = use_far ? *(float*)0x25d8dbc : *(float*)0x25d8db0;
+	int fog = *(unsigned char*)0x25d8dc0 != 0;
+	int special = fog || ((*(int*)(*(int*)((char*)mesh + 0xc) + 4) << 8) < 0) || (mesh->flags & 0x80000);
+	int surfaces = *(int*)(section + 0x50);
+	int cursor = 0;
+	float scale_a = 0;
+	float scale_b = 0;
+	if (special) {
+		int last_mat = -1;
+		for (int s = 0; s < surfaces; s++) {
+			short* group = (short*)(*(int*)(section + 0x4c) + s * 4);
+			short face_id = *(short*)(*(int*)((char*)mesh + 0xc) + cursor * 8);
+			if (last_mat != 1) {
+				int which = *(int*)0x25d8d28;
+				if (face_id > 0)
+					which = *(int*)0x25d8df8;
+				fn_0054A100(which);
+				last_mat = 1;
+			}
+			if (face_id > 0) {
+				int tex = ((int*)*(int*)0xa5a320)[face_id - 1];
+				int one = 1;
+				fn_00549560(tex, 0, (int)&scale_a, (int)&scale_b, &one, 1);
+				if ((mesh->flags >> 0x17) & 1)
+					scale_b = scale_a;
+			}
+			int vert_count = group[1];
+			for (int v = 0; v < vert_count; v++) {
+				int index = cursor + v;
+				short* src_index = (short*)(*(int*)(section + 0x18) + index * 2);
+				float* pos = positions + index * 3;
+				float local[3];
+				unsigned char clip;
+				if (*src_index < 0) {
+					if (arg3)
+						fn_0048FBB0((float*)(0x23d3608 + index * 12), pos, (float*)(*(int*)(section + 0x10) + index * 12), lights, arg2);
+					local[0] = pos[0] - *(float*)0x26924a8;
+					local[1] = pos[1] - *(float*)0x26924ac;
+					local[2] = pos[2] - *(float*)0x26924b0;
+					fn_005245A0(local);
+					clip = (unsigned char)lr_clip_flags(local, wide);
+					((unsigned char*)0x2437a74)[index] = clip;
+				} else {
+					int from = index - *src_index;
+					clip = ((unsigned char*)0x2437a74)[from];
+					((unsigned char*)0x2437a74)[index] = clip;
+				}
+				(void)near_z;
+				(void)far_z;
+				(void)clip;
+			}
+			cursor += vert_count;
+		}
+	} else {
+		fn_0054A100(*(int*)0x25d8d1c);
+		for (int s = 0; s < surfaces; s++) {
+			short* group = (short*)(*(int*)(section + 0x4c) + s * 4);
+			int vert_count = group[1];
+			for (int v = 0; v < vert_count; v++) {
+				int index = cursor + v;
+				short src = *(short*)(*(int*)(section + 0x18) + index * 2);
+				float* pos = positions + index * 3;
+				if (src < 0) {
+					if (arg3)
+						fn_0048FBB0((float*)(0x23d3608 + index * 12), pos, (float*)(*(int*)(section + 0x10) + index * 12), lights, arg2);
+					float local[3];
+					local[0] = pos[0] - *(float*)0x26924a8;
+					local[1] = pos[1] - *(float*)0x26924ac;
+					local[2] = pos[2] - *(float*)0x26924b0;
+					fn_005245A0((void*)0x26924d8);
+					((unsigned char*)0x2437a74)[index] = (unsigned char)lr_clip_flags(local, wide);
+				} else {
+					((unsigned char*)0x2437a74)[index] = ((unsigned char*)0x2437a74)[index - src];
+				}
+			}
+			int face_count = group[0];
+			for (int f = 0; f < face_count; f++) {
+				int* face = (int*)(*(int*)(section + 0x20) + (cursor + f) * 0x14);
+				int visible = 1;
+				if ((face[1] & 2) == 0) {
+					int vi = *(short*)((char*)face + 8);
+					visible = fn_0050EB30(face + 2, positions + vi * 3);
+				}
+				if (!visible)
+					continue;
+				int tri_count = 3;
+				fn_0048F8C0(mesh, face, 0, (void*)0x2437a74, (int)(void*)0x2400ec8, (unsigned char*)&tri_count, (float*)0x23d3608, (unsigned char*)arg3, &tri_count);
+			}
+			cursor += vert_count;
+		}
+	}
+	return cursor;
+}
+
+void fn_0048FDB0(int esi_arg, LrMesh* mesh, int arg3, char* arg4, void** lights)
+{
+	if ((*(unsigned char*)0x23d3600 & 1) == 0) {
+		*(unsigned char*)0x23d3600 |= 1;
+		fn_0056D1CD((void (*)())0x4914f0);
+	}
+	if ((*(unsigned char*)0x23d3600 & 2) == 0) {
+		*(unsigned char*)0x23d3600 |= 2;
+		fn_0056D1CD((void (*)())0x4914e0);
+	}
+	(void)esi_arg;
+	char* section = (char*)mesh->section;
+	int wide = (mesh->flags & 0x200400) != 0;
+	int use_far = *(float*)(section + 0x30) > *(float*)0x59c47c;
 	float near_z = use_far ? *(float*)0x25d8db8 : *(float*)0x25d8dac;
 	float far_z = use_far ? *(float*)0x25d8dbc : *(float*)0x25d8db0;
 	(void)near_z;
 	(void)far_z;
-	int surfaces = *(int*)((char*)mesh->section + 0x50);
-	fn_0054A100(*(int*)0x25d8d1c);
-	for (int s = 0; s < surfaces; s++) {
-		int* group = ((int**)(*(int*)((char*)mesh->section + 0x4c)))[s];
-		int material = 0;
-		int key = 0;
-		fn_00549560(0, material, 0, key, &material, 1);
-		(void)group;
-		(void)arg;
-		(void)extra;
-		(void)lights;
-		short* idxs = (short*)(*(int*)(*(int*)mesh->section + 0x18));
-		int begin = 0;
-		int end = idxs[1];
-		for (int v = begin; v < end; v++) {
-			float local[3];
-			local[0] = positions[v * 3] - *(float*)0x26924a8;
-			local[1] = positions[v * 3 + 1] - *(float*)0x26924ac;
-			local[2] = positions[v * 3 + 2] - *(float*)0x26924b0;
-			fn_005245A0((void*)0x26924d8);
-			((unsigned char*)0x2437a74)[v] = (unsigned char)lr_clip_flags(local, wide);
-		}
-	}
-}
-
-void fn_0048FDB0(LrMesh* mesh)
-{
-	float* section = (float*)mesh->section;
-	int wide = (mesh->flags & 0x200400) != 0;
-	int use_far = section[0x30 / 4] > 3.0f;
-	(void)use_far;
 	(void)wide;
-	void* device = *(void**)0x243e03c;
-	if (device == 0)
-		return;
-	LockFn lock = (LockFn)(*(int*)(*(int*)device + 0xc));
-	int err = lock(device, 0, 0, 0);
-	if (err < 0)
-		lr_assert(err, 0x727);
-	int surfaces = *(int*)((char*)mesh->section + 0x50);
-	for (int s = 0; s < surfaces; s++) {
-		fn_00534A40(*(int*)0x25d8d1c);
-		fn_0054D050(0, 0, 0, 0, &s, 1);
+	float* positions;
+	if (mesh->flags & 0x20) {
+		fn_0048DE60(mesh, (void*)0x23ec658);
+		positions = (float*)0x23ec658;
+	} else {
+		positions = *(float**)(section + 0xc);
 	}
-	UnlockFn unlock = (UnlockFn)(*(int*)(*(int*)device + 0x10));
-	unlock(device);
-	void* draw_dev = *(void**)0x2dc6c40;
-	int verts = *(int*)0x240d9e8;
-	DrawFn draw = (DrawFn)(*(int*)(*(int*)draw_dev + 0x80));
-	draw(draw_dev, 4, device, verts, (void*)mesh, (void*)0x2433424, 0, 0);
-	*(int*)0x240d9e8 += surfaces;
-	if (err < 0)
-		lr_assert(err, 0x7b1);
+	int fog = *(unsigned char*)0x25d8dc0 != 0;
+	int special = fog || ((*(int*)(*(int*)mesh->faces + 4) << 8) < 0) || (mesh->flags & 0x80000);
+	if (!special) {
+		int queued = *(int*)0x240d9e8;
+		if (queued >= 0x1f40)
+			*(int*)0x240d9e8 = 0;
+		fn_00534A40(queued ? *(int*)0x5a9d28 : *(int*)0x5a9d24);
+		void* device = *(void**)0x243e03c;
+		LockFn lock = (LockFn)(*(int*)(*(int*)device + 0xc));
+		int err = lock(device, *(int*)0x5a9d28, 0, 0);
+		if (err < 0)
+			lr_assert(err, 0x727);
+		int surfaces = *(int*)(section + 0x50);
+		int cursor = 0;
+		for (int s = 0; s < surfaces; s++) {
+			short* group = (short*)(*(int*)(section + 0x4c) + s * 4);
+			int vert_count = group[1];
+			for (int v = 0; v < vert_count; v++) {
+				int index = cursor + v;
+				short src = *(short*)(*(int*)(section + 0x18) + index * 2);
+				float* pos = positions + index * 3;
+				if (src < 0) {
+					if (arg4)
+						fn_0048FBB0((float*)(0x23d3608 + index * 12), pos, (float*)(*(int*)(section + 0x10) + index * 12), lights, arg3);
+					float local[3];
+					local[0] = pos[0] - *(float*)0x26924a8;
+					local[1] = pos[1] - *(float*)0x26924ac;
+					local[2] = pos[2] - *(float*)0x26924b0;
+					fn_005245A0((void*)0x26924d8);
+					((unsigned char*)0x2437a74)[index] = (unsigned char)lr_clip_flags(local, wide);
+				}
+			}
+			int face_count = group[0];
+			for (int f = 0; f < face_count; f++) {
+				int* face = (int*)(*(int*)(section + 0x20) + (cursor + f) * 0x14);
+				int visible = 1;
+				if ((face[1] & 2) == 0)
+					visible = fn_0050EB30(face + 2, positions + (*(short*)((char*)face + 8)) * 3);
+				if (visible) {
+					int tri_count = 3;
+					fn_0048F8C0(mesh, face, 0, (void*)0x2437a74, (int)(void*)0x2400ec8, (unsigned char*)&tri_count, (float*)0x23d3608, (unsigned char*)arg4, &tri_count);
+					fn_0054D050(1, face[1], 0, (int)(void*)0, (int*)0, 1);
+				}
+			}
+			cursor += vert_count;
+		}
+		UnlockFn unlock = (UnlockFn)(*(int*)(*(int*)device + 0x10));
+		unlock(device);
+		void* draw_dev = *(void**)0x2dc6c40;
+		DrawFn draw = (DrawFn)(*(int*)(*(int*)draw_dev + 0x80));
+		draw(draw_dev, 4, device, *(int*)0x240d9e8, mesh, (void*)0x2433424, 0, 0);
+		*(int*)0x240d9e8 += cursor;
+	} else {
+		fn_00534A40(*(int*)0x25d8d1c);
+		fn_0048E6C0(mesh, arg3, arg4 != 0, lights);
+	}
+	(void)positions;
 }
 
 }
