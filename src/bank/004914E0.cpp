@@ -54,3 +54,16 @@ void* Obj493F40::fn_00493F40(unsigned int flags)
 		vfs_heap_free(this);
 	return this;
 }
+
+struct Obj493F20 {
+	void* vtbl;
+	int field;
+	Obj493F20* fn_00493F20(int value);
+};
+
+Obj493F20* Obj493F20::fn_00493F20(int value)
+{
+	vtbl = (void*)0x581ae4;
+	field = value;
+	return this;
+}

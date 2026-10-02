@@ -37,4 +37,19 @@ void fn_004138A0()
 	*(int*)0x5bd77c = 0;
 }
 
+void fn_00414020();
+
+void fn_00410730()
+{
+	if (*(int*)0x5bd0b4 != 6)
+		return;
+	fn_004138A0();
+	fn_00414020();
+}
+
+int fn_00413E20()
+{
+	return (*(int*)0x5bd77c & 0x80000000) != 0;
+}
+
 }

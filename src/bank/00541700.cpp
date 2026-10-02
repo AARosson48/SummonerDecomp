@@ -38,6 +38,23 @@ int __fastcall fn_00542FF0(void* self)
 
 }
 
+struct Obj42E20 {
+	void fn_00542E20(int first, int second);
+	void fn_00542E60(int first, int second);
+};
+
+void Obj42E20::fn_00542E20(int first, int second)
+{
+	*(int*)((char*)this + 0xc) = first;
+	*(int*)((char*)this + 0x10) = second;
+}
+
+void Obj42E20::fn_00542E60(int first, int second)
+{
+	*(int*)((char*)this + 0x14) = first;
+	*(int*)((char*)this + 0x18) = second;
+}
+
 struct Obj543010 {
 	void* fn_00543010(unsigned int flags);
 };

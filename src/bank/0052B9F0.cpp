@@ -119,3 +119,12 @@ void Obj52D5B0::fn_0052D5B0(int value)
 {
 	*(int*)((char*)this + 0x30) = value;
 }
+
+struct Obj52F060 {
+	bool fn_0052F060(void);
+};
+
+bool Obj52F060::fn_0052F060(void)
+{
+	return *(void**)((char*)this + 0x2dc) == (char*)this + 0x2d4;
+}

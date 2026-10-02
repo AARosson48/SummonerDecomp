@@ -19,4 +19,12 @@ void fn_004F3880()
 	fn_004CE6D0(0x5a2a18);
 }
 
+void fn_004CE320(int text);
+
+void fn_004F27A0()
+{
+	fn_004CE320(0x596a58);
+	fn_004CE320(0x5969fc);
+}
+
 }

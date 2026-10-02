@@ -3,12 +3,21 @@
 
 struct Obj681D0 {
 	int value;
+	int id;
 	void fn_004681D0(int value);
+	int fn_004681E0(void);
 };
+
+extern "C" int fn_0046B1A0(int id);
 
 void Obj681D0::fn_004681D0(int next)
 {
 	value = next;
+}
+
+int Obj681D0::fn_004681E0(void)
+{
+	return fn_0046B1A0(id);
 }
 
 extern "C" {

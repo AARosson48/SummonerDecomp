@@ -24,6 +24,7 @@ int __fastcall fn_0055EB10(void* self)
 
 struct Obj5EB30 {
 	void fn_0055EB30(int value);
+	void fn_0055EB40(int value);
 	void fn_0055EB50(int value);
 	void fn_0055EB60(int value);
 };
@@ -31,6 +32,11 @@ struct Obj5EB30 {
 void Obj5EB30::fn_0055EB30(int value)
 {
 	*(int*)((char*)this + 0x28c) = value;
+}
+
+void Obj5EB30::fn_0055EB40(int value)
+{
+	*(int*)((char*)this + 0x288) = value;
 }
 
 void Obj5EB30::fn_0055EB50(int value)

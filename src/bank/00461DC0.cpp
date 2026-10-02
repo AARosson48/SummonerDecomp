@@ -54,6 +54,7 @@ struct Obj62D20 {
 	int fn_00462D20(void);
 	int fn_00462D40(void);
 	int fn_00462D60(void);
+	unsigned char fn_00462D70(void);
 };
 
 int Obj62D20::fn_00462D20(void)
@@ -75,6 +76,11 @@ int Obj62D20::fn_00462D40(void)
 int Obj62D20::fn_00462D60(void)
 {
 	return (flags >> 1) & 1;
+}
+
+unsigned char Obj62D20::fn_00462D70(void)
+{
+	return (unsigned char)(flags & 1);
 }
 
 struct Actor62440 {

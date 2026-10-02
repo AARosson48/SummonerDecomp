@@ -26,6 +26,24 @@ void fn_004FED30(void);
 
 }
 
+struct NodeFED20 {
+	int pad0;
+	int pad4;
+	NodeFED20* next;
+};
+
+struct ObjFED20 {
+	char pad[0x40];
+	NodeFED20* head;
+	void fn_004FED20(NodeFED20* node);
+};
+
+void ObjFED20::fn_004FED20(NodeFED20* node)
+{
+	node->next = head;
+	head = node;
+}
+
 // _dlg.tbl. Retail also keeps the caller's ecx and passes it to the
 // character lookups. The cleanup and the '{' jump table sit past this symbol.
 struct ParseText {

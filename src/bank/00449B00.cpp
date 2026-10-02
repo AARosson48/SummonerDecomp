@@ -4,7 +4,18 @@ struct ConsoleCmd {
 	void fn_0050A180(const char* name, const char* help, void (*handler)(void));
 };
 
+extern "C" int g_info_rows[];
+
 extern "C" {
+
+void fn_00449B60(void)
+{
+	int* row = g_info_rows;
+	do {
+		*row = 0;
+		row = (int*)((char*)row + 0x3ec);
+	} while ((int)row < 0x7dfeb8);
+}
 
 void fn_00449BA0(void)
 {

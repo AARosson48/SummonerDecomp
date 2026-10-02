@@ -16,9 +16,18 @@ void fn_00499F00(void)
 	((ConsoleCmd*)0x2452ca8)->fn_0050A180((char*)0x59c9d4, (char*)0x59c9e4, (void (*)(void))0x499f30);
 }
 
+void fn_00499FF0(void);
+void fn_0050A5A0(char* text, int kind);
+
 void fn_00499FC0(void)
 {
-	((ConsoleCmd*)0x2452c98)->fn_0050A180((char*)0x59c9fc, (char*)0x59ca0c, (void (*)(void))0x499ff0);
+	((ConsoleCmd*)0x2452c98)->fn_0050A180((char*)0x59c9fc, (char*)0x59ca0c, fn_00499FF0);
+}
+
+void fn_00499FF0(void)
+{
+	*(unsigned char*)0x2452a9a = 1;
+	fn_0050A5A0((char*)0x59ca28, 0);
 }
 
 void fn_0049A050(void)
