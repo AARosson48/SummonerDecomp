@@ -25,7 +25,7 @@ struct Entity {
     void fn_0045DE20(int mode);
     void fn_0044DDB0();
     void fn_00450850(float value, int source, int a, int b);
-    void fn_00454700(int slot, int value, int kind, int a, int field_80, int b);
+    void fn_00454700(int slot, int value, int kind, float scale, int field_80, int flag);
     void fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_type, int item, int arg7, int arg8);
 };
 
@@ -51,24 +51,42 @@ extern "C" void fn_0045CCB0(Entity* ent) {
 extern "C" Entity* fn_0046B1A0(int id);
 extern "C" unsigned char fn_004A28B0(Entity* ent);
 extern "C" void fn_004A13B0(Entity* ent, int a, int b, int c);
-extern "C" void fn_0048C080(int a, int b, int c, int d, int e, int f);
+extern "C" int fn_0048C080(int a, int b, int c, int d, int e, int f);
 extern "C" float fn_00524810(void* a, void* b);
 extern "C" int fn_0047A8C0(int kind);
 extern "C" int fn_0047A890(int kind);
 extern "C" int fn_0047AA80(int kind, int amount);
 extern "C" float fn_0047F4D0(Entity* ent, int kind, int hit, int delta, float scale);
 extern "C" float fn_005426E0();
-extern "C" void fn_0048BD80(int a, int b, int c, int d);
+extern "C" int fn_0048BD80(int a, int b, int c, int d);
 extern "C" int fn_0046C240(Entity* ent, int index, int flag);
 extern "C" void fn_0044B2B0(int value);
 extern "C" void fn_00439580(int value);
 extern "C" int printf(const char* text, ...);
 extern "C" double ceil(double value);
+extern "C" void fn_00524430(float* vec);
+extern "C" void fn_00511080(int* out, float* vec);
+extern "C" void* fn_00489F00(int id);
+extern "C" float fn_0047A9C0(int slot, int amount);
+extern "C" float fn_0047F2A0(Entity* ent, int kind);
+extern "C" void fn_00450C70(Entity* ent, float value);
+extern "C" void fn_0047E4D0(int a, int b, int c, int d, void* pos);
+extern "C" void fn_00474350(void* node, int value);
+extern "C" int fn_004B9E50();
+extern "C" void fn_004743E0(void* node);
+extern "C" int fn_004A3410(int a, int b);
+
+static const unsigned char fn_0045DEA0_group[0x6c] = {
+    0, 1, 2, 3, 0, 3, 2, 2, 2, 30, 30, 4, 5, 6, 7, 8, 2, 9, 30, 2, 30, 2, 2, 2, 10, 11, 11, 30,
+    12, 30, 12, 30, 11, 13, 2, 30, 2, 2, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+    30, 30, 30, 14, 15, 16, 17, 2, 2, 18, 19, 20, 20, 20, 2, 21, 30, 30, 30, 30, 22, 30, 30, 23, 11,
+    24, 12, 2, 30, 30, 30, 5, 2, 2, 5, 2, 2, 2, 11, 30, 30, 30, 30, 30, 30, 30, 30, 12, 5, 25, 26, 27,
+    3, 28, 29
+};
 
 extern char g_rand_gate;
 
 extern int g_player_list;
-extern int g_spell_actor;
 extern char g_spell_rows[];
 
 struct SpellItem {
@@ -114,8 +132,17 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         fn_0045DEA0(7, source, arg3, arg4, damage_type, item, arg7, 0);
         fn_0045DEA0(8, source, arg3, arg4, damage_type, item, arg7, 0);
         fn_0045DEA0(0x43, source, arg3, arg4, damage_type, item, arg7, 0);
-        if (fn_00455950(0) || fn_00455950(1) || fn_00455950(9)) {
-            fn_0048C080(g_spell_actor, *(int*)(self + 0x80), -1, -1, 0, 1);
+        if (fn_00455950(0) != 0) {
+            fn_0048C080(*(int*)0x22E52C4, *(int*)(self + 0x80), -1, -1, 0, 1);
+            return;
+        }
+        if (fn_00455950(1) != 0) {
+            fn_0048C080(*(int*)0x22E52C4, *(int*)(self + 0x80), -1, -1, 0, 1);
+            return;
+        }
+        if (fn_00455950(9) != 0) {
+            fn_0048C080(*(int*)0x22E52C4, *(int*)(self + 0x80), -1, -1, 0, 1);
+            return;
         }
         return;
     }
@@ -221,13 +248,12 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
     hit = 0;
     delta = 0;
 
-    switch (kind) {
+    switch (kind <= 0x6b ? fn_0045DEA0_group[kind] : 30) {
     case 0:
-    case 4:
         hit = amount;
         delta = *(int*)(g_spell_rows + (kind << 7) + 0x88);
         break;
-    case 0xF:
+    case 8:
         mark = 1;
         hit = amount;
         if (damage_type == 0) {
@@ -261,8 +287,6 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         }
         break;
     case 3:
-    case 5:
-    case 0x69:
         if (kind == 0x69 && *(int*)(self + 0xc) != 7) {
             result = (float)(int)*(short*)((char*)other + 0x600) * -7.0f;
             hit = (int)*(short*)((char*)other + 0x600) * 7;
@@ -289,7 +313,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
             *(int*)(self + 0x5f8) = 0x3f800000;
         }
         break;
-    case 0x68:
+    case 0x1b:
         mark = 1;
         apply = 0;
         result = (float)(int)*(short*)((char*)other + 0x600) * -20.0f;
@@ -298,7 +322,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         mode = 0x82;
         fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
         break;
-    case 0x6A:
+    case 0x1c:
         fn_0045DEA0(0x17, source, arg3, arg4, damage_type, item, arg7, 0);
         fn_0045DEA0(7, source, arg3, arg4, damage_type, item, arg7, 0);
         fn_0045DEA0(8, source, arg3, arg4, damage_type, item, arg7, 0);
@@ -312,7 +336,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
             apply = 1;
         }
         break;
-    case 0x6B:
+    case 0x1d:
         if (*(int*)(self + 0xc) == 7) {
             fn_0045DEA0(0x16, source, arg3, arg4, damage_type, item, arg7, 0);
             fn_0045DEA0(0x13, source, arg3, arg4, damage_type, item, arg7, 0);
@@ -330,7 +354,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
             mode = 0x82;
         }
         break;
-    case 0x66:
+    case 0x19:
         mark = 1;
         apply = 0;
         if (g_rand_gate == 0 && fn_005426E0() < factor) {
@@ -345,10 +369,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         hit = amount;
         delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
         break;
-    case 0xC:
-    case 0x54:
-    case 0x57:
-    case 0x65:
+    case 5:
         mark = 1;
         apply = 0;
         if (kind == 0x65) {
@@ -380,7 +401,7 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
         }
         mode = 0x82;
         break;
-    case 0xD:
+    case 6:
         if (g_rand_gate == 0 && fn_005426E0() < factor) {
             break;
         }
@@ -389,6 +410,340 @@ void Entity::fn_0045DEA0(int kind, int source, int arg3, int arg4, int damage_ty
             fn_0044DDB0();
         }
         break;
+    case 2: {
+        int take_hit;
+        apply = 0;
+        if (kind == 0x17 && (*(int*)((char*)other + 0x320) & 0x800) == 0) {
+            float vec[3];
+            int orient[3];
+            int effect;
+            void* spawned;
+            vec[0] = *(float*)((char*)other + 0x10) - *(float*)(self + 0x10);
+            vec[1] = *(float*)((char*)other + 0x14) - *(float*)(self + 0x14);
+            vec[2] = *(float*)((char*)other + 0x18) - *(float*)(self + 0x18);
+            fn_00524430(vec);
+            fn_00511080(orient, vec);
+            if (arg8 == 0) {
+                printf("Preloaded curse\n");
+                effect = fn_0048C080(fn_0047A890(kind), *(int*)(self + 0x80), -1, -1, 0, 1);
+            } else {
+                effect = fn_0048C080(*(int*)0x22E5AC4, *(int*)(self + 0x80), -1, -1, 0, 1);
+            }
+            spawned = fn_00489F00(effect);
+            if (spawned != 0) {
+                ((int*)spawned)[14] = orient[0];
+                ((int*)spawned)[15] = orient[1];
+                ((int*)spawned)[16] = orient[2];
+            }
+        }
+        take_hit = g_rand_gate != 0 || (*(int*)(g_spell_rows + (kind << 7) + 0x9c) & 1) == 0;
+        if (take_hit == 0) {
+            take_hit = fn_005426E0() > factor;
+        }
+        if (take_hit != 0) {
+            int duration;
+            float power;
+            int type = *(int*)(*(char**)((char*)other + 0x71c) + 0x10);
+            if (type == 0xc3) {
+                duration = (int)((float)(int)*(short*)((char*)other + 0x600) * 3.0f * 1000.0f);
+            } else if (type != 0xb6) {
+                duration = fn_0047AA80(kind, amount);
+            } else {
+                duration = (int)((float)(int)*(short*)((char*)other + 0x600) * 4.0f * 1000.0f);
+            }
+            power = fn_0047A9C0(slot, amount);
+            if (!(fn_0047F2A0(this, kind) <= 0.00999999978f)) {
+                if (damage_type == 0 && *(int*)((char*)other + 0x3a8) != kind) {
+                    fn_00454700(slot, duration, -1, power, *(int*)((char*)other + 0x80), damage_type == 7);
+                } else if (arg8 == 0) {
+                    fn_00454700(slot, duration, -1, power, *(int*)((char*)other + 0x80), damage_type == 7);
+                } else {
+                    fn_00454700(slot, duration, kind, power, *(int*)((char*)other + 0x80), damage_type == 7);
+                }
+                if ((*(int*)(g_spell_rows + (kind << 7) + 0x9c) & 1) != 0 && kind != 0x24) {
+                    mode = 0x81;
+                }
+            }
+        } else if (*(int*)(g_spell_rows + (kind << 7) + 0x44) != 0 && kind != 0x17 && kind != 0x24 &&
+                   (*(int*)((char*)other + 0x320) & 0x800) == 0) {
+            if (arg8 == 0) {
+                fn_0048C080(fn_0047A890(kind), *(int*)(self + 0x80), -1, -1, 0, 1);
+            } else {
+                fn_0048C080(*(int*)(g_spell_rows + (kind << 7) + 0x44), *(int*)(self + 0x80), -1, -1, 0, 1);
+            }
+        }
+        break;
+    }
+    case 4: {
+        int duration = fn_0047AA80(0xb, amount);
+        float power = 0.0f;
+        apply = 0;
+        if ((*(unsigned char*)0x5FBFD8 & 1) != 0 && amount >= 0x32) {
+            power = 1.0f;
+        }
+        if (arg8 == 0) {
+            fn_00454700(slot, duration, -1, power, *(int*)((char*)other + 0x80), 0);
+        } else {
+            fn_00454700(slot, duration, kind, power, *(int*)((char*)other + 0x80), 0);
+        }
+        break;
+    }
+    case 7: {
+        int duration = fn_0047AA80(0xe, amount);
+        apply = 0;
+        if (arg8 == 0) {
+            fn_00454700(slot, duration, -1, 0.0f, *(int*)((char*)other + 0x80), 0);
+        } else {
+            fn_00454700(slot, duration, kind, 0.0f, *(int*)((char*)other + 0x80), 0);
+        }
+        break;
+    }
+    case 9: {
+        int passed = g_rand_gate != 0;
+        apply = 0;
+        mark = 1;
+        if (passed == 0) {
+            passed = !(fn_005426E0() < factor);
+        }
+        if (passed != 0) {
+            int drained;
+            float give;
+            if (!(fn_005426E0() < 0.0500000007f)) {
+                drained = (int)(*(float*)(self + 0x5fe) * (float)amount * 0.00999999978f + 0.5f);
+            } else {
+                drained = *(int*)(self + 0x5fe);
+            }
+            if (drained < 0) {
+                drained = 0;
+            }
+            fn_00450C70(this, (float)(-drained));
+            give = (float)drained;
+            if (!(give < 20.0f)) {
+                give = 20.0f;
+            }
+            fn_00450C70(other, give);
+            fn_0045DE20(0x82);
+        }
+        break;
+    }
+    case 0xa:
+        if (*(int*)(self + 0xc) == 9 || (*(int*)(self + 0x320) & 0x40) != 0) {
+            mark = 1;
+            apply = 0;
+            hit = amount;
+            delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+            ((SubHit*)(self + 0x558))->fn_00468160(2);
+            if (arg8 == 0) {
+                printf("Trying to get_hit_by_spell by an invalid method!!\n");
+                fn_0048BD80(fn_0047A890(kind), arg3, arg4, 1);
+            } else {
+                int spell = fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+                if (kind == 0x1a && spell != -1) {
+                    fn_0047E4D0(*(int*)((char*)other + 0x80), spell, arg3, *(int*)(self + 0x68c), self + 0x38);
+                }
+            }
+        } else {
+            float half;
+            mark = 1;
+            apply = 0;
+            use_roll = 0;
+            ((SubHit*)(self + 0x558))->fn_00468160(2);
+            if (arg8 == 0) {
+                fn_0048BD80(fn_0047A890(kind), arg3, arg4, 1);
+            } else {
+                fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+            }
+            half = *(float*)(self + 0x5f8) * 0.5f;
+            printf("jade dmg: %d\n", (int)half);
+            fn_00450850(-(half), source, 1, 0);
+        }
+        break;
+    case 0xb:
+        mark = 1;
+        apply = 0;
+        hit = amount;
+        if (damage_type == 0) {
+            if (kind == 0x19) {
+                hit = (int)((float)hit * (other->fn_00462440(0x20) + 1.0f));
+            } else if (kind == 0x20) {
+                hit = (int)((float)hit * (other->fn_00462440(0x21) + 1.0f));
+            }
+        }
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        ((SubHit*)(self + 0x558))->fn_00468160(2);
+        if (arg8 == 0) {
+            printf("Trying to get_hit_by_spell by an invalid method!!\n");
+            fn_0048BD80(fn_0047A890(kind), arg3, arg4, 1);
+        } else {
+            int spell = fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+            if (kind == 0x1a && spell != -1) {
+                fn_0047E4D0(*(int*)((char*)other + 0x80), spell, arg3, *(int*)(self + 0x68c), self + 0x38);
+            }
+        }
+        break;
+    case 0xc:
+        hit = amount;
+        if (*(int*)(*(char**)((char*)other + 0x71c) + 0x10) != 0x58) {
+            delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        } else {
+            delta = -10;
+        }
+        mode = 0x82;
+        apply = 0;
+        mark = 1;
+        break;
+    case 0xd:
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        hit = amount;
+        break;
+    case 0xe:
+        mark = 1;
+        apply = 0;
+        hit = 3;
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        ((SubHit*)(self + 0x558))->fn_00468160(2);
+        if (arg8 == 0) {
+            fn_0048BD80(fn_0047A890(kind), arg3, arg4, 1);
+        } else {
+            int spell = fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+            if (spell != -1) {
+                fn_0047E4D0(*(int*)((char*)other + 0x80), spell, arg3, *(int*)(self + 0x68c), self + 0x38);
+            }
+        }
+        break;
+    case 0xf:
+        mark = 1;
+        apply = 0;
+        hit = 3;
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        ((SubHit*)(self + 0x558))->fn_00468160(2);
+        break;
+    case 0x10: {
+        int passed = g_rand_gate != 0;
+        apply = 0;
+        if (passed == 0) {
+            passed = !(fn_005426E0() < factor);
+        }
+        if (passed != 0) {
+            fn_004743E0(self + 0x324);
+        }
+        break;
+    }
+    case 0x11: {
+        int passed = g_rand_gate != 0;
+        apply = 0;
+        if (passed == 0) {
+            passed = !(fn_005426E0() < factor);
+        }
+        if (passed != 0) {
+            fn_00474350(self + 0x324, fn_004A3410(0xbb8, 0x1b58));
+        }
+        break;
+    }
+    case 0x12:
+        apply = 0;
+        if (g_rand_gate != 0 || !(fn_005426E0() < factor)) {
+            result = *(float*)&arg7 * 0.0500000007f * (float)amount;
+        }
+        break;
+    case 0x13:
+        apply = 0;
+        if (g_rand_gate != 0 || !(fn_005426E0() < factor)) {
+            fn_00450C70(this, -(*(float*)&arg7) * 0.0500000007f * (float)amount);
+        }
+        break;
+    case 0x14:
+        result = (float)(-amount);
+        hit = amount;
+        delta = 0;
+        apply = 0;
+        break;
+    case 0x15:
+        apply = 0;
+        if (g_rand_gate != 0 || !(fn_005426E0() < factor)) {
+            fn_00450C70(this, (float)(-amount));
+        }
+        break;
+    case 0x16:
+        if (other != 0) {
+            int type = *(int*)(*(char**)((char*)other + 0x71c) + 0x10);
+            int duration = 0x1388;
+            if (type == 0x59) {
+                duration = 0xbb8;
+            } else if (type == 0x57) {
+                duration = 0x1f40;
+            }
+            fn_00454700(0xa, duration, kind, 0.0f, *(int*)((char*)other + 0x80), 0);
+            return;
+        }
+        break;
+    case 0x17:
+        apply = 0;
+        if (g_rand_gate != 0 || !(fn_005426E0() < factor)) {
+            if (arg8 == 0) {
+                fn_00454700(0xa, 0x2bf20, -1, 0.0f, -1, 0);
+            } else {
+                fn_00454700(0xa, 0x2bf20, 0x4c, 0.0f, -1, 0);
+            }
+        }
+        break;
+    case 0x18:
+        mark = 1;
+        apply = 0;
+        hit = 3;
+        delta = -*(int*)(g_spell_rows + (kind << 7) + 0x88);
+        ((SubHit*)(self + 0x558))->fn_00468160(2);
+        if (arg8 == 0) {
+            fn_0048BD80(fn_0047A890(kind), arg3, arg4, 1);
+            fn_00474350(self + 0x324, fn_004B9E50());
+        } else {
+            int spell = fn_0048BD80(*(int*)(g_spell_rows + (kind << 7) + 0x44), arg3, arg4, 1);
+            if (spell != -1) {
+                fn_0047E4D0(*(int*)((char*)other + 0x80), spell, arg3, *(int*)(self + 0x68c), self + 0x38);
+                fn_00474350(self + 0x324, fn_004B9E50());
+            }
+        }
+        break;
+    case 0x1a: {
+        int spell_kinds[5];
+        int slots[5];
+        int index;
+        char landed = 0;
+        apply = 0;
+        spell_kinds[0] = 0x3d;
+        spell_kinds[1] = 7;
+        spell_kinds[2] = 0x3c;
+        spell_kinds[3] = 8;
+        spell_kinds[4] = 0x17;
+        slots[0] = 0xa;
+        slots[1] = 0;
+        slots[2] = 0xb;
+        slots[3] = 1;
+        slots[4] = 3;
+        for (index = 0; index < 5; index++) {
+            int take_hit = g_rand_gate != 0 || (*(int*)(g_spell_rows + (kind << 7) + 0x9c) & 1) == 0;
+            if (take_hit == 0) {
+                take_hit = !(fn_005426E0() < factor);
+            }
+            if (take_hit != 0) {
+                int duration = fn_0047AA80(spell_kinds[index], amount);
+                float power = fn_0047A9C0(slots[index], amount);
+                if (!(fn_0047F2A0(this, spell_kinds[index]) <= 0.00999999978f)) {
+                    landed = 1;
+                    if (arg8 == 0) {
+                        fn_00454700(slots[index], duration, -1, power, *(int*)((char*)other + 0x80), 0);
+                    } else {
+                        fn_00454700(slots[index], duration, spell_kinds[index], power,
+                            *(int*)((char*)other + 0x80), 0);
+                    }
+                }
+            }
+        }
+        if (landed != 0) {
+            mode = 0x81;
+        }
+        break;
+    }
     default:
         break;
     }
