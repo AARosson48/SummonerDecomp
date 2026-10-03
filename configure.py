@@ -157,6 +157,8 @@ def compiled_units():
         ("Engine/objects/item_paging.cpp", "src/Engine/Objects/item_paging.cpp"),
         ("Engine/ai/boss_ai.cpp", "src/Engine/ai/boss_ai.cpp"),
         ("Engine/ai/pathfinding_visibility.cpp", "src/Engine/ai/pathfinding_visibility.cpp"),
+        ("Engine/ai/pathfinding.cpp", "src/Engine/ai/pathfinding.cpp"),
+        ("levelscripts/conversation.cpp", "src/levelscripts/conversation.cpp"),
         ("Engine/characterinfo/characterinfo.cpp", "src/Engine/characterinfo/characterinfo.cpp"),
         ("levelscripts/script_internal.cpp", "src/levelscripts/script_internal.cpp"),
         ("levelscripts/Scripts/level_scripts_common.cpp", "src/levelscripts/Scripts/level_scripts_common.cpp"),
