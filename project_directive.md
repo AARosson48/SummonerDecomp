@@ -1,5 +1,5 @@
-#### E. Asset Runtime & Symlink Directive
-Do NOT instruct the workspace configuration to extract or duplicate game assets, movie files, maps, or audio packs into the workspace.
-1. The repository treats the retail installation directory as a read-only static source.
-2. The compilation output toolchain targets the 'build/' folder. 
-3. A symbolic link configuration layer maps the retail asset files and middleware DLLs directly into 'build/' at runtime. This allows live debugging and binary execution checks without modifying or bloating the local Git repository tree.
+# Assets
+
+Retail archives, movies, and audio stay in the Steam or GOG install. Do not copy `.vpp` files, movies, or audio into this repository. `tools/extract_game.py` copies `Sum.exe` to `orig/sum-pc/Sum.exe` and can symlink the install into `build/` and `assets/` for a local run. Those paths are gitignored.
+
+`binkw32.dll` and `eax.dll` are third-party middleware. Treat their imports as stubs. Do not decompile those DLLs.
