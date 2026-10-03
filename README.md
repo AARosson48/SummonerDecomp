@@ -28,4 +28,4 @@ ninja
 
 `ninja` splits that executable, compiles the files listed in `configure.py` `compiled_units()`, and writes `build/report.json`.
 
-To work on a function, see [CONTRIBUTING.md](CONTRIBUTING.md).
+To work on a function, see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).

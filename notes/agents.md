@@ -24,7 +24,7 @@ A function stays unmatched until objdiff verifies the bytes.
 ## What this repo currently does
 
 - `configure.py` `compiled_units()` compiles the `.cpp` files that already build with MSVC 6 and sets objdiff `base_path` for those units. The ninja default is `build/report.json`. It does not run `lld-link` or `dtk shasum -c`. The full link still fails `config/sum-pc/build.sha1`. See `notes/build.md`.
-- The public description is `README.md`. How a person matches a function is `docs/matching.md`. `CONTRIBUTING.md` and `DECOMP_SPECIFICATION.md` point there.
+- The public description is `README.md`. How a person matches a function is `docs/matching.md`. `docs/CONTRIBUTING.md` and `docs/specification.md` point there. Asset rules are `docs/assets.md`.
 - `config/splits.txt` partitions `.text`. A unit is one original `.cpp` where an assert path in `Sum.exe` places that range, and a `bank/00xxxxxx` object where the `.cpp` is not known yet. Banks are cut on 4-aligned function starts, about 16KB each, so objdiff has one job per object. Do not collapse this back to a single `Sum.exe` unit. Do not emit one unit per `fn_` address. Do not link an unfinished `src/` tree with `/FORCE` to manufacture `build/Sum.exe`. A function stays unmatched until objdiff compares its object.
 - `fn_004E6890` (size `0x66D0`) is a bad split: a jump table plus separate handlers. Real code in that span starts at `0x4E68E0`.
 - `src/Engine/handler_4e68e0.cpp` matches retail under MSVC 6 `/O2` for `0x4E68E0` (0x44 bytes) and `0x4E6930` (0x6D bytes). The names in that file are not recovered. There is no `// FUNCTION: SUM` annotation, and the decomp.dev report does not include them.
