@@ -44,6 +44,7 @@ int fn_00484AA0(void)
 	unsigned char* flags;
 	int* slots;
 	int column;
+	int cleared;
 
 	flags = (unsigned char*)0x22f9558;
 	slots = (int*)0x22f9560;
@@ -57,9 +58,10 @@ int fn_00484AA0(void)
 		} while (column < 3);
 		flags += 3;
 	} while ((int)slots < 0x22f9578);
-	*(int*)0x22f9558 = 0;
-	*(unsigned short*)0x22f955c = 0;
-	return 0;
+	cleared = 0;
+	*(int*)0x22f9558 = cleared;
+	*(unsigned short*)0x22f955c = (unsigned short)cleared;
+	return cleared;
 }
 
 void fn_00484830(int count, int** items)
@@ -132,14 +134,12 @@ void fn_00484380(void)
 
 int fn_00486520(int index)
 {
-	int count;
-	int result;
-	char* node;
+	char* node = (char*)(*(int*)0xa5a2cc + index * 0x70);
+	int count = 0;
 	int list[64];
+	int result;
 
-	count = 0;
-	node = (char*)(*(int*)0xa5a2cc + index * 0x70);
-	if ((*(unsigned char*)(node + 9) & 4) == 0)
+	if ((*(int*)(node + 8) & 0x400) == 0)
 		fn_004A4B40(node, list, &count);
 	result = fn_004BCBB0(node, list, &count);
 	fn_004C08D0(index, list, count);
