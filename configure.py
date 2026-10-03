@@ -94,6 +94,7 @@ def compiled_units():
         ("bank/0046F210", "src/bank/0046F210.cpp"),
         ("bank/00477080", "src/bank/00477080.cpp"),
         ("bank/0047E900", "src/bank/0047E900.cpp"),
+        ("bank/00482850", "src/bank/00482850.cpp"),
         ("bank/004865A0", "src/bank/004865A0.cpp"),
         ("bank/004914E0", "src/bank/004914E0.cpp"),
         ("bank/004C06B0", "src/bank/004C06B0.cpp"),
