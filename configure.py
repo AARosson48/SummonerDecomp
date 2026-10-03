@@ -145,6 +145,7 @@ def compiled_units():
         ("Summoner/player/player.cpp", "src/Summoner/player/player.cpp"),
         ("vsdk/gr/gr.cpp", "src/vsdk/gr/gr.cpp"),
         ("vsdk/bmpman/bmpman.cpp", "src/vsdk/bmpman/bmpman.cpp"),
+        ("vsdk/geom/effect_mem.cpp", "src/vsdk/geom/effect_mem.cpp"),
         ("vsdk/ca/character.cpp", "src/vsdk/ca/character.cpp"),
         ("vsdk/ca/character_instance.cpp", "src/vsdk/ca/character_instance.cpp"),
         ("vsdk/ca/skeleton.cpp", "src/vsdk/ca/skeleton.cpp"),
